@@ -1,8 +1,5 @@
 package Domain;
 
-interface IRole {}
-class ShoppingCart {}
-
 public class Guest {
     private IRole role;
 
