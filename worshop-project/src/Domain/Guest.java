@@ -62,4 +62,12 @@ public class Guest {
     public ShoppingCart getCart() {
         return this.cart;
     }
+    
+    public long setUserID(long userID) {
+        return this.userID;
+    }
+
+    public ShoppingCart getCart(ShoppingCart cart) {
+        return this.cart;
+    }
 }
