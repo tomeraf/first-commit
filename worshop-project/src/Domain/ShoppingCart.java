@@ -36,7 +36,7 @@ public class ShoppingCart {
         for (int i = 0; i < baskets.size(); i++) {
             ShoppingBasket basket = baskets.get(i);
             for (int itemID : basket.getItems()) {
-                items.put(itemID, basket.getBasketID()); // Add itemID and basketID to the dictionary
+                items.put(itemID, basket.getShopID()); // Add itemID and basketID to the dictionary
             }
         }
         return items;
@@ -46,17 +46,12 @@ public class ShoppingCart {
     // Use case #2.4.b: Change cart content
     // map<Integer, Integer> items: itemID, basketID
     public boolean deleteItems(Map<Integer, Integer> items) {
-        // Check if the cart is empty
-        if (items == null || items.isEmpty()) {
-            return false;
-        }
-
         // Check if all items are in the baskets
         boolean itemFound = false;
         for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
             int itemID = entry.getKey();
             for (ShoppingBasket basket : baskets) {
-                if (basket.itemIn(itemID)) {
+                if (basket.isItemIn(itemID) && basket.getShopID() == entry.getValue()) {
                     itemFound = true;
                 }
             }
@@ -70,7 +65,7 @@ public class ShoppingCart {
         for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
             int itemID = entry.getKey();
             for (ShoppingBasket basket : baskets) {
-                if (!basket.removeItem(itemID))
+                if (!basket.removeItem(itemID) && basket.getShopID() == entry.getValue()) 
                     return false;
             }
         }

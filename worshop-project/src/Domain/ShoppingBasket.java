@@ -3,24 +3,24 @@ package Domain;
 import java.util.List;
 
 public class ShoppingBasket {
-    private int basketID; // should be the same as shopID
+    private int shopID;
     private List<Integer> items;
 
 
     public ShoppingBasket(int basketID, List<Integer> items) {
-        this.basketID = basketID;
+        this.shopID = basketID;
         this.items = items;
     }
 
 
     public ShoppingBasket(int basketID) {
-        this.basketID = basketID;
+        this.shopID = basketID;
         this.items = new java.util.ArrayList<>();
     }
 
 
-    public int getBasketID() {
-        return basketID;
+    public int getShopID() {
+        return shopID;
     }
 
 
@@ -29,7 +29,7 @@ public class ShoppingBasket {
     }
 
 
-    public boolean itemIn(int itemID) {
+    public boolean isItemIn(int itemID) {
         // Check if the itemID is in the list of items
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i) == itemID) {
