@@ -5,12 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
-public class basket_test {
+public class BasketTest {
     
     private Domain.ShoppingBasket basket;
     
     @BeforeEach
     public void setUp() {
+        System.out.println("Test is running!");
         // Create a ShoppingBasket object with a shopID and a list of items
         ArrayList<Integer> items = new ArrayList<>();
         items.add(101);
