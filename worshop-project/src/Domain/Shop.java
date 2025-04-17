@@ -13,6 +13,8 @@ public class Shop {
     private HashMap<Integer, Item> items; // itemId -> item
     private boolean isOpen;
     private int counterItemId; // Counter for item IDs
+    public double rating;
+    public int ratingCount;
 
     public Shop(int id, String name, String description) {
         this.id = id;
@@ -23,6 +25,8 @@ public class Shop {
         this.items = new HashMap<>();
         this.isOpen = false;
         this.counterItemId = 1; // Initialize the item ID counter
+        this.rating = 0.0;
+        this.ratingCount = 0;
     }
 
     public int getId() { return id; }
@@ -32,6 +36,7 @@ public class Shop {
     public PurchasePolicy getPurchasePolicy() { return purchasePolicy; }
     public DiscountPolicy getDiscountPolicy() { return discountPolicy; }
     public HashMap<Integer, Item> getItems() { return items; }
+    public double getRating() { return rating; }
 
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
@@ -83,7 +88,7 @@ public class Shop {
     }
 
     public void updateItemPrice(int itemId, double price) {
-        if (items.containsKey(itemId)) {
+        if (items.containsKey(itemId)){
             Item item = items.get(itemId);
             item.setPrice(price);
         } 
@@ -112,6 +117,16 @@ public class Shop {
         }
     }
 
+    public void updateRating(double rating) {
+        if (rating < 0 || rating > 5) {
+            System.out.println("Can't rate, rating must be between 0 and 5.");
+        }
+        else {
+            ratingCount++;
+            this.rating = (rating + this.rating) / ratingCount; // Update the shop's rating based on the new rating
+        }
+    }
+
     public void openShop(){ //must fix later on using synchronized methods
         if (isOpen) {
             System.out.println("Shop is already open.");
@@ -126,6 +141,20 @@ public class Shop {
             return;
         }
         this.isOpen = false;
+    }
+
+    public boolean canAddItemToBasket(int itemId, int quantity) {
+        if (items.containsKey(itemId) && items.get(itemId).quantityCheck(quantity)) {
+            return true;
+        }
+        else if (!items.containsKey(itemId)) {
+            System.out.println("Item does not exist.");
+        } 
+        else {
+            System.out.println("Can't add "+ quantity + " of item: " + itemId +
+                                    ", only "+ items.get(itemId).getQuantity() + " left in shop.");
+        }
+        return false;
     }
 
     public boolean canPurchaseBasket(ShoppingBasket basket){
