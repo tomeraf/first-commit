@@ -18,37 +18,34 @@ public class GuestTest {
     @Test
     void testSuccessfulLogin() {
         long tempId = 123456L;
-        ShoppingCart emptyCart = new ShoppingCart();
-        boolean result = guest.login(tempId, emptyCart);
+        boolean result = guest.login(tempId);
         assertTrue(result);
         assertTrue(guest.isInSession());
         assertEquals(tempId, guest.getUserID());
-        assertEquals(emptyCart, guest.getCart());
     }
 
     @Test
     void testLoginTwiceShouldNotOverride() {
         long tempId1 = 111L;
         long tempId2 = 222L;
-        ShoppingCart cart1 = new ShoppingCart();
-        ShoppingCart cart2 = new ShoppingCart();
 
-        boolean result1 = guest.login(tempId1, cart1);
-        boolean result2 = guest.login(tempId2, cart2); // Should not take effect
+        boolean result1 = guest.login(tempId1);
+        boolean result2 = guest.login(tempId2); // Should not take effect
         assertTrue(result1); // First login should succeed
         assertFalse(result2); // Login should fail since already logged in
         assertTrue(guest.isInSession());
         assertEquals(tempId1, guest.getUserID());
-        assertEquals(cart1, guest.getCart());
     }
 
     @Test
     void testSuccessfulLogout() {
         long tempId = 999L;
-        ShoppingCart emptyCart = new ShoppingCart();
-        boolean result1 = guest.login(tempId, emptyCart);
-        boolean result2 = guest.logout();
+        boolean result1 = guest.login(tempId);
         assertTrue(result1); // First login should succeed
+        assertTrue(guest.isInSession());
+        assertEquals(tempId, guest.getUserID());
+        assertNotNull(guest.getCart()); // Cart should be initialized on login
+        boolean result2 = guest.logout();
         assertTrue(result2); // Logout should succeed
         assertFalse(guest.isInSession());
         assertEquals(-1, guest.getUserID());
@@ -65,9 +62,7 @@ public class GuestTest {
     @Test
     void testDoubleLogout() {
         long id = 555L;
-        ShoppingCart cart = new ShoppingCart();
-
-        guest.login(id, cart);
+        guest.login(id);
         assertTrue(guest.logout());
         assertFalse(guest.logout()); // Second one should fail
 
@@ -77,17 +72,9 @@ public class GuestTest {
     }
 
     @Test
-    void testLoginWithNullCart() {
-        long id = 777L;
-        boolean result = guest.login(id, null);
-
-        assertFalse(result);
-    }
-
-    @Test
     void testLoginWithNegativeID() {
         long id = -1;
-        boolean result = guest.login(id, new ShoppingCart());
+        boolean result = guest.login(id);
 
         assertFalse(result);
     }

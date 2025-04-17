@@ -10,17 +10,13 @@ public class Guest {
 
     public Guest() {}
 
-    public Guest(IRole initialRole, long userID, ShoppingCart cart) {
+    public Guest(IRole initialRole, long userID) {
         this.userID = userID;
         this.role = initialRole;
-        this.cart = cart;
+        this.cart = null;
     }
 
-    public void changeRole(IRole newRole) {
-        this.role = newRole;
-    }
-
-    public boolean login(long userID, ShoppingCart cart) {
+    public boolean login(long userID) {
         if (isInSession) {
             System.out.println("Unauthorized Action: already logged in as guest. TempID: " + userID);
             return false;
@@ -29,13 +25,9 @@ public class Guest {
             System.out.println("Negative user ID is not valid: " + userID);
             return false;
         }
-        if (cart == null) {
-            System.out.println("Null cart is not valid.");
-            return false;
-        }
         this.isInSession = true;
         this.userID = userID;
-        this.cart = cart; // According to the USE-CASE guest has an empty cart. 
+        this.cart = new ShoppingCart(); // According to the USE-CASE guest has an empty cart. 
         System.out.println("Guest login successful. Assigned TempID: " + userID);
         return true;
     }
@@ -62,12 +54,20 @@ public class Guest {
     public ShoppingCart getCart() {
         return this.cart;
     }
+
+    public IRole getRole() {
+        return this.role;
+    }
     
-    public long setUserID(long userID) {
-        return this.userID;
+    public void setUserID(long userID) {
+        this.userID = userID;
     }
 
-    public ShoppingCart getCart(ShoppingCart cart) {
-        return this.cart;
+    public void setCart(ShoppingCart cart) {
+        this.cart = cart;
+    }
+    
+    public void setRole(IRole newRole) {
+        this.role = newRole;
     }
 }
