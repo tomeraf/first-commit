@@ -1,48 +1,84 @@
 package Tests;
 
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class cart_test {
-
-    public static void main(String[] args) {
-        
-        // Create a ShoppingBasket object with a shopID and a list of items
+    
+    private Domain.ShoppingCart cart;
+    private Domain.ShoppingBasket basket1;
+    private Domain.ShoppingBasket basket2;
+    
+    @BeforeEach
+    public void setUp() {
+        // Create ShoppingBasket objects with shopIDs and lists of items
         ArrayList<Integer> items_1 = new ArrayList<>();
         items_1.add(101);
         items_1.add(102);
         items_1.add(103);
+        
         ArrayList<Integer> items_2 = new ArrayList<>();
         items_2.add(201);
         items_2.add(202);
         items_2.add(203);
-        Domain.ShoppingBasket basket1 = new Domain.ShoppingBasket(-1, items_1);
-        Domain.ShoppingBasket basket2 = new Domain.ShoppingBasket(-2, items_2);
+        
+        basket1 = new Domain.ShoppingBasket(-1, items_1);
+        basket2 = new Domain.ShoppingBasket(-2, items_2);
 
         // Create a ShoppingCart object with a cartID and a list of baskets
-        Domain.ShoppingCart cart = new Domain.ShoppingCart(java.util.Arrays.asList(basket1, basket2), -1);
-
+        cart = new Domain.ShoppingCart(Arrays.asList(basket1, basket2), -1);
+    }
+    
+    @Test
+    public void testGetCartID() {
+        assertEquals(-1, cart.getCartID(), "Cart ID should be -1");
+    }
+    
+    @Test
+    public void testGetItems() {
+        Map<Integer, Integer> expectedItems = new HashMap<>();
+        expectedItems.put(101, -1);
+        expectedItems.put(102, -1);
+        expectedItems.put(103, -1);
+        expectedItems.put(201, -2);
+        expectedItems.put(202, -2);
+        expectedItems.put(203, -2);
         
-        // Test the getCartID method
-        System.out.println("Cart ID: " + cart.getCartID() + ", Expected output: -1");
-        
-        // Test the getItems method
-        System.out.println("Items in cart: " + cart.getItems() + ", Expected output: {101=-1, 102=-1, 103=-1, 201=-2, 202=-2, 203=-2}");
-        
-        // Test the deleteItems method
-        java.util.Map<Integer, Integer> itemsToDelete = new java.util.HashMap<>();
+        assertEquals(expectedItems, cart.getItems(), "Items in cart should match expected mapping of item IDs to shop IDs");
+    }
+    
+    @Test
+    public void testDeleteItemsSuccess() {
+        Map<Integer, Integer> itemsToDelete = new HashMap<>();
         itemsToDelete.put(101, -1);
         itemsToDelete.put(201, -2);
         
-        System.out.println("Deleting items: " + cart.deleteItems(itemsToDelete) + ", Expected output: true");
+        assertTrue(cart.deleteItems(itemsToDelete), "Should return true when successfully deleting items");
         
-        // Check items after deletion
-        System.out.println("Items in cart after deletion: " + cart.getItems() + ", Expected output: {102=-1, 103=-1, 202=-2, 203=-2}");
-
-        // Test the deleteItems method with items not in the cart
-        itemsToDelete = new java.util.HashMap<>();
+        // Verify items after deletion
+        Map<Integer, Integer> expectedRemainingItems = new HashMap<>();
+        expectedRemainingItems.put(102, -1);
+        expectedRemainingItems.put(103, -1);
+        expectedRemainingItems.put(202, -2);
+        expectedRemainingItems.put(203, -2);
+        
+        assertEquals(expectedRemainingItems, cart.getItems(), "Cart should contain only remaining items after deletion");
+    }
+    
+    @Test
+    public void testDeleteItemsNotInCart() {
+        // First delete the items so they're no longer in cart
+        Map<Integer, Integer> itemsToDelete = new HashMap<>();
         itemsToDelete.put(101, -1);
         itemsToDelete.put(201, -2);
-
-        System.out.println("Deleting items: " + cart.deleteItems(itemsToDelete) + ", Expected output: false");
+        cart.deleteItems(itemsToDelete);
+        
+        // Try to delete them again
+        assertFalse(cart.deleteItems(itemsToDelete), "Should return false when trying to delete items not in cart");
     }
 }

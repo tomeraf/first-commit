@@ -1,30 +1,56 @@
 package Tests;
 
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 public class basket_test {
-
-    public static void main(String[] args) {
+    
+    private Domain.ShoppingBasket basket;
+    
+    @BeforeEach
+    public void setUp() {
         // Create a ShoppingBasket object with a shopID and a list of items
         ArrayList<Integer> items = new ArrayList<>();
         items.add(101);
         items.add(102);
         items.add(103);
-        Domain.ShoppingBasket basket = new Domain.ShoppingBasket(-1, items);
+        basket = new Domain.ShoppingBasket(-1, items);
+    }
+    
+    @Test
+    public void testGetShopID() {
+        assertEquals(-1, basket.getShopID(), "Shop ID should be -1");
+    }
+    
+    @Test
+    public void testGetItems() {
+        ArrayList<Integer> expectedItems = new ArrayList<>();
+        expectedItems.add(101);
+        expectedItems.add(102);
+        expectedItems.add(103);
+        assertEquals(expectedItems, basket.getItems(), "Items list should match the initial values");
+    }
+    
+    @Test
+    public void testIsItemIn() {
+        assertTrue(basket.isItemIn(102), "Should confirm item 102 is in the basket");
+        assertFalse(basket.isItemIn(104), "Should confirm item 104 is not in the basket");
+    }
+    
+    @Test
+    public void testRemoveItem() {
+        // Test successful removal
+        assertTrue(basket.removeItem(102), "Should return true when removing existing item 102");
         
-        // Test the getShopID method
-        System.out.println("Shop ID: " + basket.getShopID() + ", Expected output: -1");
+        // Test removing an item that's no longer in the basket
+        assertFalse(basket.removeItem(102), "Should return false when removing non-existent item 102");
         
-        // Test the getItems method
-        System.out.println("Items: " + basket.getItems() + ", Expected output: [101, 102, 103]");
-        
-        // Test the isItemIn method
-        System.out.println("Is item 102 in the basket? " + basket.isItemIn(102) + ", Expected output: true");
-        System.out.println("Is item 104 in the basket? " + basket.isItemIn(104) + ", Expected output: false");
-
-        // Test the removeItem method
-        System.out.println("Removing item 102: " + basket.removeItem(102) + ", Expected output: true");
-        System.out.println("Removing item 104: " + basket.removeItem(102) + ", Expected output: false");
-        System.out.println("Items after removal: " + basket.getItems() + ", Expected output: [101, 103]");
+        // Verify the basket contents after removal
+        ArrayList<Integer> expectedItems = new ArrayList<>();
+        expectedItems.add(101);
+        expectedItems.add(103);
+        assertEquals(expectedItems, basket.getItems(), "Basket should contain only items 101 and 103 after removal");
     }
 }
