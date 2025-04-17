@@ -20,8 +20,8 @@ public class Item {
         this.numOfOrders = 0;
     }
 
-    public void updateRating(double newRating) {
-        this.rating = (this.rating * numOfOrders + newRating) / (numOfOrders);
+    public void updateRating(double newCustomerRating) {
+        this.rating = (this.rating * numOfOrders + newCustomerRating) / (numOfOrders);
     }
     public void buyItem(int quantity) {
         if (this.quantity >= quantity) {
