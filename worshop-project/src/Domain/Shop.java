@@ -5,17 +5,15 @@ public class Shop {
     public int id;
     public String name;
     public String description;
-    private int founderId;
     public PurchasePolicy purchasePolicy;
     public DiscountPolicy discountPolicy;
-    public HashMap<Integer, Integer> items;
+    public HashMap<Integer, Integer> items; // itemId -> quantity
     private boolean isOpen;
 
     public Shop(int id, String name, String description, int founderId) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.founderId = founderId;
         this.purchasePolicy = new PurchasePolicy();
         this.discountPolicy = new DiscountPolicy();
         this.items = new HashMap<>();
@@ -25,7 +23,6 @@ public class Shop {
     public int getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    public int getFounderId() { return founderId; }
     public boolean isOpen() { return isOpen; }
     public PurchasePolicy getPurchasePolicy() { return purchasePolicy; }
     public DiscountPolicy getDiscountPolicy() { return discountPolicy; }
