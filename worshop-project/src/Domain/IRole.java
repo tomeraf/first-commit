@@ -1,8 +1,6 @@
 package Domain;
-
 import java.util.Map;
-
-interface IRole {
+public interface IRole {
 
     //Item management
     void addItem(String sessionToken, String shopId, String item);
@@ -24,6 +22,3 @@ interface IRole {
     void respondToMessage(String sessionToken, String shopId, String userId, String message);
     String viewPurchaseHistory(String sessionToken, String shopId);
 }
-
-
-
