@@ -22,6 +22,12 @@ public class Item {
     }
 
     public void updateRating(double newRating) {
+        if (newRating < 0 || newRating > 5) {
+            throw new IllegalArgumentException("Rating must be between 0 and 5.");
+        }
+        if (numOfOrders == 0) {
+            throw new IllegalStateException("No orders have been made yet. Cannot update rating.");
+        } 
         this.rating = (this.rating * numOfOrders + newRating) / (numOfOrders);
     }
     public boolean updateQuantity(int quantity) {
