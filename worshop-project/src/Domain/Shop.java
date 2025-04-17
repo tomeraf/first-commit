@@ -13,8 +13,8 @@ public class Shop {
     private HashMap<Integer, Item> items; // itemId -> item
     private boolean isOpen;
     private int counterItemId; // Counter for item IDs
-    public double rating;
-    public int ratingCount;
+    private double rating;
+    private int ratingCount;
 
     public Shop(int id, String name, String description) {
         this.id = id;
