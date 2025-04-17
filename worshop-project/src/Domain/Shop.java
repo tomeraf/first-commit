@@ -12,8 +12,9 @@ public class Shop {
     private DiscountPolicy discountPolicy;
     private HashMap<Integer, Item> items; // itemId -> item
     private boolean isOpen;
+    private int counterItemId; // Counter for item IDs
 
-    public Shop(int id, String name, String description, int founderId) {
+    public Shop(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -21,6 +22,7 @@ public class Shop {
         this.discountPolicy = new DiscountPolicy();
         this.items = new HashMap<>();
         this.isOpen = false;
+        this.counterItemId = 1; // Initialize the item ID counter
     }
 
     public int getId() { return id; }
@@ -37,15 +39,16 @@ public class Shop {
     public void setDiscountPolicy(DiscountPolicy discountPolicy) { this.discountPolicy = discountPolicy; }
     public void setOpen(boolean isOpen) { this.isOpen = isOpen; }
 
-    public void addItem(Item item) {
-        if (items.containsKey(item.getId())) {
-            System.out.println("Item ID already exists in the shop.");
-        }
-        else if (item.getShopId() != this.id) {
-            System.out.println("Item does not belong to this shop.");
-        }
+    public boolean addItem(String name, Category category, double price){
+        if (price < 0) {
+            System.out.println("Item price cannot be negative.");
+            return false;
+        } 
         else{
+            Item item = new Item(name, category, price, this.id, counterItemId);
             items.put(item.getId(), item);
+            counterItemId++; // Increment the item ID counter for the next item
+            return true;
         }
     }
     
@@ -68,13 +71,14 @@ public class Shop {
         }
     }
 
-    public void updateItemQuantity(int itemId, int quantity) {
-        if (items.containsKey(itemId)) {
+    public boolean updateItemQuantity(int itemId, int quantity) {
+        if (items.containsKey(itemId)){
             Item item = items.get(itemId);
-            item.setQuantity(quantity);
+            return item.updateQuantity(quantity);
         } 
         else {
             System.out.println("Item ID does not exist in the shop.");
+            return false;
         }
     }
 
@@ -91,7 +95,7 @@ public class Shop {
     public void updateItemRating(int itemId, double rating) {
         if (items.containsKey(itemId)) {
             Item item = items.get(itemId);
-            item.setRating(rating);
+            item.updateRating(rating);
         } 
         else{
             System.out.println("Item ID does not exist in the shop.");
