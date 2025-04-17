@@ -10,11 +10,12 @@ public class Item {
     private double rating;
     private int numOfOrders;
 
-    public Item(String name,Category category, double price, int shopId) {
+    public Item(String name,Category category, double price, int shopId,int id) {
         this.name = name;
         this.category = category;
         this.price = price;
         this.shopId = shopId;
+        this.id = id;
         this.quantity = 0;
         this.rating = 0.0;
         this.numOfOrders = 0;
@@ -23,13 +24,24 @@ public class Item {
     public void updateRating(double newRating) {
         this.rating = (this.rating * numOfOrders + newRating) / (numOfOrders);
     }
-    public void buyItem(int quantity) {
-        if (this.quantity >= quantity) {
-            this.quantity -= quantity;
-            this.numOfOrders += 1;
+    public boolean updateQuantity(int quantity) {
+        if (quantity >= 0) {
+            this.quantity = quantity;
+            return true;
         } else {
-            System.out.println("Not enough stock available.");
+            return false;
         }
+    }
+    public boolean quantityCheck(int quantity) {
+        if (this.quantity >= quantity) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public void buyItem(int quantity) {
+        this.quantity -= quantity;
+        this.numOfOrders += 1;
     }
     public String getName() {
         return name;
