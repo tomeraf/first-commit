@@ -2,8 +2,7 @@ package Domain;
 
 import java.util.List;
 import java.util.Map;
-
-interface IRole {
+public interface IRole {
 
     public void AddManager(int storeID, int managerID);
     public void AddOwner(int storeID, int ownerID);
@@ -25,6 +24,3 @@ interface IRole {
     // void removeItem(String itemId);
     // void updateItem(String itemId, String updatedItem);
 }
-
-
-
