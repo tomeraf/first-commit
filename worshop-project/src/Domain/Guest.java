@@ -16,7 +16,7 @@ public class Guest {
         this.cart = null;
     }
 
-    public boolean login(long userID) {
+    public boolean login(long userID, int cartID) {
         if (isInSession) {
             System.out.println("Unauthorized Action: already logged in as guest. TempID: " + userID);
             return false;
@@ -27,7 +27,7 @@ public class Guest {
         }
         this.isInSession = true;
         this.userID = userID;
-        this.cart = new ShoppingCart(); // According to the USE-CASE guest has an empty cart. 
+        this.cart = new ShoppingCart(cartID); // According to the USE-CASE guest has an empty cart. 
         System.out.println("Guest login successful. Assigned TempID: " + userID);
         return true;
     }

@@ -18,7 +18,7 @@ public class GuestTest {
     @Test
     void testSuccessfulLogin() {
         long tempId = 123456L;
-        boolean result = guest.login(tempId);
+        boolean result = guest.login(tempId, 0);
         assertTrue(result);
         assertTrue(guest.isInSession());
         assertEquals(tempId, guest.getUserID());
@@ -29,8 +29,8 @@ public class GuestTest {
         long tempId1 = 111L;
         long tempId2 = 222L;
 
-        boolean result1 = guest.login(tempId1);
-        boolean result2 = guest.login(tempId2); // Should not take effect
+        boolean result1 = guest.login(tempId1, 0);
+        boolean result2 = guest.login(tempId2, 0); // Should not take effect
         assertTrue(result1); // First login should succeed
         assertFalse(result2); // Login should fail since already logged in
         assertTrue(guest.isInSession());
@@ -40,7 +40,7 @@ public class GuestTest {
     @Test
     void testSuccessfulLogout() {
         long tempId = 999L;
-        boolean result1 = guest.login(tempId);
+        boolean result1 = guest.login(tempId, 0);
         assertTrue(result1); // First login should succeed
         assertTrue(guest.isInSession());
         assertEquals(tempId, guest.getUserID());
@@ -62,7 +62,7 @@ public class GuestTest {
     @Test
     void testDoubleLogout() {
         long id = 555L;
-        guest.login(id);
+        guest.login(id, 0);
         assertTrue(guest.logout());
         assertFalse(guest.logout()); // Second one should fail
 
@@ -74,7 +74,7 @@ public class GuestTest {
     @Test
     void testLoginWithNegativeID() {
         long id = -1;
-        boolean result = guest.login(id);
+        boolean result = guest.login(id, 0);
 
         assertFalse(result);
     }
