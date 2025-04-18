@@ -4,19 +4,30 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
+import Domain.ItemDTO;
+import Domain.Category;
 
 public class BasketTest {
     
     private Domain.ShoppingBasket basket;
+    private ItemDTO item1;
+    private ItemDTO item2;
+    private ItemDTO item3;
+    private ItemDTO itemNotInBasket;
     
     @BeforeEach
     public void setUp() {
-        System.out.println("Test is running!");
+        // Create ItemDTO objects
+        item1 = new ItemDTO("Item 1", Category.BEAUTY, 10.0, -1, 101, 5, 4.5);
+        item2 = new ItemDTO("Item 2", Category.BEAUTY, 10.0, -1, 102, 5, 4.5);
+        item3 = new ItemDTO("Item 3", Category.BEAUTY, 10.0, -1, 103, 5, 4.5);
+        itemNotInBasket = new ItemDTO("Item 4", Category.BEAUTY, 10.0, -1, 104, 5, 4.5);
+        
         // Create a ShoppingBasket object with a shopID and a list of items
-        ArrayList<Integer> items = new ArrayList<>();
-        items.add(101);
-        items.add(102);
-        items.add(103);
+        ArrayList<ItemDTO> items = new ArrayList<>();
+        items.add(item1);
+        items.add(item2);
+        items.add(item3);
         basket = new Domain.ShoppingBasket(-1, items);
     }
     
@@ -27,31 +38,31 @@ public class BasketTest {
     
     @Test
     public void testGetItems() {
-        ArrayList<Integer> expectedItems = new ArrayList<>();
-        expectedItems.add(101);
-        expectedItems.add(102);
-        expectedItems.add(103);
+        ArrayList<ItemDTO> expectedItems = new ArrayList<>();
+        expectedItems.add(item1);
+        expectedItems.add(item2);
+        expectedItems.add(item3);
         assertEquals(expectedItems, basket.getItems(), "Items list should match the initial values");
     }
     
     @Test
     public void testIsItemIn() {
-        assertTrue(basket.isItemIn(102), "Should confirm item 102 is in the basket");
-        assertFalse(basket.isItemIn(104), "Should confirm item 104 is not in the basket");
+        assertTrue(basket.isItemIn(item2.getItemID()), "Should confirm item2 is in the basket");
+        assertFalse(basket.isItemIn(itemNotInBasket.getItemID()), "Should confirm itemNotInBasket is not in the basket");
     }
     
     @Test
     public void testRemoveItem() {
         // Test successful removal
-        assertTrue(basket.removeItem(102), "Should return true when removing existing item 102");
+        assertTrue(basket.removeItem(item2.getItemID()), "Should return true when removing existing item2");
         
         // Test removing an item that's no longer in the basket
-        assertFalse(basket.removeItem(102), "Should return false when removing non-existent item 102");
+        assertFalse(basket.removeItem(item2.getItemID()), "Should return false when removing non-existent item2");
         
         // Verify the basket contents after removal
-        ArrayList<Integer> expectedItems = new ArrayList<>();
-        expectedItems.add(101);
-        expectedItems.add(103);
-        assertEquals(expectedItems, basket.getItems(), "Basket should contain only items 101 and 103 after removal");
+        ArrayList<ItemDTO> expectedItems = new ArrayList<>();
+        expectedItems.add(item1);
+        expectedItems.add(item3);
+        assertEquals(expectedItems, basket.getItems(), "Basket should contain only item1 and item3 after removal");
     }
 }

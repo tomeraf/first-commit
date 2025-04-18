@@ -4,10 +4,10 @@ import java.util.List;
 
 public class ShoppingBasket {
     private int shopID;
-    private List<Integer> items;
+    private List<ItemDTO> items;
 
 
-    public ShoppingBasket(int basketID, List<Integer> items) {
+    public ShoppingBasket(int basketID, List<ItemDTO> items) {
         this.shopID = basketID;
         this.items = items;
     }
@@ -24,7 +24,7 @@ public class ShoppingBasket {
     }
 
 
-    public List<Integer> getItems() {
+    public List<ItemDTO> getItems() {
         return items;
     }
 
@@ -32,7 +32,8 @@ public class ShoppingBasket {
     public boolean isItemIn(int itemID) {
         // Check if the itemID is in the list of items
         for (int i = 0; i < items.size(); i++) {
-            if (items.get(i) == itemID) {
+            int tempID = ((ItemDTO) items.get(i)).getItemID();
+            if (tempID == itemID) {
                 return true; // Item found
             }
         }
@@ -43,7 +44,8 @@ public class ShoppingBasket {
     public boolean removeItem(int itemID) {
         // Check if the itemID is in the list of items
         for (int i = 0; i < items.size(); i++) {
-            if (items.get(i) == itemID) {
+            int tempID = ((ItemDTO) items.get(i)).getItemID();
+            if (tempID == itemID) {
                 items.remove(i);
                 return true; // Item removed successfully
             }
