@@ -1,4 +1,4 @@
-package Domain;
+package Domain.Purchase;
 
 public interface IPurchaseType {
 
