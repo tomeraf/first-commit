@@ -1,6 +1,6 @@
 package Domain;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,15 +28,14 @@ public class ShoppingCart {
 
     // Use case #2.4.a: Check cart content
     // map<Integer, Integer> items: itemID, basketID
-    public Map<Integer, Integer> getItems() {
-        Map<Integer, Integer> items = new Hashtable<>(); // Create a new dictionary to store items
+    public List<ItemDTO> getItems() {
+        List<ItemDTO> items = new ArrayList<>(); // List to store items
 
         // Iterate through each basket and add items to the dictionary
-        // The key is the itemID and the value is the basketID
         for (int i = 0; i < baskets.size(); i++) {
             ShoppingBasket basket = baskets.get(i);
-            for (int itemID : basket.getItems()) {
-                items.put(itemID, basket.getShopID()); // Add itemID and basketID to the dictionary
+            for (ItemDTO item : basket.getItems()) {
+                items.add(item);
             }
         }
         return items;
@@ -44,7 +43,7 @@ public class ShoppingCart {
 
 
     // Use case #2.4.b: Change cart content
-    // map<Integer, Integer> items: itemID, basketID
+    // map<Integer, Integer> items: itemID, shopID
     public boolean deleteItems(Map<Integer, Integer> items) {
         // Check if all items are in the baskets
         boolean itemFound = false;
@@ -65,8 +64,9 @@ public class ShoppingCart {
         for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
             int itemID = entry.getKey();
             for (ShoppingBasket basket : baskets) {
-                if (!basket.removeItem(itemID) && basket.getShopID() == entry.getValue()) 
-                    return false;
+                if (basket.getShopID() == entry.getValue())
+                    if(!basket.removeItem(itemID)) 
+                        return false;
             }
         }
         return true;
