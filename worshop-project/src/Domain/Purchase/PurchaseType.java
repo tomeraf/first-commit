@@ -1,30 +1,19 @@
 package Domain.Purchase;
 
-public abstract class PurchaseType {
-    private double amount;
-    private int itemId;
-    private int buyerId;
+public enum PurchaseType {
+    IMDIATE,
+    BID,
+    AUCTION;
 
-    public PurchaseType(double amount, int itemId, int buyerId) {
-        this.amount = amount;
-        this.itemId = itemId;
-        this.buyerId = buyerId;
+    public static PurchaseType fromString(String type) {
+        if (type == null || type.trim().isEmpty()) {
+            throw new IllegalArgumentException("Type cannot be null or empty");
+        }
+        try {
+            return PurchaseType.valueOf(type.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid PurchaseType: " + type);
+        }
     }
-    public double getAmount() {
-        return amount;
-    }
-    public int getItemId() {
-        return itemId;
-    }
-    public int getBuyerId() {
-        return buyerId;
-    }
-    public void setBuyerId(int buyerId) {
-        this.buyerId = buyerId;
-    }
-
-
-    public abstract boolean isAccepted();
-    public abstract void accept();
-
 }
+

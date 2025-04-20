@@ -1,6 +1,7 @@
 package Domain.Discount;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class HiddenDiscount extends OpenDiscount {
     private String couponCode;
@@ -29,7 +30,7 @@ public class HiddenDiscount extends OpenDiscount {
         this.couponCode = couponCode;
     }
     public int applyDiscount(int itemId, int price, String providedCouponCode) {
-        if (providedCouponCode.equals(this.couponCode) && inTime(new Date(System.currentTimeMillis())) && isApplicable(itemId)) {
+        if (providedCouponCode.equals(this.couponCode) && inTime(LocalDate.now()) && isApplicable(itemId)) {
             return price - (price * getPercentage() / 100);
         } else {
             return price; // No discount applied

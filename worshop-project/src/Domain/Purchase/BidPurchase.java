@@ -3,7 +3,7 @@ package Domain.Purchase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BidPurchase extends PurchaseType {
+public class BidPurchase extends Purchase {
     private int submitterId;
     private List<Integer> AcceptingMembers;
     private int rejecterID=-1;

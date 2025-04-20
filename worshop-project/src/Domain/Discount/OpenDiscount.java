@@ -1,22 +1,23 @@
 package Domain.Discount;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OpenDiscount{
     private int id;
     private int percentage;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private List<Integer> itemIds;
 
     public OpenDiscount(int id, int percentage, String startDate, String endDate) {
         validDetails(id, percentage, startDate, endDate);
         this.id = id;
         this.percentage = percentage;
-        this.startDate = Date.valueOf(startDate);
-        this.endDate = Date.valueOf(endDate);
+        this.startDate = LocalDate.parse(startDate);
+        this.endDate = LocalDate.parse(endDate);
         this.itemIds = new ArrayList<>();
     }
     private void validDetails(int id, int percentage, String startDate, String endDate) {
@@ -29,10 +30,10 @@ public class OpenDiscount{
 
     public boolean validDates(String sDate,String eDate) {
         try {
-            Date s=Date.valueOf(sDate);
-            Date e=Date.valueOf(eDate);
-            if(s.after(e)) return false; // Start date is after end date
-            if(e.before(new Date(System.currentTimeMillis()))) return false; // End date is before current date
+            LocalDate s=LocalDate.parse(sDate);
+            LocalDate e=LocalDate.parse(eDate);
+            if(s.isAfter(e)) return false; // Start date is after end date
+            if(e.isBefore(LocalDate.now())) return false; // End date is before current date
             return true;
         } catch (IllegalArgumentException e) {
             return false;
@@ -45,17 +46,17 @@ public class OpenDiscount{
     public void removeItemId(int itemId) {
         this.itemIds.remove(Integer.valueOf(itemId));
     }
-    public boolean inTime(Date currentDate) {
-        return (currentDate.after(startDate) || currentDate.equals(startDate)) && (currentDate.before(endDate) || currentDate.equals(endDate));
+    public boolean inTime(LocalDate currentDate) {
+        return (currentDate.isAfter(startDate) || currentDate.equals(startDate)) && (currentDate.isBefore(endDate) || currentDate.equals(endDate));
     }
     public boolean isApplicable(int itemId) {
         return itemIds.contains(itemId);
     }
     public void extendDiscount(String newEndDate) {
-        this.endDate = Date.valueOf(newEndDate);
+        this.endDate = LocalDate.parse(newEndDate);
     }
     public int applyDiscount(int itemId,int price) {
-        if(inTime(new Date(System.currentTimeMillis())) && isApplicable(itemId))  // Assuming itemIds has at least one item for simplicity
+        if(inTime(LocalDate.now()) && isApplicable(itemId))  // Assuming itemIds has at least one item for simplicity
             return price - (price * percentage / 100);
          else 
             return price; // No discount applied
@@ -67,10 +68,10 @@ public class OpenDiscount{
     public int getPercentage() {
         return percentage;
     }
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
     public List<Integer> getItemIds() {

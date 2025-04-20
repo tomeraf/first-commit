@@ -2,7 +2,7 @@ package Domain.Purchase;
 
 import java.time.LocalDateTime;
 
-public class AuctionPurchase extends PurchaseType {
+public class AuctionPurchase extends Purchase {
     private double highestBid=0;
     private LocalDateTime auctionStartTime; 
     private LocalDateTime auctionEndTime; 
