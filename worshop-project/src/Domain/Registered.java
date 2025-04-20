@@ -7,9 +7,10 @@ public class Registered extends Guest {
     private String username;
     private String password;
     private LocalDate dateOfBirth;
-    public Registered(String username, String password) {
+    public Registered(String username, String password, LocalDate dateOfBirth) {
         this.username = username;
         this.password = password;
+        this.dateOfBirth = dateOfBirth;
     }
     public String getUsername() {
         return username;
@@ -23,6 +24,23 @@ public class Registered extends Guest {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    public void addOwner(Shop shop, int userID) {
+        role.addOwner(shop, userID);
+    }
+    public void removeOwner(Shop shop, int userID) {
+        role.removeOwner(shop, userID);
+    }
+    public void addManager(Shop shop, int userID) {
+        role.addManager(shop, userID);
+    }
+    public void removeManager(Shop shop, int userID) {
+        role.removeManager(shop, userID);
+    }
+    public void updateManagerPermissions(Shop shop, List<Permission> permissions) {
+        role.updateManagerPermissions(shop, permissions);
+    }
+    
     public void addItemToShop(Shop shop, String name, Category category, double price) {
         role.addItem(shop, name, category, price);
     }
@@ -46,4 +64,5 @@ public class Registered extends Guest {
     public int getAge() {
         return Period.between(dateOfBirth, dateOfBirth).getYears();
     }
+    
 }
