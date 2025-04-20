@@ -1,29 +1,28 @@
 package Domain;
 
+import java.util.List;
 import java.util.Map;
+public interface IRole {
 
-interface IRole {
 
-    //Item management
-    void addItem(String sessionToken, String shopId, String item);
-    void removeItem(String sessionToken, String shopId, String itemId);
-    void updateItem(String sessionToken, String shopId, String itemId, String updatedItem);
+   // Map<List<String>, Map<String, List<Permissions>>> getShopMembersInfo(String shopIds);//<owners, <managers, permissions>>
 
-    //Purchase/discount type management
-    void addPurchaseType(String sessionToken, String shopId, String typeDetails);
-    void addDiscountType(String sessionToken, String shopId, String typeDetails);
-    void removePurchaseType(String sessionToken, String shopId, String purchaseTypeId);
-    void removeDiscountType(String sessionToken, String shopId, String discountTypeId);
-    void addPurchasePolicy(String sessionToken, String shopId, String policyDetails);
-    void addDiscountPolicy(String sessionToken, String shopId, String policyDetails);
-    void updatePurchasePolicy(String sessionToken, String shopId, String policyId);
-    void updateDiscountPolicy(String sessionToken, String shopId, String policyId);
-    
-    //Notifications and purchase history
-    Map<String, Permissions> getShopMembersInfo(String sessionToken, String shopId);
-    void respondToMessage(String sessionToken, String shopId, String userId, String message);
-    String viewPurchaseHistory(String sessionToken, String shopId);
+    // // void respondToMessage(String shopId, String userId, String message);
+    // // String viewPurchaseHistory(String shopId);
+
+    // // void updatePurchasePolicy(String shopId, String policyId);
+    // // void updateDiscountPolicy(String shopId, String policyId);
+
+    void addItem(Shop shop , String name, Category category, double price);//shop.addItem
+    void removeItem(int itemId);//badket.removeItem
+
+    void updatItemName(Shop shop, String itemId, String itemName);
+    void updateItemPrice(Shop shop, String itemId, double itemPrice);
+    void updateItemQuantity(Shop shop, String itemId, int itemQuantity);//shop.
+
+    public void AddManager(Shop shop, int managerID);
+    public void AddOwner(Shop shop, int ownerID);
+    public void UpdateManagerPermissions(Shop shop, List<Permission> authorizations);
+    public void RemoveOwner(Shop shop, int ownerIdToRemove);
+    public void RemoveManager(Shop shop, int managerIdtoRemove);
 }
-
-
-
