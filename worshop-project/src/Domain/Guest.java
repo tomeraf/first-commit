@@ -19,11 +19,11 @@ public class Guest {
     }
 
     public Registered register(String username, String password, LocalDate dateOfBirth) {
-        if (isInSession) {
+        if (!isInSession) {
             System.out.println("Unauthorized Action: already logged in as guest. TempID: " + userID);
             return null;
         }
-        if (validPassword(password) || validUsername(username)) {
+        if (!validPassword(password) || !validUsername(username)) {
             System.out.println("Invalid registration details.");
             return null;
         }
