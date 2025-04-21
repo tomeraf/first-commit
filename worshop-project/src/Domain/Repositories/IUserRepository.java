@@ -1,4 +1,4 @@
-package Domain;
+package Domain.Repositories;
 
 import java.util.List;
 public interface IUserRepository {
