@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.Date;
 import java.util.function.Function;
 
-public class JWToken implements IAuthentication {
+public class JWTAdapter implements IAuthentication {
     //private String token;
     @Value("${jwt.secret}")
     private String secret;
@@ -22,7 +22,7 @@ public class JWToken implements IAuthentication {
     private SecretKey key;
 
     
-    public JWToken() {
+    public JWTAdapter() {
     try {
         KeyGenerator keyGen = KeyGenerator.getInstance("HmacSha256");
         key = keyGen.generateKey();
