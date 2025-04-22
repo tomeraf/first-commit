@@ -14,6 +14,5 @@ public interface IRole {
 
     List<Integer> getAppointments(); // Returns a list of all the appointments the role has made  
     int getAppointer();
-    HashSet<Permission> getPermissions();
     int getShopID();
 }
