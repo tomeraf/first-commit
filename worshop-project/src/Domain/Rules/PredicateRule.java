@@ -36,7 +36,7 @@ public class PredicateRule implements Rule {
 
     // Factory for rules that only depend on Quantity
     public static PredicateRule fromQuantity(java.util.function.IntPredicate quantityPredicate, int shopID) {
-        return new PredicateRule((_, _, quantity) -> quantityPredicate.test(quantity), shopID);
+        return new PredicateRule((ignored1, ignored2, quantity) -> quantityPredicate.test(quantity), shopID);
     }
 
     // Full custom rule
