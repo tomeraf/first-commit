@@ -22,12 +22,12 @@ public class Owner implements IRole {
 
     @Override
     public void addPermission(Permission permission) {
-        throw new UnsupportedOperationException("Owner cannot add permissions");
+        System.out.println("Owner cannot add permissions");
     }
 
     @Override
     public void removePermission(Permission permission) {
-        throw new UnsupportedOperationException("Owner cannot remove permissions");
+        System.out.println("Owner cannot remove permissions");
     }
 
     @Override
