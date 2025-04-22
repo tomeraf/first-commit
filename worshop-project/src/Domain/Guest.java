@@ -3,8 +3,6 @@ package Domain;
 import java.time.LocalDate;
 
 public class Guest {
-    private IRole role;
-
     // New fields for guest-specific session data:
     private long userID;    // For a guest's temporary ID.
     protected ShoppingCart cart;    // For the guest's (temporary) shopping cart.
@@ -12,9 +10,8 @@ public class Guest {
     
     public Guest() {}
 
-    public Guest(IRole initialRole, long userID) {
+    public Guest(long userID) {
         this.userID = userID;
-        this.role = initialRole;
         this.cart = null;
     }
 
@@ -72,10 +69,6 @@ public class Guest {
     public ShoppingCart getCart() {
         return this.cart;
     }
-
-    public IRole getRole() {
-        return this.role;
-    }
     
     public void setUserID(long userID) {
         this.userID = userID;
@@ -83,10 +76,6 @@ public class Guest {
 
     public void setCart(ShoppingCart cart) {
         this.cart = cart;
-    }
-    
-    public void setRole(IRole newRole) {
-        this.role = newRole;
     }
 
     private boolean validUsername(String username) {

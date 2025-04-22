@@ -1,4 +1,4 @@
-package Adapters_and_Interfaces;
+package Domain.Adapters_and_Interfaces;
 
 import java.util.Date;
 import java.util.function.Function;
