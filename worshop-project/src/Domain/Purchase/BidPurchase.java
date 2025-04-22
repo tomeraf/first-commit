@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BidPurchase extends Purchase {
+    private int BidID;
     private int submitterId;
     private List<Integer> AcceptingMembers;
     private int rejecterID=-1;
     private int isAccepted = 0; // 0 = not accepted, 1 = accepted, -1 = rejected
-    private BidPurchase CounterBid;
+    private int CounterBidID=-1;
 
-    public BidPurchase(double bidAmount, int itemId, int buyerId,int submitterId) {
+    public BidPurchase(int id,double bidAmount, int itemId, int buyerId,int submitterId) {
         super(bidAmount, itemId, buyerId);
+        this.BidID = id;
         this.submitterId = submitterId;
         this.AcceptingMembers = new ArrayList<>();
         this.AcceptingMembers.add(submitterId);
@@ -45,8 +47,8 @@ public class BidPurchase extends Purchase {
             AcceptingMembers.add(memberId);
         }
     }
-    public void submitCounterBid(double bidAmount,int submitterId) {
-        this.CounterBid = new BidPurchase(getAmount(),getItemId(),getBuyerId(), submitterId);
+    public void submitCounterBid(int counterID) {
+        this.CounterBidID = counterID;
     }
     /* getMembersWithPermission() is a placeholder for the actual implementation of getting members with permission.
     public String showStatus(){
