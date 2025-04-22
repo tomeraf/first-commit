@@ -53,12 +53,6 @@ public class Owner implements IRole {
     }
 
     @Override
-    public HashSet<Permission> getPermissions() {
-        //the owner has all permissions there is no need to return nothing
-        return null;
-    }
-
-    @Override
     public int getShopID() {
         return shopID;
     }
