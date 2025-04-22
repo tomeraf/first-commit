@@ -1,4 +1,39 @@
 package Domain.Adapters_and_Interfaces;
 
-public class AuthenticationAdapter {
+import java.util.Date;
+import java.util.function.Function;
+
+import io.jsonwebtoken.Claims;
+
+public class AuthenticationAdapter implements IAuthentication {
+    private final IAuthentication authentication;
+
+    public AuthenticationAdapter(IAuthentication authentication) {
+        this.authentication = authentication;
+    }
+
+    @Override
+    public String generateToken(String username) {
+        return authentication.generateToken(username);
+    }
+
+    @Override
+    public boolean validateToken(String token) {
+        return authentication.validateToken(token);
+    }
+
+    @Override
+    public String getUsername(String token) {
+        return authentication.getUsername(token);
+    }
+
+    @Override
+    public Date extractExpiration(String token) {
+        return authentication.extractExpiration(token);
+    }
+
+    @Override
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        return authentication.extractClaim(token, claimsResolver);
+    }
 }
