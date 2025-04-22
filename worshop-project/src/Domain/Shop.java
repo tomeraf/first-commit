@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import jdk.jshell.spi.ExecutionControl.NotImplementedException;
@@ -57,9 +59,9 @@ public class Shop {
         }
     }
     
-    public void removeItem(Item item){
-        if (items.containsKey(item.getId())) {
-            items.remove(item.getId());
+    public void removeItem(int itemId){
+        if (items.containsKey(itemId)) {
+            items.remove(itemId);
         } 
         else{
             System.out.println("Item ID does not exist in the shop.");
@@ -157,30 +159,34 @@ public class Shop {
         return false;
     }
 
-    public boolean canPurchaseBasket(ShoppingBasket basket){
+    public boolean canPurchaseBasket(HashMap <Integer, Integer> itemsToPurchase){ //itemId -> quantity
         if (!isOpen) {
             System.out.println("Shop is closed. Cannot purchase items.");
             return false;
         }
-        if (basket.isEmpty()) {
+        if (itemsToPurchase.isEmpty()) {
             System.out.println("Shopping basket is empty. Cannot purchase items.");
             return false;
         }
         boolean result = true;
-        for (Item item : basket.keySet()) {
-            if (!items.containsKey(item.getId())) {
-                System.out.println("Item " + item.getName() + " does not exist in the shop.");
+
+        for (Integer id : itemsToPurchase.keySet()) {
+            if (!items.containsKey(id)) {
+                System.out.println("Item " + id + " does not exist in the shop.");
                 return false;
             }
-            result = result && item.quantityCheck(basket.get(item)); //assuming basket.get(item) returns the quantity of the item wanting to purchase
+            result = result && items.get(id).quantityCheck(itemsToPurchase.get(id)); //assuming basket.get(item) returns the quantity of the item wanting to purchase
         }
         return result;
     }
 
-    public void purchaseBasket(ShoppingBasket basket){ //will need to be synchronized later on
-        Set<Item> allItems = basket.keySet(); //assuming basket is a HashMap<Item, Integer> : item -> quantity
+    public void purchaseBasket(HashMap <Integer, Integer> itemsToPurchase){ //will need to be synchronized later on
+        List<Item> allItems = new ArrayList<Item>();
+        for(Integer itemId: itemsToPurchase.keySet()){
+            allItems.add(items.get(itemId)); 
+        }
         for(Item item: allItems){
-            item.buyItem(basket.get(item)); //assuming basket.get(item) returns the quantity of the item in the basket
+            item.buyItem(itemsToPurchase.get(item.getId())); 
         }
     }
 }
