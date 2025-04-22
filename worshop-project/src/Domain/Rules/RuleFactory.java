@@ -6,6 +6,7 @@ public class RuleFactory {
     // public static Rule minUserAge(int minAge, int shopID) {
     //     return PredicateRule.fromUser(user -> user.getAge() >= minAge, shopID);
     // }
+    //
 
     public static Rule minQuantity(int minQuantity, int shopID) {
         return PredicateRule.from((_, _, quantity) -> quantity >= minQuantity, shopID);
