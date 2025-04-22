@@ -1,17 +1,19 @@
 package Domain;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class Manager implements IRole {
-    private int appointerID;
-    private int shopID;
-    private HashSet<Permission> permission; //hashSet-to prevents duplication
+public class Manager extends IRole {
+    private Set<Permission> permission; //hashSet-to prevents duplication
 
-    public Manager(int appointerID, int shopID, HashSet<Permission> permission) {
+    public Manager(int appointerID, int shopID, Set<Permission> permission) {
         this.appointerID = appointerID;
         this.shopID = shopID;
         this.permission = permission;
+        this.appointments = new HashMap<>();
     }
 
     @Override
@@ -42,7 +44,7 @@ public class Manager implements IRole {
     }
 
     @Override
-    public void addAppointment(int nomineeID) {
+    public void addAppointment(int nomineeID, IRole role) {
         System.out.println("Manager has no appointments");
     }
 
@@ -52,9 +54,19 @@ public class Manager implements IRole {
     }
 
     @Override
-    public List<Integer> getAppointments() {
+    public Map<Integer, IRole> getAppointments() {
         // no implementation needed for manager
         return null;
     }
 
+    @Override
+    public void removeAllAppointments() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeAllAppointments'");
+    }
+
+    public Set<Permission> getPermissions() {
+        return permission;
+    }
+    
 }

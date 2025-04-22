@@ -3,16 +3,22 @@ package Domain;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-public interface IRole {
+public abstract class IRole {
+    protected int appointerID; //-1 for founder
+    protected int shopID;
+    protected Map<Integer,IRole> appointments;
 
-    boolean hasPermission(Permission permission);
-    void addPermission(Permission permission);
-    void removePermission(Permission permission);
 
-    public void addAppointment(int nomineeID);
-    public void removeAppointment(int appointeeID);
+    abstract boolean hasPermission(Permission permission);
+    abstract void addPermission(Permission permission);
+    abstract void removePermission(Permission permission);
+    
 
-    List<Integer> getAppointments(); // Returns a list of all the appointments the role has made  
-    int getAppointer();
-    int getShopID();
+    abstract void addAppointment(int nomineeID, IRole role );
+    abstract void removeAppointment(int appointeeID);
+    abstract void removeAllAppointments();
+
+    abstract Map<Integer, IRole> getAppointments(); // Returns a list of all the appointments the role has made  
+    abstract int getAppointer();
+    abstract int getShopID();
 }
