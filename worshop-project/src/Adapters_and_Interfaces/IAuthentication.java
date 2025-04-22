@@ -11,5 +11,4 @@ public interface IAuthentication {
     String getUsername(String token);
     Date extractExpiration(String token);
     <T> T extractClaim(String token, Function<Claims, T> claimsResolver);
-    
 }
