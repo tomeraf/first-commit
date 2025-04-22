@@ -9,11 +9,11 @@ public class RuleFactory {
     //
 
     public static Rule minQuantity(int minQuantity, int shopID) {
-        return PredicateRule.from((ignored1, ignored2, quantity) -> quantity >= minQuantity, shopID);
+        return PredicateRule.from((i1, i2, quantity) -> quantity >= minQuantity, shopID);
     }
 
     public static Rule maxQuantity(int maxQuantity, int shopID) {
-        return PredicateRule.from((ignored1, ignored2, quantity) ->
+        return PredicateRule.from((i1, i2, quantity) ->
             quantity <= maxQuantity, shopID);
     }
 
