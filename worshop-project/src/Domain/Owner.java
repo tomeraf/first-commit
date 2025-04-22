@@ -31,12 +31,12 @@ public class Owner implements IRole {
     }
 
     @Override
-    public void AddAppointment(int nomineeID) {
+    public void addAppointment(int nomineeID) {
         appointments.add(nomineeID);
     }
 
     @Override
-    public void RemoveAppointment(int appointeeID) {
+    public void removeAppointment(int appointeeID) {
         appointments.remove(appointeeID);
     }
 
