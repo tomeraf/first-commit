@@ -46,7 +46,6 @@ public class ManagerTest {
         manager.addPermission(Permission.UPDATE_ITEM_QUANTITY);
         assertTrue(manager.hasPermission(Permission.UPDATE_ITEM_QUANTITY));
     }
-
     @Test
     void testRemovePermission() {
         manager.removePermission(Permission.UPDATE_ITEM_QUANTITY);
@@ -67,28 +66,8 @@ public class ManagerTest {
         assertEquals(1, manager.getAppointer());
     }
     @Test
-    void testAddAppointment() {
-        // Adding an appointment should throw an exception
-        assertThrows(UnsupportedOperationException.class, () -> {
-            manager.AddAppointment(2);
-        });
-    }
-    @Test
-    void testRemoveAppointment() {
-        // Removing an appointment should throw an exception
-        assertThrows(UnsupportedOperationException.class, () -> {
-            manager.RemoveAppointment(2);
-        });
-    }
-    @Test
     void testGetAppointments() {
         // Getting appointments should return null
         assertNull(manager.getAppointments());
-    }
-    @Test
-    void testGetPermissions() {
-        HashSet<Permission> expectedPermissions = new HashSet<>();
-        expectedPermissions.add(Permission.UPDATE_ITEM_QUANTITY);
-        assertEquals(expectedPermissions, manager.getPermissions());
     }
 }

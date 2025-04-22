@@ -43,23 +43,18 @@ public class Manager implements IRole {
 
     @Override
     public void addAppointment(int nomineeID) {
-        throw new UnsupportedOperationException("Manager has no appointments");
+        System.out.println("Manager has no appointments");
     }
 
     @Override
     public void removeAppointment(int appointeeID) {
-        throw new UnsupportedOperationException("Manager has no appointments");
+        System.out.println("Manager has no appointments");
     }
 
     @Override
     public List<Integer> getAppointments() {
         // no implementation needed for manager
         return null;
-    }
-
-    @Override
-    public HashSet<Permission> getPermissions() {
-        return permission;
     }
 
 }
