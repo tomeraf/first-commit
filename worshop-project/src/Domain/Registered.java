@@ -2,8 +2,13 @@ package Domain;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Registered extends Guest {
+    private Map<Integer, IRole> roleInShops; //<shopID, role>
     private String username;
     private String password;
     private LocalDate dateOfBirth;
@@ -11,6 +16,7 @@ public class Registered extends Guest {
         this.username = username;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
+        this.roleInShops = new ConcurrentHashMap<>();
     }
     public String getUsername() {
         return username;
@@ -25,24 +31,64 @@ public class Registered extends Guest {
         this.password = password;
     }
     
-    public void addOwner(Shop shop, int userID) {
-        role.addOwner(shop, userID);
-    }
-    public void removeOwner(Shop shop, int userID) {
-        role.removeOwner(shop, userID);
-    }
-    public void addManager(Shop shop, int userID) {
-        role.addManager(shop, userID);
-    }
-    public void removeManager(Shop shop, int userID) {
-        role.removeManager(shop, userID);
-    }
-    public void updateManagerPermissions(Shop shop, List<Permission> permissions) {
-        role.updateManagerPermissions(shop, permissions);
+    public IRole getRoleInShop(int shopID) {
+        return this.roleInShops.get(shopID);
     }
     
-    public void addItemToShop(Shop shop, String name, Category category, double price) {
-        role.addItem(shop, name, category, price);
+    public void setRoleToShop(int shopID, IRole newRole) {
+        this.roleInShops.put(shopID, newRole);
+    }
+    public boolean hasPermission(int shopID, Permission permission) {
+        if(roleInShops.containsKey(shopID)) {
+            return roleInShops.get(shopID).hasPermission(permission);
+        }
+        System.out.println("No role found for shop ID: " + shopID);
+        return false;      
+    }
+    public void addPermission(int shopID, Permission permission) {
+        if(roleInShops.containsKey(shopID)) {
+            roleInShops.get(shopID).addPermission(permission);
+        } else {
+            System.out.println("No role found for shop ID: " + shopID);
+        }
+    }
+    public void removePermission(int shopID, Permission permission) {
+        if(roleInShops.containsKey(shopID)) {
+            roleInShops.get(shopID).removePermission(permission);
+        } else {
+            System.out.println("No role found for shop ID: " + shopID);
+        }
+    }
+    public void addAppointment(int shopID, int nomineeID) {
+        if(roleInShops.containsKey(shopID)) {
+            roleInShops.get(shopID).addAppointment(nomineeID);
+        } else {
+            System.out.println("No role found for shop ID: " + shopID);
+        }
+            
+    }
+    public void removeAppointment(int shopID, int appointeeID) {
+        if(roleInShops.containsKey(shopID)) {
+            roleInShops.get(shopID).removeAppointment(appointeeID);
+        } else {
+            System.out.println("No role found for shop ID: " + shopID);
+        }
+    }
+    public List<Integer> getAppointments(int shopID) {
+        if(roleInShops.containsKey(shopID)) {
+            return roleInShops.get(shopID).getAppointments();
+        } else {
+            System.out.println("No role found for shop ID: " + shopID);
+            return null;
+        }
+    }
+    public int getAppointer(int shopID) {
+        if(roleInShops.containsKey(shopID)) {
+            return roleInShops.get(shopID).getAppointer();
+        } else {
+            System.out.println("No role found for shop ID: " + shopID);
+            return -1;
+        }
     }
     public void addItemToBasket(int itemID) {
         cart.addItem(itemID);
@@ -50,19 +96,7 @@ public class Registered extends Guest {
     public void removeItemFromBasket(int itemID) {
         cart.removeItem(itemID);
     }
-    public void updateItemName(Shop shop, int itemID, String name) {
-        role.updateItemName(itemID, name);
-    }
-    public void updateItemPrice(Shop shop, int itemID, double price) {
-        role.updateItemPrice(itemID, price);
-    }
-    public void updateItemQuantity(Shop shop, int itemID, int quantity) {
-        role.updateItemName(itemID, quantity);
-    }
-
-
     public int getAge() {
         return Period.between(dateOfBirth, dateOfBirth).getYears();
-    }
-    
+    }   
 }
