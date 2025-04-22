@@ -17,4 +17,8 @@ public enum Category {
     MUSIC,
     MOVIES,
     VIDEO_GAMES;
+
+    public boolean equalsIgnoreCase(String expectedCategory) {
+        return this.name().equalsIgnoreCase(expectedCategory);
+    }
 }
