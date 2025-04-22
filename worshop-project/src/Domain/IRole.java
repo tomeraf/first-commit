@@ -1,5 +1,6 @@
 package Domain;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 public interface IRole {
@@ -8,11 +9,11 @@ public interface IRole {
     void addPermission(Permission permission);
     void removePermission(Permission permission);
 
-    public void AddAppointment(int nomineeID);
-    public void RemoveAppointment(int appointeeID);
+    public void addAppointment(int nomineeID);
+    public void removeAppointment(int appointeeID);
 
     List<Integer> getAppointments(); // Returns a list of all the appointments the role has made  
     int getAppointer();
-    List<Permission> getPermissions();
+    HashSet<Permission> getPermissions();
     int getShopID();
 }
