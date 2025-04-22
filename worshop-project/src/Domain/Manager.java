@@ -1,13 +1,14 @@
 package Domain;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class Manager implements IRole {
     private int appointerID;
     private int shopID;
-    private List<Permission> permission;
+    private HashSet<Permission> permission; //hashSet-to prevents duplication
 
-    public Manager(int appointerID, int shopID, List<Permission> permission) {
+    public Manager(int appointerID, int shopID, HashSet<Permission> permission) {
         this.appointerID = appointerID;
         this.shopID = shopID;
         this.permission = permission;
@@ -41,24 +42,19 @@ public class Manager implements IRole {
     }
 
     @Override
-    public void AddAppointment(int nomineeID) {
-        // no implementation needed for manager
+    public void addAppointment(int nomineeID) {
+        System.out.println("Manager has no appointments");
     }
 
     @Override
-    public void RemoveAppointment(int appointeeID) {
-        // no implementation needed for manager
+    public void removeAppointment(int appointeeID) {
+        System.out.println("Manager has no appointments");
     }
 
     @Override
     public List<Integer> getAppointments() {
         // no implementation needed for manager
         return null;
-    }
-
-    @Override
-    public List<Permission> getPermissions() {
-        return permission;
     }
 
 }
