@@ -1,6 +1,7 @@
 package Domain;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Owner implements IRole {
@@ -52,7 +53,7 @@ public class Owner implements IRole {
     }
 
     @Override
-    public List<Permission> getPermissions() {
+    public HashSet<Permission> getPermissions() {
         //the owner has all permissions there is no need to return nothing
         return null;
     }
