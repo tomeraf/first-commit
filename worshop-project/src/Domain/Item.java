@@ -10,26 +10,44 @@ public class Item {
     private double rating;
     private int numOfOrders;
 
-    public Item(String name,Category category, double price, int shopId) {
+    public Item(String name,Category category, double price, int shopId,int id) {
         this.name = name;
         this.category = category;
         this.price = price;
         this.shopId = shopId;
+        this.id = id;
         this.quantity = 0;
         this.rating = 0.0;
         this.numOfOrders = 0;
     }
 
-    public void updateRating(double newCustomerRating) {
-        this.rating = (this.rating * numOfOrders + newCustomerRating) / (numOfOrders);
+    public void updateRating(double newRating) {
+        if (newRating < 0 || newRating > 5) {
+            throw new IllegalArgumentException("Rating must be between 0 and 5.");
+        }
+        if (numOfOrders == 0) {
+            throw new IllegalStateException("No orders have been made yet. Cannot update rating.");
+        } 
+        this.rating = (this.rating * numOfOrders + newRating) / (numOfOrders);
+    }
+    public boolean updateQuantity(int quantity) {
+        if (quantity >= 0) {
+            this.quantity = quantity;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean quantityCheck(int quantity) {
+        if (this.quantity >= quantity) {
+            return true;
+        } else {
+            return false;
+        }
     }
     public void buyItem(int quantity) {
-        if (this.quantity >= quantity) {
-            this.quantity -= quantity;
-            this.numOfOrders += 1;
-        } else {
-            System.out.println("Not enough stock available.");
-        }
+        this.quantity -= quantity;
+        this.numOfOrders += 1;
     }
     public String getName() {
         return name;
