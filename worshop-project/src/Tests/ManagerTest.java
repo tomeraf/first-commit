@@ -27,46 +27,46 @@ public class ManagerTest {
     }
 
     @Test
-    void testHasPermission() {
+    public void testHasPermission() {
         assertTrue(manager.hasPermission(Permission.UPDATE_ITEM_QUANTITY));
     }
     @Test
-    void testHasNoPermission() {
+    public void testHasNoPermission() {
         assertFalse(manager.hasPermission(Permission.VIEW));
     }
 
     @Test
-    void testAddPermission() {
+    public void testAddPermission() {
         manager.addPermission(Permission.VIEW);
         assertTrue(manager.hasPermission(Permission.VIEW));
     }
     @Test
-    void testAddDuplicatePermission() {
+    public void testAddDuplicatePermission() {
         // Adding the same permission again should not change anything
         manager.addPermission(Permission.UPDATE_ITEM_QUANTITY);
         assertTrue(manager.hasPermission(Permission.UPDATE_ITEM_QUANTITY));
     }
     @Test
-    void testRemovePermission() {
+    public void testRemovePermission() {
         manager.removePermission(Permission.UPDATE_ITEM_QUANTITY);
         assertFalse(manager.hasPermission(Permission.UPDATE_ITEM_QUANTITY));
     }
     @Test
-    void testRemoveNonExistentPermission() {
+    public void testRemoveNonExistentPermission() {
         // Trying to remove a permission that doesn't exist should not change anything
         manager.removePermission(Permission.VIEW);
         assertFalse(manager.hasPermission(Permission.VIEW));
     }
     @Test
-    void testGetShopID() {
+    public void testGetShopID() {
         assertEquals(101, manager.getShopID());
     }
     @Test
-    void testGetAppointer() {
+    public void testGetAppointer() {
         assertEquals(1, manager.getAppointer());
     }
     @Test
-    void testGetAppointments() {
+    public void testGetAppointments() {
         // Getting appointments should return null
         assertNull(manager.getAppointments());
     }

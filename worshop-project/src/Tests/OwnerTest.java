@@ -24,37 +24,37 @@ public class OwnerTest {
         appointments = owner.getAppointments();
     }
     @Test
-    void testHasPermission() {
+    public void testHasPermission() {
         assertTrue(owner.hasPermission(Permission.UPDATE_ITEM_QUANTITY));
     }
     @Test
-    void testRemoveNonExistentPermission() {
+    public void testRemoveNonExistentPermission() {
         // Trying to remove a permission that doesn't exist should not change anything
         owner.removePermission(Permission.VIEW);
         assertFalse(owner.hasPermission(Permission.VIEW));
     }
     @Test
-    void testAddAppointment() {
+    public void testAddAppointment() {
         owner.addAppointment(2);
         assertTrue(owner.getAppointments().contains(2));
     }
     @Test
-    void testRemoveAppointment() {
+    public void testRemoveAppointment() {
         appointments.add(2);
         owner.removeAppointment(2);
         assertFalse(owner.getAppointments().contains(2));
     }
     @Test
-    void testGetAppointments() {
+    public void testGetAppointments() {
         appointments.add(2);
         assertTrue(appointments.contains(2));
     }
     @Test
-    void testGetAppointer() {
+    public void testGetAppointer() {
         assertEquals(-1, owner.getAppointer());
     }
     @Test
-    void testGetShopID() {
+    public void testGetShopID() {
         assertEquals(101, owner.getShopID());
     }
 }
