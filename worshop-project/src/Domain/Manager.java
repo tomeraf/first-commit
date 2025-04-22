@@ -42,12 +42,12 @@ public class Manager implements IRole {
     }
 
     @Override
-    public void AddAppointment(int nomineeID) {
+    public void addAppointment(int nomineeID) {
         throw new UnsupportedOperationException("Manager has no appointments");
     }
 
     @Override
-    public void RemoveAppointment(int appointeeID) {
+    public void removeAppointment(int appointeeID) {
         throw new UnsupportedOperationException("Manager has no appointments");
     }
 
