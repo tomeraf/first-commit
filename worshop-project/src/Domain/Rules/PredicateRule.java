@@ -26,12 +26,12 @@ public class PredicateRule implements Rule {
 
     // Factory for rules that only depend on the Guest
     public static PredicateRule fromUser(Predicate<Guest> userPredicate, int shopID) {
-        return new PredicateRule((guest, _, _) -> userPredicate.test(guest), shopID);
+        return new PredicateRule((guest, ignored1, ignored2) -> userPredicate.test(guest), shopID);
     }
 
     // Factory for rules that only depend on the Item
     public static PredicateRule fromItem(Predicate<Item> itemPredicate, int shopID) {
-        return new PredicateRule((_, item, _) -> itemPredicate.test(item), shopID);
+        return new PredicateRule((ignored1, item, ignored2) -> itemPredicate.test(item), shopID);
     }
 
     // Factory for rules that only depend on Quantity
