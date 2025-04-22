@@ -1,5 +1,10 @@
 package Domain;
 
 public enum Permission {
-
+    UPDATE_ITEM_QUANTITY,
+    UPDATE_ITEM_PRICE,
+    UPDATE_ITEM_DESCRIPTION,
+    UPDATE_PURCHASE_POLICY,
+    UPDATE_SALE_POLICY,
+    VIEW
 }
