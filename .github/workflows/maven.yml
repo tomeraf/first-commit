@@ -1,0 +1,33 @@
+name: Run Tests
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Compile and Run JUnit Tests
+        run: |
+          mkdir -p bin
+          # Compile all .java files
+          find worshop-project/src -name "*.java" > sources.txt
+          javac -d bin -cp .:junit-platform-console-standalone.jar @sources.txt
+          
+          # Download JUnit if not already present
+          curl -L -o junit-platform-console-standalone.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.1/junit-platform-console-standalone-1.10.1.jar
+
+          # Run the tests
+          java -jar junit-platform-console-standalone.jar \
+            --class-path bin \
+            --scan-classpath
