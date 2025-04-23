@@ -1,7 +1,7 @@
 package Domain.Purchase;
 
 public enum PurchaseType {
-    IMDIATE,
+    IMMEDIATE,
     BID,
     AUCTION;
 

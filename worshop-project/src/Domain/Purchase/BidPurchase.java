@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BidPurchase extends Purchase {
-    private int BidID;
     private int submitterId;
     private List<Integer> AcceptingMembers;
     private int rejecterID=-1;
@@ -12,13 +11,11 @@ public class BidPurchase extends Purchase {
     private int CounterBidID=-1;
 
     public BidPurchase(int id,double bidAmount, int itemId, int buyerId,int submitterId) {
-        super(bidAmount, itemId, buyerId);
-        this.BidID = id;
+        super(id, bidAmount, itemId, buyerId);
         this.submitterId = submitterId;
         this.AcceptingMembers = new ArrayList<>();
         this.AcceptingMembers.add(submitterId);
     }
-
     public int getSubmitterId() {
         return submitterId;
     }

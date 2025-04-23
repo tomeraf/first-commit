@@ -1,8 +1,15 @@
+package Domain;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import Domain.Discount.DiscountPolicy;
+import Domain.Purchase.AuctionPurchase;
+import Domain.Purchase.BidPurchase;
+import Domain.Purchase.PurchasePolicy;
 import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 public class Shop {
@@ -17,6 +24,10 @@ public class Shop {
     private int counterItemId; // Counter for item IDs
     private double rating;
     private int ratingCount;
+    private HashMap<Integer, BidPurchase> bidPurchaseItems; // BidId -> BidPurchase
+    private HashMap<Integer, AuctionPurchase> auctionPurchaseItems; // AuctionId -> AuctionPurchase
+    private int bidPurchaseCounter; // Counter for bid purchases
+    private int auctionPurchaseCounter; // Counter for auction purchases
 
     public Shop(int id, String name, String description) {
         this.id = id;
@@ -29,6 +40,10 @@ public class Shop {
         this.counterItemId = 1; // Initialize the item ID counter
         this.rating = 0.0;
         this.ratingCount = 0;
+        this.bidPurchaseItems = new HashMap<>();
+        this.auctionPurchaseItems = new HashMap<>();
+        this.bidPurchaseCounter = 1; 
+        this.auctionPurchaseCounter = 1; 
     }
 
     public int getId() { return id; }
@@ -189,5 +204,33 @@ public class Shop {
             item.buyItem(itemsToPurchase.get(item.getId())); 
         }
     }
+
+// not sure if needed - need to check
+    public void addBidPurchase(int itemId, double bidAmount, int buyerId) {  
+        if (items.containsKey(itemId)) {
+            BidPurchase bidPurchase = new BidPurchase(bidPurchaseCounter, bidAmount, itemId, buyerId, buyerId);
+            bidPurchaseCounter++;
+            bidPurchaseItems.put(bidPurchase.getId(), bidPurchase);
+        } else {
+            System.out.println("Item ID does not exist in the shop.");
+        }
+    }
+
+// not sure if needed - need to check
+    public void addAuctionPurchase(int itemId, double startingAmount, LocalDateTime startTime, LocalDateTime endTime){
+        if (items.containsKey(itemId) && items.get(itemId).getQuantity() > 0) {
+            AuctionPurchase auctionPurchase = new AuctionPurchase(auctionPurchaseCounter, startingAmount, itemId, startTime, endTime);
+            auctionPurchaseItems.put(auctionPurchase.getId(), auctionPurchase);
+            auctionPurchaseCounter++;
+        } 
+        else if (!items.containsKey(itemId)) {
+            System.out.println("Item ID does not exist in the shop.");
+        }
+        else {
+            System.out.println("Item is out of stock.");
+        }
+    }
+
+
 }
 
