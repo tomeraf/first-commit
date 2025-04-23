@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
-import Domain.ItemDTO;
+
 import Domain.Category;
+import Domain.DTOs.ItemDTO;
 
 public class BasketTest {
     
@@ -23,14 +24,35 @@ public class BasketTest {
         item3 = new ItemDTO("Item 3", Category.BEAUTY, 10.0, -1, 103, 5, 4.5);
         itemNotInBasket = new ItemDTO("Item 4", Category.BEAUTY, 10.0, -1, 104, 5, 4.5);
         
-        // Create a ShoppingBasket object with a shopID and a list of items
-        ArrayList<ItemDTO> items = new ArrayList<>();
-        items.add(item1);
-        items.add(item2);
-        items.add(item3);
-        basket = new Domain.ShoppingBasket(-1, items);
+        // Initialize the ShoppingBasket with a shop ID and items
+         basket = new Domain.ShoppingBasket(-1);
     }
     
+    @Test
+    public void testAddItem() {
+        // Test adding an item that is not already in the basket
+        assertTrue(basket.addItem(item1), "Should return true when adding item1 to the basket");
+        
+        // Test adding an item that is already in the basket
+        assertFalse(basket.addItem(item1), "Should return false when adding item1 again to the basket");
+        
+        // Verify the basket contents after adding items
+        ArrayList<ItemDTO> expectedItems = new ArrayList<>();
+        expectedItems.add(item1);
+        assertEquals(expectedItems, basket.getItems(), "Basket should contain only item1 after adding it");
+        
+        // Test adding another new item
+        assertTrue(basket.addItem(item2), "Should return true when adding item2 to the basket");
+        
+        // Verify the basket contents after adding another item
+        expectedItems.add(item2);
+        assertEquals(expectedItems, basket.getItems(), "Basket should contain item1 and item2 after adding them");
+
+        // Test adding a third item
+        assertTrue(basket.addItem(item3), "Should return true when adding item3 to the basket");
+    }
+
+
     @Test
     public void testGetShopID() {
         assertEquals(-1, basket.getShopID(), "Shop ID should be -1");

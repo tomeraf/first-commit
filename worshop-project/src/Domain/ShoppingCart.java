@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import Domain.DTOs.ItemDTO;
+
 public class ShoppingCart {
     private List<ShoppingBasket> baskets;
     private int cartID;
@@ -26,12 +28,35 @@ public class ShoppingCart {
     }
 
 
+    // Use case #2.3: Add item to cart
+    public boolean addItems(List<ItemDTO> items) {
+        // Check if all items are in the baskets
+        for (ItemDTO item : items) {
+            for (ShoppingBasket basket : baskets) {
+                if (basket.isItemIn(item.getItemID()) && basket.getShopID() == item.getShopId())
+                    return false; // Item already exists, not added
+            }
+        }
+
+        // Add items to all baskets
+        for (ItemDTO item : items) {
+            for (ShoppingBasket basket : baskets) {
+                if (basket.getShopID() == item.getShopId())
+                    if (!basket.addItem(item)) 
+                        return false; // failed to add item
+            }
+        }
+        return true;
+    }
+
+
     // Use case #2.4.a: Check cart content
+    // Use case #2.5: Buy items in cart - get all items in cart
     // map<Integer, Integer> items: itemID, basketID
     public List<ItemDTO> getItems() {
         List<ItemDTO> items = new ArrayList<>(); // List to store items
 
-        // Iterate through each basket and add items to the dictionary
+        // Iterate through each basket and add items to the List
         for (int i = 0; i < baskets.size(); i++) {
             ShoppingBasket basket = baskets.get(i);
             for (ItemDTO item : basket.getItems()) {
@@ -70,6 +95,15 @@ public class ShoppingCart {
             }
         }
         return true;
+    }
+
+
+    // Use case #2.5: Buy items in cart - after confirmation, the items are removed from the cart
+    public void clearCart() {
+        // Clear all items from all baskets
+        for (ShoppingBasket basket : baskets) {
+            basket.clearBasket(); // Clear the basket
+        }
     }
 }
 
