@@ -9,10 +9,16 @@ import Domain.Owner;
 import Domain.Permission;
 import Domain.Registered;
 import Domain.Shop;
+import Domain.DTOs.ShopDTO;
+import Domain.DTOs.UserDTO;
 
-public class ManagmentService {
+public class ManagementService {
 
-
+    public ShopDTO createShop(int shopId, UserDTO user, String name, String description, String address, String phoneNumber) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+        //shoukd adapt user role
+    }
+    
     public void addOwner(Registered appointer, Shop shop, Registered appointee) {
         Owner owner = new Owner((int)appointer.getUserID(),shop.getId());
         appointer.addAppointment(shop.getId(), (int)appointee.getUserID(), owner);

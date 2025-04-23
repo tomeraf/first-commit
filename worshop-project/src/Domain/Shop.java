@@ -1,8 +1,11 @@
+package Domain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import Domain.Discount.DiscountPolicy;
+import Domain.Purchase.PurchasePolicy;
 import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 public class Shop {
@@ -189,5 +192,21 @@ public class Shop {
             item.buyItem(itemsToPurchase.get(item.getId())); 
         }
     }
+
+    public List<ItemDTO> filter(String name, Category category, double minPrice, double maxPrice, int itemMinRating, int shopMinRating) {
+        List<ItemDTO> filteredItems = new ArrayList<>();
+        for (Item item : items.values()) {
+            if ((name == null || item.getName().toLowerCase().contains(name.toLowerCase())) &&
+                (category == null || item.getCategory() == category) &&
+                (minPrice <= 0 || item.getPrice() >= minPrice) &&
+                (maxPrice <= 0 || item.getPrice() <= maxPrice)
+                && (itemMinRating <= 0 || item.getRating() >= itemMinRating) &&
+                (shopMinRating <= 0 || this.rating >= shopMinRating)) {
+                filteredItems.add(convertToDTO(item));
+            }
+        }
+        return filteredItems;
+    }
 }
+
 
