@@ -16,7 +16,6 @@ public class ShoppingCart {
         this.cartID = cartID;
     }
 
-
     public ShoppingCart(int cartID) {
         this.cartID = cartID;
         this.baskets = new java.util.ArrayList<>();
