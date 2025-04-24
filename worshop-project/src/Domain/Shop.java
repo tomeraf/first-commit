@@ -290,11 +290,11 @@ public class Shop {
     }
 
 
-    public List<Item> filter(String name, Category category, double minPrice, double maxPrice, int itemMinRating, int shopMinRating) {
+    public List<Item> filter(String name, String category, double minPrice, double maxPrice, int itemMinRating, int shopMinRating) {
         List<Item> filteredItems = new ArrayList<>();
         for (Item item : items.values()) {
             if ((name == null || item.getName().toLowerCase().contains(name.toLowerCase())) &&
-                (category == null || item.getCategory() == category) &&
+                (category == null || item.getCategory().equalsIgnoreCase(category)) &&
                 (minPrice <= 0 || item.getPrice() >= minPrice) &&
                 (maxPrice <= 0 || item.getPrice() <= maxPrice)
                 && (itemMinRating <= 0 || item.getRating() >= itemMinRating) &&

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Domain.Category;
+import Domain.Item;
 import Domain.DTOs.ItemDTO;
 import Domain.Registered;
 import Domain.Shop;
@@ -27,18 +28,20 @@ public class ShopService {
     private ManagementService managementService = ManagementService.getInstance();
     private IAuthentication authenticationAdapter;
     private int shopIdCounter = 1;
+    private ObjectMapper objectMapper;
     
 
     public ShopService(IUserRepository userRepository, IShopRepository shopRepository, IAuthentication authenticationAdapter) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.authenticationAdapter = authenticationAdapter;
+        this.objectMapper = new ObjectMapper();
     }
     
     public List<ShopDTO> showAllShops() {
         ArrayList<Shop> s = new ArrayList(shopRepository.getAllShops().values());
         List<ShopDTO> shopDTOs = new ArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
+        
         for (Shop shop : s) {
             ShopDTO shopDTO = objectMapper.convertValue(shop, ShopDTO.class);
             shopDTOs.add(shopDTO);
@@ -47,39 +50,53 @@ public class ShopService {
     }
 
     public List<ItemDTO> showShopItems(int shopId) {
-        return new ArrayList<ItemDTO>(shopRepository.getShopById(shopId).getItems().values());
+        ArrayList<Item> items=new ArrayList<Item>(shopRepository.getShopById(shopId).getItems().values());
+        List<ItemDTO> itemDTOs = new ArrayList<>();
+        for (Item item : items) {
+            ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+            itemDTOs.add(itemDTO);
+        }
+        return itemDTOs;
     }
 
     public List<ItemDTO> filterItemsAllShops(HashMap<String, String> filters){
         String category = filters.get("category");
         String name = filters.get("name");
-        int minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
-        int maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
+        double minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
+        double maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
         int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
         int shopRating = filters.get("shopRating") != null ? Integer.parseInt(filters.get("shopRating")) : 0;
-        List<ItemDTO> filteredItems = new ArrayList<>();
-        for (ShopDTO shop : shopRepository.getAllShops().values()) {
-            Shop s = convertToObject(shop);
-            filteredItems.add(s.filter(category, name, minPrice, maxPrice, minRating, shopRating));
+        List<Item> filteredItems = new ArrayList<>();
+        for (Shop shop : shopRepository.getAllShops().values()) {
+            filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, shopRating));
         }
-        return filteredItems;
+        List<ItemDTO> itemDTOs = new ArrayList<>();
+        for (Item item : filteredItems) {
+            ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+            itemDTOs.add(itemDTO);
+        }
+        return itemDTOs;
     }
 
     public List<ItemDTO> filterItemsInShop(int shopId, HashMap<String, String> filters){
         String category = filters.get("category");
         String name = filters.get("name");
-        int minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
-        int maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
+        double minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
+        double maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
         int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
-        List<ItemDTO> filteredItems = new ArrayList<>();
-        ShopDTO shop = shopRepository.getShopById(shopId);
-        Shop s = convertToObject(shop);
-        filteredItems.add(s.filter(category, name, minPrice, maxPrice, minRating,null));
-        return filteredItems;
+        List<Item> filteredItems = new ArrayList<>();
+        Shop shop = shopRepository.getShopById(shopId);
+        filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating,0));
+        List<ItemDTO> itemDTOs = new ArrayList<>();
+        for (Item item : filteredItems) {
+            ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+            itemDTOs.add(itemDTO);
+        }
+        return itemDTOs;
     }
 
     public ShopDTO createShop(int userID, String name, String description) {
-        ShopDTO shop = managementService.createShop(userRepository.getUserById(userID), name, description);
+        Shop shop = managementService.createShop(userRepository.getUserById(userID), name, description);
         shopRepository.addShop(shop);
         return shop;
     }
@@ -90,7 +107,8 @@ public class ShopService {
             throw new RuntimeException("Please login.");
         }
         else {
-            ShopDTO shopDto = this.shopRepository.getShopById(shopID);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
             return shopDto;
         }
     }
@@ -105,11 +123,9 @@ public class ShopService {
         }
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
-            UserDTO userDto = this.userRepository.getUserByName(userName);
-            Registered registeredUser = convertToObject(userDto);
-            ShopDTO shopDto = this.shopRepository.getShopById(shopID);
-            Shop shop = convertToObject(shopDto);
-            this.managementService.addItemToShop(registeredUser, shop, itemName, category, itemPrice);
+            Registered user = this.userRepository.getUserByName(userName);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            this.managementService.addItemToShop(user, shop, itemName, category, itemPrice);
         }
     }
     public void removeItemFromShop(String sessionToken, int shopID, int itemID) {
@@ -118,11 +134,9 @@ public class ShopService {
         // If logged in, remove the item from the shop with the provided details
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.removeItemFromShop(registeredUser, s, itemID);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.removeItemFromShop(user, shop, itemID);
         }
         
     }
@@ -136,11 +150,10 @@ public class ShopService {
         }
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
-            UserDTO userDto = this.userRepository.getUserByName(userName);
-            Registered registeredUser = convertToObject(userDto);
-            ShopDTO shopDto = this.shopRepository.getShopById(shopID);
-            Shop shop = convertToObject(shopDto);
-            managementService.updateItemQuantity(registeredUser, shop, itemID, newQuantity);
+            Registered user = this.userRepository.getUserByName(userName);
+            Shop shop = this.shopRepository.getShopById(shopID);
+
+            managementService.updateItemQuantity(user, shop, itemID, newQuantity);
         }
     }
     public void changeItemPriceInShop(String sessionToken, int shopID, int itemID, double newPrice) {
@@ -149,11 +162,9 @@ public class ShopService {
         // If logged in, change the item price in the shop with the provided details
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.updateItemPrice(registeredUser, s, itemID, newPrice);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.updateItemPrice(user, shop, itemID, newPrice);
         }
     }
     public void changeItemDescriptionInShop(String sessionToken, int shopID, int itemID, String newDescription) {
@@ -162,11 +173,9 @@ public class ShopService {
         // If logged in, change the item name in the shop with the provided details
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.updateItemDescription(registeredUser, s, itemID, newDescription);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.updateItemDescription(user, shop, itemID, newDescription);
         }
     }
     public void rateShop(String sessionToken, int shopID, double rating) {
@@ -177,10 +186,9 @@ public class ShopService {
         }
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
-            UserDTO userDto = this.userRepository.getUserByName(userName);
-            ShopDTO shopDto = this.shopRepository.getShopById(shopID);
-            Shop shop = convertToObject(shopDto);
-            List<Order> orders = orderRepository.getOrdersByCustomerId(userDto.id);
+            Registered user = this.userRepository.getUserByName(userName);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            List<Order> orders = orderRepository.getOrdersByCustomerName(user.getUsername());
             boolean canRate = false;
             for (Order order : orders) {
                 List<ItemDTO> items = order.getItems();
@@ -207,9 +215,8 @@ public class ShopService {
         }
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
-            UserDTO userDto = this.userRepository.getUserByName(userName);
-            Registered registeredUser = convertToObject(userDto);
-            List<Order> orders = orderRepository.getOrdersByCustomerId(userDto.id);
+            Registered user = this.userRepository.getUserByName(userName);
+            List<Order> orders = orderRepository.getOrdersByCustomerId(user.g);
             boolean canRate = false;
             int shopID = -1;
             for (Order order : orders) {
