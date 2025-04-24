@@ -1,14 +1,15 @@
 package Domain.Repositories;
 
+import Domain.Shop;
 import Domain.DTOs.ShopDTO;
 
 import java.util.HashMap;
 
 public interface IShopRepository {
-    void addShop(ShopDTO shop);
-    ShopDTO getShopById(int id);
-    void updateShop(ShopDTO shop);
+    void addShop(Shop shop);
+    Shop getShopById(int id);
+    void updateShop(Shop shop);
     void deleteShop(int id);
-    HashMap<Integer,ShopDTO> getAllShops();
+    HashMap<Integer,Shop> getAllShops();
 
 }
