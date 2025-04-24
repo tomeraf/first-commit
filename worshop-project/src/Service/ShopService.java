@@ -231,16 +231,11 @@ public class ShopService {
                 }
             }
             if(canRate){
-                ShopDTO shopDto = this.shopRepository.getShopById(shopID);
-                Shop shop = convertToObject(shopDto);
+                Shop shop = shopRepository.getShopById(shopID);
+                //maybe should add method to shop that rate item instead of using the item directly
                 shop.getItems().get(itemID).updateRating(rating);
             }   
         }
-    }
-    public void submitBidOffer(String sessionToken, int itemID, double offerPrice) {
-        // Check if the user is logged in
-        // If not, prompt to log in or register
-        // If logged in, submit a bid offer for the item with the provided details
     }
     public void updateDiscountType(String sessionToken, int shopID, String discountType) {
         // Check if the user is logged in
