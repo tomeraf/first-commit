@@ -9,10 +9,22 @@ public class AuctionPurchase extends Purchase {
     private boolean isAccepted = false;
 
     
-    public AuctionPurchase(double startingBid, int itemId, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime) {
-        super(startingBid, itemId, 0); // Assuming the buyerId is not set at this point
+    public AuctionPurchase(int id,double startingBid, int itemId, LocalDateTime auctionStartTime, LocalDateTime auctionEndTime) {
+        super(id,startingBid, itemId, 0); // Assuming the buyerId is not set at this point
+        validateAuctionTimes(auctionStartTime, auctionEndTime);
         this.auctionStartTime = auctionStartTime;
         this.auctionEndTime = auctionEndTime;
+    }
+    private void validateAuctionTimes(LocalDateTime auctionStartTime, LocalDateTime auctionEndTime) {
+        if (auctionStartTime.isAfter(auctionEndTime)) {
+            throw new IllegalArgumentException("Auction start time must be before end time.");
+        }
+        if (auctionStartTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Auction start time must be in the future.");
+        }
+        if (auctionEndTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Auction end time must be in the future.");
+        }  
     }
     public void placeOffer(double bidAmount, int buyerId) {
         if (bidAmount > highestBid && bidAmount >= getAmount() && auctionEndTime.isAfter(LocalDateTime.now())&& auctionStartTime.isBefore(LocalDateTime.now())) {

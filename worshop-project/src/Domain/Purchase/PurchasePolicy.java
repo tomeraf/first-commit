@@ -11,6 +11,9 @@ public class PurchasePolicy {
 
     public PurchasePolicy(){
         this.purchaseTypes = new ArrayList<>();
+        this.purchaseTypes.add(PurchaseType.BID);
+        this.purchaseTypes.add(PurchaseType.AUCTION);
+        this.purchaseTypes.add(PurchaseType.IMMEDIATE);
         this.purchaseRules = new ArrayList<>();
     }
     public void addPurchaseType(String purchaseType) {
