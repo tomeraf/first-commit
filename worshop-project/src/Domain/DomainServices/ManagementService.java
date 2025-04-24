@@ -102,4 +102,14 @@ public class ManagementService {
         }
     }
     //Not to forget purchase and sale policy
+    
+    public void updatePurchaseType(Registered registeredUser, Shop shop, String purchaseType) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updatePurchaseType'");
+    }
+
+    public void updateDiscountType(Registered registeredUser, Shop shop, String discountType) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateDiscountType'");
+    }
 }
