@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface IUserRepository {
     void addUser(UserDTO user);
-    UserDTO getUserById(int id);
+    UserDTO getUserById(String username);
     void updateUser(UserDTO user);
-    void deleteUser(int id);
+    void deleteUser(String username);
     boolean isUsernameExists(String username);
     HashMap<Integer,UserDTO> getAllUsers();
-    void assignRoleToUserInShop(int userId, int shopId, String role);
-    String getRoleOfUserInShop(int userId, int shopId);
-    List<UserRoleDTO> getRolesByUserId(int userId);
+    void assignRoleToUserInShop(String username, int shopId, String role);
+    String getRoleOfUserInShop(String username, int shopId);
+    List<UserRoleDTO> getRolesByUserId(String username);
 }
