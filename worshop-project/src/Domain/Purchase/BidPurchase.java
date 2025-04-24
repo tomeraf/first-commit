@@ -44,6 +44,13 @@ public class BidPurchase extends Purchase {
             AcceptingMembers.add(memberId);
         }
     }
+    public void receiveDecision(int memberId, boolean answer) {
+        if (answer) {
+            addAcceptingMember(memberId);
+        } else {
+            rejected(memberId);
+        }
+    }
     public void submitCounterBid(int counterID) {
         this.CounterBidID = counterID;
     }
