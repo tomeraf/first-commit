@@ -1,5 +1,6 @@
 package Service;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +78,7 @@ public class ShopService {
     public ShopDTO getShopInfo(String sessionToken, int shopID) {
         if(!authenticationAdapter.validateToken(sessionToken)){
             System.out.println("Please log in or register to add items to the shop.");
-            return;
+            throw new RuntimeException("Please login.");
         }
         else {
             ShopDTO shopDto = this.shopRepository.getShopById(shopID);
@@ -137,12 +138,122 @@ public class ShopService {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, change the item price in the shop with the provided details
-    }
-    public void changeItemDescriptionInShop(String sessionToken, int shopID, int itemID, String newDescription) {
-        // Check if the user is logged in
-        // If not, prompt to log in or register
-        // If logged in, change the item description in the shop with the provided details
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.updateItemPrice(registeredUser, s, itemID, newPrice);
+        }
     }
 
+    public void rateShop(String sessionToken, int shopID, double rating) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, rate the shop with the provided rating
+    }
+    public void rateItem(String sessionToken, int itemID, double rating) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, rate the item with the provided rating
+    }
+    public void submitBidOffer(String sessionToken, int itemID, double offerPrice) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, submit a bid offer for the item with the provided details
+    }
+    public void updateDiscountType(String sessionToken, int shopID, String discountType) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, update the discount type for the item in the shop with the provided details
+    }
+    public void updatePurchaseType(String sessionToken, int shopID, String purchaseType) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, update the purchase type for the item in the shop with the provided details
+    }
+    public void addShopOwner(String sessionToken, int shopID, int appointeeID) {
+        //UserDTO appointer = userRepository.getUserById(appointerID);
+        
+        //UserDTO appointee = userRepository.getUserById(appointeeID);
+
+
+        //Shop shop = shopRepository.getShop(shopID);
+        //managmentService.addOwner(userRepository.getUser(appointerID), shopRepository.getShop(shopID), userRepository.getUser(appointeeID));
+    }
+    public void addShopManager(String sessionToken, int shopID, String appointeeName) {
+       if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            UserDTO appointee=userRepository.getUserByName(appointeeName);
+            Registered appointeeUser=convertToObject(appointee);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.addManager(registeredUser, s, appointeeUser);
+        }
+    }
+    public void removeShopOwner(String sessionToken, int shopID, String appointeeName) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            UserDTO appointee=userRepository.getUserByName(appointeeName);
+            Registered appointeeUser=convertToObject(appointee);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.removeAppointment(registeredUser, s, appointeeUser);
+        }
+    }
+    public void addShopManagerPermission(String sessionToken, int shopID,String appointeeName, Permission  permission) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            UserDTO appointee=userRepository.getUserByName(appointeeName);
+            Registered appointeeUser=convertToObject(appointee);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.addPermission(registeredUser, s, appointeeUser, permission);
+        }
+    }
     
+    public void removeShopManagerPermission(String sessionToken, int shopID,String appointeeName , Permission permission) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            UserDTO appointee=userRepository.getUserByName(appointeeName);
+            Registered appointeeUser=convertToObject(appointee);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.removePermission(registeredUser, s, appointeeUser, permission);
+        }
+    }
+
+    public void closeShopByFounder(String sessionToken, int shopID) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, close the shop with the provided details
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.closeShop(registeredUser, s);
+        }
+    }
+    public void getMembersPermissions(String sessionToken, int shopID) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.getMembersPermissions(registeredUser, s);
+        }
+    }
+      
 }
