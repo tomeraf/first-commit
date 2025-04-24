@@ -1,7 +1,5 @@
 package Domain.DTOs;
 
-import Domain.ItemDTO;
-
 import java.util.List;
 
 public class Order {
