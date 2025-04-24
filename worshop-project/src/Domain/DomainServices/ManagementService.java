@@ -14,6 +14,16 @@ import Domain.DTOs.ShopDTO;
 import Domain.DTOs.UserDTO;
 
 public class ManagementService {
+    private static ManagementService instance = null;
+    private ManagementService() {
+        // private constructor to prevent instantiation
+    }
+    public static ManagementService getInstance() {
+        if (instance == null) {
+            instance = new ManagementService();
+        }
+        return instance;
+    }
 
     public Shop createShop(int shopId, Registered user, String name, String description) {
         Shop shop = new Shop(shopId, name, description);
