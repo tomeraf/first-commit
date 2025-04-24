@@ -1,12 +1,18 @@
-package Domain;
+package Domain.DTOs;
+
+import Domain.Category;
 
 public class ItemDTO {
     private String name;
     private Category category;
+    
     // for single item
     private double price;
+    
     private int shopId;
     private int itemID;
+    
+    // quantity in the basket
     private int quantity;
     private double rating;
 

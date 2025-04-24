@@ -1,14 +1,19 @@
 package Domain.Purchase;
 
 public abstract class Purchase {
+    private int id;
     private double amount;
     private int itemId;
     private int buyerId;
 
-    public Purchase(double amount, int itemId, int buyerId) {
+    public Purchase(int id,double amount, int itemId, int buyerId) {
+        this.id = id;
         this.amount = amount;
         this.itemId = itemId;
         this.buyerId = buyerId;
+    }
+    public int getId() {
+        return id;
     }
     public double getAmount() {
         return amount;

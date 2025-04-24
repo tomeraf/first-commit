@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import Domain.ItemDTO;
+import Domain.DTOs.ItemDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,24 +29,27 @@ public class CartTest {
         item5 = new ItemDTO("Item 5", Domain.Category.BEAUTY, 10.0, -2, 202, 5, 4.5);
         item6 = new ItemDTO("Item 6", Domain.Category.BEAUTY, 10.0, -2, 203, 5, 4.5);
         
-        // Create ShoppingBasket objects with shopIDs and lists of items
-        ArrayList<ItemDTO> items_1 = new ArrayList<>();
-        items_1.add(item1);
-        items_1.add(item2);
-        items_1.add(item3);
-        
-        ArrayList<ItemDTO> items_2 = new ArrayList<>();
-        items_2.add(item4);
-        items_2.add(item5);
-        items_2.add(item6);
-                
-        basket1 = new Domain.ShoppingBasket(-1, items_1);
-        basket2 = new Domain.ShoppingBasket(-2, items_2);
+        // Create ShoppingBasket objects with shopIDs
+        // and initialize them with empty item lists
+        basket1 = new Domain.ShoppingBasket(-1);
+        basket2 = new Domain.ShoppingBasket(-2);
 
         // Create a ShoppingCart object with a cartID and a list of baskets
         cart = new Domain.ShoppingCart(Arrays.asList(basket1, basket2), -1);
     }
     
+
+    @Test
+    public void testAddItemsSuccess() {
+        List<ItemDTO> itemsToAdd = Arrays.asList(item1, item2, item3, item4, item5, item6);
+        
+        assertTrue(cart.addItems(itemsToAdd), "Should return true when adding items to the cart successfully");
+        
+        // Verify items in each basket after adding
+        assertTrue(basket1.getItems().containsAll(Arrays.asList(item1, item2, item3)), "Basket 1 should contain items 1, 2, and 3");
+        assertTrue(basket2.getItems().containsAll(Arrays.asList(item4, item5, item6)), "Basket 2 should contain items 4, 5, and 6");
+    }
+
     @Test
     public void testGetCartID() {
         assertEquals(-1, cart.getCartID(), "Cart ID should be -1");
