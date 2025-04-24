@@ -4,12 +4,12 @@ import java.time.LocalDate;
 
 public class Guest {
     protected ShoppingCart cart;    
-    protected boolean isInSession = false; // Flag to check if the guest is in session.
+    protected String sessionToken = null; // Flag to check if the guest is in session.
     
     public Guest() {}
 
     public Registered register(String username, String password, LocalDate dateOfBirth) {
-        if (!isInSession) {
+        if (!isInSession()) {
             System.out.println("Unauthorized Action: User didn't entered the system yet. TempID: " + cart.getCartID());
             return null;
         }
@@ -23,8 +23,8 @@ public class Guest {
         return newUser;
     }
 
-    public boolean enterToSystem(int cartID) {
-        if (isInSession) {
+    public boolean enterToSystem(String sessionToken, int cartID) {
+        if (isInSession()) {
             System.out.println("Unauthorized Action: already logged in as guest. TempID: " + getUserID());
             return false;
         }
@@ -32,28 +32,32 @@ public class Guest {
             System.out.println("Unauthorized Action: invalid cart ID (negative)");
             return false;
         }
-        this.isInSession = true;
+        this.sessionToken = sessionToken;
         this.cart = new ShoppingCart(cartID); // According to the USE-CASE guest has an empty cart. 
         System.out.println("Guest login successful. Assigned TempID: " + cartID);
         return true;
     }
 
     public boolean logout() {
-        if (!isInSession) {
+        if (!isInSession()) {
             System.out.println("Unauthorized Action: already logged out.");
             return false;
         }
-        this.isInSession = false;
+        this.sessionToken = null;
         this.cart = null; // Clear the cart on logout.
         System.out.println("Guest logout successful. TempID cleared.");
         return true;
     }
 
     public boolean isInSession() {
-        return this.isInSession;
+        return this.sessionToken != null;
     }
 
-    public long getUserID() {
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
+
+    public int getUserID() {
         if (this.getCart() == null) return -1;
         return this.getCart().getCartID();
     }

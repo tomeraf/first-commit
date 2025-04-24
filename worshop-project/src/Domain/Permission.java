@@ -1,6 +1,9 @@
 package Domain;
 
 public enum Permission {
+    FOUNDER,
+    OWNER,
+
     UPDATE_ITEM_QUANTITY,
     UPDATE_ITEM_PRICE,
     UPDATE_ITEM_DESCRIPTION,

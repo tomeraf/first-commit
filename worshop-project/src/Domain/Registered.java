@@ -123,6 +123,9 @@ public class Registered extends Guest {
     public int getAge() {
         return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
     public boolean removeShopRole(int shopID) {
         if (!roleInShops.containsKey(shopID)) {
             System.out.println("No role found for shop ID: " + shopID);

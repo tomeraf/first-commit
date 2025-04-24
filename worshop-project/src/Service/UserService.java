@@ -40,10 +40,13 @@ public class UserService {
     
     public String enterToSystem() {
         logger.info(() -> "User entered the system");
+        int guestUserID = userRepository.getIdToAssign(); // Get a unique ID for the guest user
         Guest guest = new Guest();
-        // Shopping cart is created here, it seems redundant but then we need it to get the ID of the cart(UserID == CartID)
-        guest.enterToSystem(userRepository.getIdToAssign()); 
-        return jwtAdapter.generateToken(guest.getUserID()+"");
+
+        String sessionToken = jwtAdapter.generateToken(guestUserID+"");
+        
+        //guest.enterToSystem(sessionToken, guestUserID);
+        return sessionToken;
     }
 
     public void exitAsGuest(String sessionToken) {
@@ -52,8 +55,7 @@ public class UserService {
                 throw new Exception("User is not logged in");
             }
             int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            userRepository.removedCartContent(userID); // User' ID and its cart's ID are same - it goes to the table <cartID, itemID> and removes
-            userRepository.removedId(userID); // Adds to the "reuse" list
+            userRepository.removeGuestId(userID); // Adds to the "reuse" list
             logger.info(() -> "User exited the system");
         } catch (Exception e) {
             logger.error(() -> "Error exiting the system: " + e.getMessage());
@@ -99,6 +101,8 @@ public class UserService {
             if (userRepository.getUserById(idToAssign) != null) {
                 throw new Exception("Username already exists");
             }
+
+            // Now, if no registered user exists...
             int currentGuestUserID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             ShoppingCart cart = userRepository.getShoppingCart(currentGuestUserID);
             Guest guest = new Guest();
