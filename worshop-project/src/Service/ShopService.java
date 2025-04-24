@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Domain.ItemDTO;
+import Domain.Shop;
 import Domain.DTOs.ShopDTO;
 import Domain.DomainServices.ManagementService;
 import Domain.Repositories.IShopRepository;
@@ -63,6 +64,36 @@ public class ShopService {
         ShopDTO shop = managementService.createShop(userRepository.getUserById(userID), name, description);
         shopRepository.addShop(shop);
         return shop;
+    }
+
+    public void getShopInfo() {
+
+    }
+
+    public void addItemToShop(String sessionToken, int shopID, String itemName, String itemDescription, double itemPrice) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, add the item to the shop with the provided details
+    }
+    public void removeItemFromShop(String sessionToken, int shopID, int itemID) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, remove the item from the shop with the provided details
+    }
+    public void changeItemQuantityInShop(String sessionToken, int shopID, int itemID, int newQuantity) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, change the item quantity in the shop with the provided details
+    }
+    public void changeItemPriceInShop(String sessionToken, int shopID, int itemID, double newPrice) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, change the item price in the shop with the provided details
+    }
+    public void changeItemDescriptionInShop(String sessionToken, int shopID, int itemID, String newDescription) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, change the item description in the shop with the provided details
     }
 
     
