@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Domain.Category;
-import Domain.ItemDTO;
+import Domain.DTOs.ItemDTO;
 import Domain.Registered;
 import Domain.Shop;
 import Domain.Adapters_and_Interfaces.IAuthentication;
@@ -17,7 +17,7 @@ import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
 import Domain.Permission;
-// import jdk.vm.ci.code.Register;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ShopService {
     
@@ -36,7 +36,14 @@ public class ShopService {
     }
     
     public List<ShopDTO> showAllShops() {
-        return new ArrayList<ShopDTO>(shopRepository.getAllShops().values());
+        ArrayList<Shop> s = new ArrayList(shopRepository.getAllShops().values());
+        List<ShopDTO> shopDTOs = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Shop shop : s) {
+            ShopDTO shopDTO = objectMapper.convertValue(shop, ShopDTO.class);
+            shopDTOs.add(shopDTO);
+        }
+        return shopDTOs;
     }
 
     public List<ItemDTO> showShopItems(int shopId) {

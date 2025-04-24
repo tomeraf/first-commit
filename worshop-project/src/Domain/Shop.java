@@ -2,6 +2,7 @@ package Domain;
 
 import java.time.LocalDateTime;
 
+import Domain.DTOs.ShopDTO;
 import Domain.Discount.DiscountPolicy;
 import Domain.Purchase.PurchasePolicy;
 
@@ -289,8 +290,8 @@ public class Shop {
     }
 
 
-    public List<ItemDTO> filter(String name, Category category, double minPrice, double maxPrice, int itemMinRating, int shopMinRating) {
-        List<ItemDTO> filteredItems = new ArrayList<>();
+    public List<Item> filter(String name, Category category, double minPrice, double maxPrice, int itemMinRating, int shopMinRating) {
+        List<Item> filteredItems = new ArrayList<>();
         for (Item item : items.values()) {
             if ((name == null || item.getName().toLowerCase().contains(name.toLowerCase())) &&
                 (category == null || item.getCategory() == category) &&
@@ -298,7 +299,7 @@ public class Shop {
                 (maxPrice <= 0 || item.getPrice() <= maxPrice)
                 && (itemMinRating <= 0 || item.getRating() >= itemMinRating) &&
                 (shopMinRating <= 0 || this.rating >= shopMinRating)) {
-                filteredItems.add(convertToDTO(item));
+                filteredItems.add(item);
             }
         }
         return filteredItems;
