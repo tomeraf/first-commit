@@ -1,5 +1,7 @@
 package Domain.Repositories;
 
+import Domain.Item;
+import Domain.Registered;
 import Domain.DTOs.UserDTO;
 import Domain.DTOs.UserRoleDTO;
 
@@ -7,13 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface IUserRepository {
-    void addUser(UserDTO user);
-    UserDTO getUserById(int id);
-    void updateUser(UserDTO user);
+    void saveUser(Registered user);
+    Registered getUserById(int id);
+    void updateUser(Registered user);
     void deleteUser(int id);
     boolean isUsernameExists(String username);
-    HashMap<Integer,UserDTO> getAllUsers();
+    HashMap<Integer,Registered> getAllUsers();
     void assignRoleToUserInShop(int userId, int shopId, String role);
     String getRoleOfUserInShop(int userId, int shopId);
-    List<UserRoleDTO> getRolesByUserId(int userId);
+    int getIdToAssign();
+    boolean removedId(int id);
+    void saveCartContent(int cartID, List<Item> items); // middle-table
 }
