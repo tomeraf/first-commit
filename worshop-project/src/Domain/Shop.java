@@ -1,9 +1,11 @@
+package Domain;
+
+import Domain.Discount.DiscountPolicy;
+import Domain.Purchase.PurchasePolicy;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
-import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 public class Shop {
 
