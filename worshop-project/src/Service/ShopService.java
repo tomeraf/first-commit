@@ -1,6 +1,5 @@
 package Service;
 
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +16,7 @@ import Domain.DomainServices.ManagementService;
 import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
+import Domain.Permission;
 // import jdk.vm.ci.code.Register;
 
 public class ShopService {
@@ -136,7 +136,7 @@ public class ShopService {
             managementService.updateItemQuantity(registeredUser, shop, itemID, newQuantity);
         }
     }
-    public void rateShop(String sessionToken, int shopID, double rating) {
+    public void changeItemPriceInShop(String sessionToken, int shopID, int itemID, double newPrice) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, change the item price in the shop with the provided details
@@ -148,6 +148,8 @@ public class ShopService {
             Shop s=convertToObject(shop);
             managementService.updateItemPrice(registeredUser, s, itemID, newPrice);
         }
+    }
+    public void rateShop(String sessionToken, int shopID, double rating) {
         // If logged in, rate the shop with the provided rating
         if(!authenticationAdapter.validateToken(sessionToken)){
             System.out.println("Please log in or register to add items to the shop.");

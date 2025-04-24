@@ -112,4 +112,14 @@ public class ManagementService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateDiscountType'");
     }
+
+    public void closeShop(Registered registeredUser, Shop s) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'closeShop'");
+    }
+
+    public void getMembersPermissions(Registered registeredUser, Shop s) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getMembersPermissions'");
+    }
 }
