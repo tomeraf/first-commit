@@ -96,8 +96,8 @@ public class ShopService {
         return itemDTOs;
     }
 
-    public Shop createShop(int userID, String name, String description) {
-        Shop shop = managementService.createShop(userRepository.getUserById(userID), name, description);
+    public Shop createShop(String username, String name, String description) {
+        Shop shop = managementService.createShop(shopRepository.getAllShops().size(),userRepository.getUserByName(username), name, description);
         shopRepository.addShop(shop);
         return shop;
     }
