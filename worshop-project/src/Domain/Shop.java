@@ -279,7 +279,7 @@ public class Shop {
         } 
         else {
             BidPurchase bidPurchase = bidPurchaseItems.get(bidId);
-            bidPurchase.recieveDecision(ownerId, decision);
+            bidPurchase.receiveDecision(ownerId, decision);
         }
     }
 
