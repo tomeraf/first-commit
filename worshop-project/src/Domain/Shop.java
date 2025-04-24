@@ -304,6 +304,16 @@ public class Shop {
         }
         return filteredItems;
     }
+
+    public void updateItemDescription(int itemID, String description2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateItemDescription'");
+    }
+
+    public void updatePurchaseType(String purchaseType) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updatePurchaseType'");
+    }
 }
 
 
