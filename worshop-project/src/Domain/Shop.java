@@ -3,6 +3,7 @@ package Domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,8 @@ public class Shop {
     private PurchasePolicy purchasePolicy;
     private DiscountPolicy discountPolicy;
     private HashMap<Integer, Item> items; // itemId -> item
+    private Set<Integer> ownerIds;
+    private Set<Integer> managerIds;
     private boolean isOpen;
     private int counterItemId; // Counter for item IDs
     private double rating;
@@ -36,6 +39,11 @@ public class Shop {
         this.purchasePolicy = new PurchasePolicy();
         this.discountPolicy = new DiscountPolicy();
         this.items = new HashMap<>();
+        this.ownerIds = new HashSet<>();
+        /////////
+        /// TODO: add ownerId to the set of owners
+        /////////
+        this.managerIds = new HashSet<>(); 
         this.isOpen = false;
         this.counterItemId = 1; // Initialize the item ID counter
         this.rating = 0.0;
@@ -53,6 +61,8 @@ public class Shop {
     public PurchasePolicy getPurchasePolicy() { return purchasePolicy; }
     public DiscountPolicy getDiscountPolicy() { return discountPolicy; }
     public HashMap<Integer, Item> getItems() { return items; }
+    public Set<Integer> getOwnerIds() { return ownerIds; }
+    public Set<Integer> getManagerIds() { return managerIds; }
     public double getRating() { return rating; }
 
     public void setName(String name) { this.name = name; }
@@ -231,6 +241,47 @@ public class Shop {
         }
     }
 
+    public void addOwner(int ownerId) {
+        if (!ownerIds.contains(ownerId)) {
+            ownerIds.add(ownerId);
+        } else {
+            System.out.println("Owner ID already exists in the shop.");
+        }
+    }
+
+    public void removeOwner(int ownerId) {
+        if (ownerIds.contains(ownerId)) {
+            ownerIds.remove(ownerId);
+        } else {
+            System.out.println("Owner ID does not exist in the shop.");
+        }
+    }
+
+    public void addManager(int managerId) {
+        if (!managerIds.contains(managerId)) {
+            managerIds.add(managerId);
+        } else {
+            System.out.println("Manager ID already exists in the shop.");
+        }
+    }
+
+    public void removeManager(int managerId) {
+        if (managerIds.contains(managerId)) {
+            managerIds.remove(managerId);
+        } else {
+            System.out.println("Manager ID does not exist in the shop.");
+        }
+    }
+
+    public void addBidDecision(int ownerId, int bidId, boolean decision) {
+        if(!bidPurchaseItems.containsKey(bidId)) {
+            System.out.println("Bid ID does not exist in the shop.");
+        } 
+        else {
+            BidPurchase bidPurchase = bidPurchaseItems.get(bidId);
+            bidPurchase.recieveDecision(ownerId, decision);
+        }
+    }
 
 }
 
