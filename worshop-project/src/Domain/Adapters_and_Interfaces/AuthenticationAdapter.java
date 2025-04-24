@@ -6,7 +6,7 @@ import java.util.function.Function;
 import io.jsonwebtoken.Claims;
 
 public class AuthenticationAdapter implements IAuthentication {
-    private final IAuthentication authentication;
+    private IAuthentication authentication;
 
     // Dependency injection of the authentication implementation adapter
     public AuthenticationAdapter(IAuthentication authentication) {
