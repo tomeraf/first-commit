@@ -3,6 +3,7 @@ package Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import Domain.Category;
 import Domain.Item;
@@ -39,7 +40,7 @@ public class ShopService {
     }
     
     public List<ShopDTO> showAllShops() {
-        ArrayList<Shop> s = new ArrayList(shopRepository.getAllShops().values());
+        ArrayList<Shop> s = new ArrayList<Shop>(shopRepository.getAllShops().values());
         List<ShopDTO> shopDTOs = new ArrayList<>();
         
         for (Shop shop : s) {
@@ -95,7 +96,7 @@ public class ShopService {
         return itemDTOs;
     }
 
-    public ShopDTO createShop(int userID, String name, String description) {
+    public Shop createShop(int userID, String name, String description) {
         Shop shop = managementService.createShop(userRepository.getUserById(userID), name, description);
         shopRepository.addShop(shop);
         return shop;
@@ -251,11 +252,9 @@ public class ShopService {
         }
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
-            UserDTO userDto = this.userRepository.getUserByName(userName);
-            Registered registeredUser = convertToObject(userDto);
-            ShopDTO shopDto = this.shopRepository.getShopById(shopID);
-            Shop shop = convertToObject(shopDto);
-            this.managementService.updateDiscountType(registeredUser, shop, discountType);
+            Registered user = this.userRepository.getUserByName(userName);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            this.managementService.updateDiscountType(user, shop, discountType);
         }
     }
     public void updatePurchaseType(String sessionToken, int shopID, String purchaseType) {
@@ -268,11 +267,9 @@ public class ShopService {
         }
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
-            UserDTO userDto = this.userRepository.getUserByName(userName);
-            Registered registeredUser = convertToObject(userDto);
-            ShopDTO shopDto = this.shopRepository.getShopById(shopID);
-            Shop shop = convertToObject(shopDto);
-            this.managementService.updatePurchaseType(registeredUser, shop, purchaseType);
+            Registered user = this.userRepository.getUserByName(userName);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            this.managementService.updatePurchaseType(user, shop, purchaseType);
         }
     }
     public void addShopOwner(String sessionToken, int shopID, String appointeeName) {
@@ -282,62 +279,47 @@ public class ShopService {
         }
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
-            UserDTO userDto = this.userRepository.getUserByName(userName);
-            UserDTO appointee = this.userRepository.getUserByName(appointeeName);
-            Registered registeredUser = convertToObject(userDto);
-            Registered appointeeUser = convertToObject(appointee);
-            ShopDTO shopDto = this.shopRepository.getShopById(shopID);
-            Shop shop = convertToObject(shopDto);
-            this.managementService.addOwner(registeredUser, shop, appointeeUser);
+            Registered user = this.userRepository.getUserByName(userName);
+            Registered appointee = this.userRepository.getUserByName(appointeeName);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            this.managementService.addOwner(user, shop, appointee);
         }
     }
-    public void addShopManager(String sessionToken, int shopID, String appointeeName) {
+    public void addShopManager(String sessionToken, int shopID, String appointeeName, Set<Permission> permission) {
        if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            UserDTO appointee=userRepository.getUserByName(appointeeName);
-            Registered appointeeUser=convertToObject(appointee);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.addManager(registeredUser, s, appointeeUser);
+            Registered user=userRepository.getUserByName(username);
+            Registered appointee=userRepository.getUserByName(appointeeName);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.addManager(user, shop, appointee, permission);
         }
     }
     public void removeShopOwner(String sessionToken, int shopID, String appointeeName) {
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            UserDTO appointee=userRepository.getUserByName(appointeeName);
-            Registered appointeeUser=convertToObject(appointee);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.removeAppointment(registeredUser, s, appointeeUser);
+            Registered user=userRepository.getUserByName(username);
+            Registered appointee=userRepository.getUserByName(appointeeName);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.removeAppointment(user, shop, appointee);
         }
     }
     public void addShopManagerPermission(String sessionToken, int shopID,String appointeeName, Permission  permission) {
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            UserDTO appointee=userRepository.getUserByName(appointeeName);
-            Registered appointeeUser=convertToObject(appointee);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.addPermission(registeredUser, s, appointeeUser, permission);
+            Registered user=userRepository.getUserByName(username);
+            Registered appointee=userRepository.getUserByName(appointeeName);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.addPermission(user, shop, appointee, permission);
         }
     }
     
     public void removeShopManagerPermission(String sessionToken, int shopID,String appointeeName , Permission permission) {
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            UserDTO appointee=userRepository.getUserByName(appointeeName);
-            Registered appointeeUser=convertToObject(appointee);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.removePermission(registeredUser, s, appointeeUser, permission);
+            Registered user=userRepository.getUserByName(username);
+            Registered appointee=userRepository.getUserByName(appointeeName);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.removePermission(user, shop, appointee, permission);
         }
     }
 
@@ -347,22 +329,21 @@ public class ShopService {
         // If logged in, close the shop with the provided details
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.closeShop(registeredUser, s);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.closeShop(user, shop);
         }
     }
     public void getMembersPermissions(String sessionToken, int shopID) {
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
-            UserDTO user=userRepository.getUserByName(username);
-            Registered registeredUser=convertToObject(user);
-            ShopDTO shop=shopRepository.getShopById(shopID);
-            Shop s=convertToObject(shop);
-            managementService.getMembersPermissions(registeredUser, s);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.getMembersPermissions(user, shop);
         }
     }
-      
+    // 1. missing method to open shop. is it interactionService because of the notification?
+    // 2. 3.5 - send message to shop.
+    // 3. 4.12 - shopOwner responds to message.
+    // 4. 4.13 - shop owner gets purchase history.
 }
