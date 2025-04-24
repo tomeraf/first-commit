@@ -9,14 +9,14 @@ public class ShoppingBasket {
     private List<ItemDTO> items;
 
 
-    public ShoppingBasket(int basketID, List<ItemDTO> items) {
-        this.shopID = basketID;
+    public ShoppingBasket(int shopID, List<ItemDTO> items) {
+        this.shopID = shopID;
         this.items = items;
     }
 
 
-    public ShoppingBasket(int basketID) {
-        this.shopID = basketID;
+    public ShoppingBasket(int shopID) {
+        this.shopID = shopID;
         this.items = new java.util.ArrayList<>();
     }
 
