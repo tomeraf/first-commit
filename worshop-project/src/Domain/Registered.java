@@ -13,6 +13,7 @@ public class Registered extends Guest {
     private Map<Integer, IRole> roleInShops; //<shopID, role>
     private String username;
     private String password;
+
     private LocalDate dateOfBirth;
     
     public Registered(String username, String password, LocalDate dateOfBirth) {
@@ -33,7 +34,7 @@ public class Registered extends Guest {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public IRole getRoleInShop(int shopID) {
         if(roleInShops.containsKey(shopID)) {
             return roleInShops.get(shopID);
