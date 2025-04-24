@@ -17,33 +17,28 @@ public class GuestTest {
 
     @Test
     void testSuccessfulLogin() {
-        long tempId = 123456L;
-        boolean result = guest.login(tempId, 0);
+        boolean result = guest.enterToSystem(0);
         assertTrue(result);
         assertTrue(guest.isInSession());
-        assertEquals(tempId, guest.getUserID());
+        assertEquals(0, guest.getUserID());
     }
 
     @Test
     void testLoginTwiceShouldNotOverride() {
-        long tempId1 = 111L;
-        long tempId2 = 222L;
-
-        boolean result1 = guest.login(tempId1, 0);
-        boolean result2 = guest.login(tempId2, 0); // Should not take effect
+        boolean result1 = guest.enterToSystem(0);
+        boolean result2 = guest.enterToSystem(1); // Should not take effect
         assertTrue(result1); // First login should succeed
         assertFalse(result2); // Login should fail since already logged in
         assertTrue(guest.isInSession());
-        assertEquals(tempId1, guest.getUserID());
+        assertEquals(0, guest.getUserID());
     }
 
     @Test
     void testSuccessfulLogout() {
-        long tempId = 999L;
-        boolean result1 = guest.login(tempId, 0);
+        boolean result1 = guest.enterToSystem(0);
         assertTrue(result1); // First login should succeed
         assertTrue(guest.isInSession());
-        assertEquals(tempId, guest.getUserID());
+        assertEquals(0, guest.getUserID());
         assertNotNull(guest.getCart()); // Cart should be initialized on login
         boolean result2 = guest.logout();
         assertTrue(result2); // Logout should succeed
@@ -61,8 +56,7 @@ public class GuestTest {
 
     @Test
     void testDoubleLogout() {
-        long id = 555L;
-        guest.login(id, 0);
+        guest.enterToSystem(0);
         assertTrue(guest.logout());
         assertFalse(guest.logout()); // Second one should fail
 
@@ -73,8 +67,7 @@ public class GuestTest {
 
     @Test
     void testLoginWithNegativeID() {
-        long id = -1;
-        boolean result = guest.login(id, 0);
+        boolean result = guest.enterToSystem(-1);
 
         assertFalse(result);
     }
