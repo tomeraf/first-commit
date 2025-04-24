@@ -95,5 +95,4 @@ public class ManagmentService {
             System.out.println("You don't have permission to update item category");
         }
     }
-    //Not to forget purchase and sale policy
 }
