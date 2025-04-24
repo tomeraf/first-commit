@@ -41,9 +41,23 @@ public class ShoppingCart {
         // Add items to all baskets
         for (ItemDTO item : items) {
             for (ShoppingBasket basket : baskets) {
-                if (basket.getShopID() == item.getShopId())
-                    if (!basket.addItem(item)) 
+                if (basket.getShopID() == item.getShopId()) {
+                    if (!basket.addItem(item))
                         return false; // failed to add item
+                    else {
+                        break;
+                    }
+                }
+                else
+                {
+                    // If the basket does not exist for the shop, create a new one
+                    ShoppingBasket newBasket = new ShoppingBasket(item.getShopId());
+                    if (!newBasket.addItem(item))
+                        return false; // failed to add item
+                    else {
+                        break;
+                    }
+                }
             }
         }
         return true;
@@ -104,6 +118,15 @@ public class ShoppingCart {
         for (ShoppingBasket basket : baskets) {
             basket.clearBasket(); // Clear the basket
         }
+    }
+
+    public List<ShoppingBasket> getBaskets() {
+        return baskets;
+    }
+
+    public void addBasket(int shopID) {
+        ShoppingBasket basket = new ShoppingBasket(shopID);
+        baskets.add(basket);
     }
 }
 
