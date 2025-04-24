@@ -149,6 +149,19 @@ public class ShopService {
             managementService.updateItemPrice(registeredUser, s, itemID, newPrice);
         }
     }
+    public void changeItemDescriptionInShop(String sessionToken, int shopID, int itemID, String newDescription) {
+        // Check if the user is logged in
+        // If not, prompt to log in or register
+        // If logged in, change the item name in the shop with the provided details
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.updateItemDescription(registeredUser, s, itemID, newDescription);
+        }
+    }
     public void rateShop(String sessionToken, int shopID, double rating) {
         // If logged in, rate the shop with the provided rating
         if(!authenticationAdapter.validateToken(sessionToken)){
