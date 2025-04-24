@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IUserRepository {
     void addUser(UserDTO user);
-    UserDTO getUserById(String username);
+    UserDTO getUserByName(String username);
     void updateUser(UserDTO user);
     void deleteUser(String username);
     boolean isUsernameExists(String username);

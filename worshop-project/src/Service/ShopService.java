@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import Domain.ItemDTO;
+import Domain.Registered;
 import Domain.Shop;
+import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.DTOs.ShopDTO;
+import Domain.DTOs.UserDTO;
 import Domain.DomainServices.ManagementService;
 import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
@@ -16,12 +19,15 @@ public class ShopService {
     private IUserRepository userRepository;
     private IShopRepository shopRepository;
     private ManagementService managementService = ManagementService.getInstance();
+    private IAuthentication authenticationAdapter;
     private int shopIdCounter = 1;
     
 
-    public ShopService(IUserRepository userRepository, IShopRepository shopRepository) {
+    public ShopService(IUserRepository userRepository, IShopRepository shopRepository, IAuthentication authenticationAdapter) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
+        this.authenticationAdapter = authenticationAdapter;
+
     }
     
     public List<ShopDTO> showAllShops() {
@@ -66,7 +72,8 @@ public class ShopService {
         return shop;
     }
 
-    public void getShopInfo() {
+    public ShopDTO getShopInfo(String sessionToken, int shopID) {
+
 
     }
 
@@ -79,6 +86,15 @@ public class ShopService {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, remove the item from the shop with the provided details
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            UserDTO user=userRepository.getUserByName(username);
+            Registered registeredUser=convertToObject(user);
+            ShopDTO shop=shopRepository.getShopById(shopID);
+            Shop s=convertToObject(shop);
+            managementService.removeItemFromShop(registeredUser, s, itemID);
+        }
+        
     }
     public void changeItemQuantityInShop(String sessionToken, int shopID, int itemID, int newQuantity) {
         // Check if the user is logged in
