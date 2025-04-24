@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import Domain.DTOs.ItemDTO;
+
 public class Registered extends Guest {
     private Map<Integer, IRole> roleInShops; //<shopID, role>
     private String username;
@@ -49,44 +51,50 @@ public class Registered extends Guest {
         System.out.println("No role found for shop ID: " + shopID);
         return false;      
     }
-    public void addPermission(int shopID, Permission permission) {
+    public boolean addPermission(int shopID, Permission permission) {
         if(roleInShops.containsKey(shopID)) {
             roleInShops.get(shopID).addPermission(permission);
+            return true;
         } else {
             System.out.println("No role found for shop ID: " + shopID);
         }
+        return false;
     }
-    public void removePermission(int shopID, Permission permission) {
+    public boolean removePermission(int shopID, Permission permission) {
         if(roleInShops.containsKey(shopID)) {
             roleInShops.get(shopID).removePermission(permission);
+            return true;
         } else {
             System.out.println("No role found for shop ID: " + shopID);
         }
+        return false;
     }
 
     // As and owner or manager
-    public void addAppointment(int shopID, int nomineeID, IRole nominee) {
+    public boolean addAppointment(int shopID, int nomineeID, IRole nominee) {
         if (!roleInShops.containsKey(shopID)) {
             System.out.println("No role found for shop ID: " + shopID);
-            return;
+            return false;
         }
         if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
             System.out.println("No permission to add appointment in shop ID: " + shopID);
-            return;
+            return false;
         }
-        roleInShops.get(shopID).addAppointment(nomineeID, nominee);            
+        roleInShops.get(shopID).addAppointment(nomineeID, nominee);      
+        return true;      
     }
     
-    public void removeAppointment(int shopID, int appointeeID) {
+    public boolean removeAppointment(int shopID, int appointeeID) {
         if (!roleInShops.containsKey(shopID)) {
             System.out.println("No role found for shop ID: " + shopID);
-            return;
+            return false;
         }
         if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
             System.out.println("No permission to remove appointment in shop ID: " + shopID);
-            return;
+            return false;
         } 
         roleInShops.get(shopID).removeAppointment(appointeeID);
+        return true;
     }
 
     public Map<Integer, IRole> getAppointments(int shopID) {
@@ -105,21 +113,22 @@ public class Registered extends Guest {
             return -1;
         }
     }
-    public void addItemToBasket(int itemID) {
-        cart.addItem(itemID);
+    public void addItemToBasket(List<ItemDTO> items) {
+        cart.addItems(items);
     }
-    public void removeItemFromBasket(int itemID) {
-        cart.removeItem(itemID);
+    public void removeItemFromBasket(Map<Integer, Integer> items) {
+        cart.deleteItems(items);
     }
     public int getAge() {
-        return Period.between(dateOfBirth, dateOfBirth).getYears();
+        return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }
-    public void removeShopRole(int shopID) {
+    public boolean removeShopRole(int shopID) {
         if (!roleInShops.containsKey(shopID)) {
             System.out.println("No role found for shop ID: " + shopID);
-            return;
+            return false;
         }
         roleInShops.get(shopID).removeAppointment((int)this.getUserID());
         roleInShops.remove(shopID);
+        return true;
     }
 }
