@@ -28,7 +28,7 @@ public class Owner extends IRole {
         //No implementation needed for owner
     }
 
-    @Override
+    
     public void addAppointment(int nomineeID, IRole role) {
         appointments.put(nomineeID, role);
     }
@@ -42,29 +42,14 @@ public class Owner extends IRole {
         appointments.get(appointeeID).removeAllAppointments();
         appointments.remove(appointeeID);
     }
-    
-    public void removeAllAppointments() {
-        for (int appointeeID : appointments.keySet()) {
-            appointments.get(appointeeID).removeAllAppointments();
-        }
-        appointments.clear();
-    }
-
 
     @Override
     public Map<Integer,IRole> getAppointments() {
         return appointments;
     }
 
-    @Override
-    public int getAppointer() {
-        return appointerID;
+    public String getPermissionsString() {
+        return "Owner - has all permissions";
     }
-
-    @Override
-    public int getShopID() {
-        return shopID;
-    }
-
 }
 

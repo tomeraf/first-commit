@@ -1,8 +1,6 @@
 package Domain;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,40 +31,41 @@ public class Manager extends IRole {
         }
     }
 
-    @Override
-    public int getShopID() {
-        return shopID;
-    }
-
-    @Override
-    public int getAppointer() {
-        return appointerID;
-    }
-
-    @Override
     public void addAppointment(int nomineeID, IRole role) {
-        System.out.println("Manager has no appointments");
+        if (this.permission.contains(Permission.APPOINTMENT)) {
+            appointments.put(nomineeID, role);
+        } else {
+            System.out.println("No permission to add appointment");
+        }
     }
 
     @Override
     public void removeAppointment(int appointeeID) {
-        System.out.println("Manager has no appointments");
+        if (!appointments.containsKey(appointeeID)) {
+            System.out.println("No appointment found for user ID: " + appointeeID);
+            return;
+        }
+        appointments.get(appointeeID).removeAllAppointments();
     }
 
     @Override
     public Map<Integer, IRole> getAppointments() {
         // no implementation needed for manager
-        return null;
-    }
-
-    @Override
-    public void removeAllAppointments() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeAllAppointments'");
+        return appointments;
     }
 
     public Set<Permission> getPermissions() {
         return permission;
     }
-    
+
+    public String getPermissionsString() {
+        StringBuilder sb = new StringBuilder();
+        for (Permission p : permission) {
+            sb.append(p.toString()).append(", ");
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 2); // remove last comma and space
+        }
+        return sb.toString();
+    }
 }

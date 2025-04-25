@@ -65,10 +65,6 @@ public class Guest {
     public ShoppingCart getCart() {
         return this.cart;
     }
-    
-    public void setUserID(long userID) {
-    //    this.userID = userID;
-    }
 
     public void setCart(ShoppingCart cart) {
         this.cart = cart;
