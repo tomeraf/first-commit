@@ -10,5 +10,6 @@ public enum Permission {
     UPDATE_PERMISSIONS,
     UPDATE_SUPPLY,
     UPDATE_ITEM_RATING, 
-    APPOINTMENT
+    APPOINTMENT,
+    CLOSE_SHOP
 }
