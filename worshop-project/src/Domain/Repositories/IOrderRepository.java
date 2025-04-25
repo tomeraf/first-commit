@@ -10,6 +10,6 @@ public interface IOrderRepository {
     void removeOrder(int orderId);
     Order getOrder(int orderId);
     HashMap<Integer,Order> getAllOrders();
-    List<Order> getOrdersByCustomerId(int customerId);
+    List<Order> getOrdersByUserName(String userName);
     List<Order> getOrdersByShopId(int shopId);
 }
