@@ -1,12 +1,9 @@
 package Domain.DomainServices;
 
+import Domain.*;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.ShopDTO;
-import Domain.Guest;
 import Domain.Repositories.IShopRepository;
-import Domain.ShoppingBasket;
-import Domain.ShoppingCart;
-import Domain.Item;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,24 +24,35 @@ public class PurchaseService {
         cart.deleteItems(items);
     }
 
-    public int PurchaseCart(Guest user, IShopRepository shops) {
+    public boolean canPurchaseCart(Guest user, IShopRepository shops) {
         // Use case #2.5: Purchase cart
+        // The price and all discounts with it should be calculated in the shop or
+        // in the paymentService or in another function
+
         ShoppingCart cart = user.getCart();
         int price = 0;
+
         if (!cart.getItems().isEmpty())
         {
             for (ShoppingBasket basket: cart.getBaskets())
             {
+                HashMap<Integer, Integer> items = new HashMap<>();
+                for (ItemDTO item : basket.getItems())
+                    items.put(item.getItemID(), item.getQuantity());
                 int shopId = basket.getShopID();
-                ShopDTO shop = shops.getShopById(shopId);
-                shop
+                Shop shop = shops.getShopById(shopId);
 
+                if(!shop.canPurchaseBasket(items))
+                    return false;
             }
         }
-        else
-            System.out.println("Purchase failed. Your cart is empty.");
 
-        return price;
+        else {
+            System.out.println("Purchase failed. Your cart is empty.");
+            return false;
+        }
+
+        return true;
     }
 
 }
