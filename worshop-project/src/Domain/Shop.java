@@ -2,6 +2,8 @@ package Domain;
 
 import java.time.LocalDateTime;
 
+import Domain.Adapters_and_Interfaces.IMessage;
+import Domain.Adapters_and_Interfaces.IMessageListener;
 import Domain.DTOs.ShopDTO;
 import Domain.Discount.DiscountPolicy;
 import Domain.Purchase.PurchasePolicy;
@@ -19,7 +21,7 @@ import Domain.Purchase.PurchasePolicy;
 import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 
-public class Shop {
+public class Shop implements IMessageListener {
 
     private int id;
     private String name;
@@ -37,6 +39,7 @@ public class Shop {
     private HashMap<Integer, AuctionPurchase> auctionPurchaseItems; // AuctionId -> AuctionPurchase
     private int bidPurchaseCounter; // Counter for bid purchases
     private int auctionPurchaseCounter; // Counter for auction purchases
+    private HashMap<Integer, IMessage> inbox; // 
 
     public Shop(int id, String name, String description) {
         this.id = id;
@@ -58,6 +61,7 @@ public class Shop {
         this.auctionPurchaseItems = new HashMap<>();
         this.bidPurchaseCounter = 1; 
         this.auctionPurchaseCounter = 1; 
+        this.inbox = new HashMap<>();
     }
 
     public int getId() { return id; }
@@ -313,6 +317,11 @@ public class Shop {
     public void updatePurchaseType(String purchaseType) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updatePurchaseType'");
+    }
+ 
+    @Override
+    public void acceptMessage(IMessage message) {
+        inbox.put(message.getId(), message);
     }
 }
 
