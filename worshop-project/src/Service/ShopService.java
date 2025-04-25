@@ -179,6 +179,8 @@ public class ShopService {
             managementService.updateItemDescription(user, shop, itemID, newDescription);
         }
     }
+    //need to implement after the shipping service is implemented
+    /* 
     public void rateShop(String sessionToken, int shopID, double rating) {
         // If logged in, rate the shop with the provided rating
         if(!authenticationAdapter.validateToken(sessionToken)){
@@ -237,6 +239,7 @@ public class ShopService {
             }   
         }
     }
+    */
     public void updateDiscountType(String sessionToken, int shopID, String discountType) {
         // Check if the user is logged in
         // If not, prompt to log in or register
@@ -252,6 +255,7 @@ public class ShopService {
             this.managementService.updateDiscountType(user, shop, discountType);
         }
     }
+    
     public void updatePurchaseType(String sessionToken, int shopID, String purchaseType) {
         // Check if the user is logged in
         // If not, prompt to log in or register
