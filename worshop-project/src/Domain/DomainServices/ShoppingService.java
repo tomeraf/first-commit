@@ -2,20 +2,17 @@ package Domain.DomainServices;
 
 import java.util.List;
 
-import Domain.Item;
 import Domain.Shop;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
 
 public class ShoppingService {
 
-    public boolean RateItem(Item item, List<Order> allUserOrders, int rating) {
-        int itemId = item.getId();
-        int shopId = item.getShopId();
+    public boolean RateItem(Shop shop, int itemId, List<Order> allUserOrders, int rating) {
         for (Order order : allUserOrders) {
             for (ItemDTO orderItem : order.getItems()) {
-                if (orderItem.getItemID() == itemId && orderItem.getShopId() == shopId) {
-                    item.updateRating(rating);
+                if (orderItem.getItemID() == itemId && orderItem.getShopId() == shop.getId()) {
+                    shop.updateItemRating(itemId, rating);
                     return true; // Item found and rating updated
                 }
             }
