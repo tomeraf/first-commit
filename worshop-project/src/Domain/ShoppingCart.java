@@ -30,35 +30,40 @@ public class ShoppingCart {
 
     // Use case #2.3: Add item to cart
     public boolean addItems(List<ItemDTO> items) {
-        // Check if all items are in the baskets
+        // Check if all items are not in the baskets (cant add any item if even one already in the cart)
         for (ItemDTO item : items) {
             for (ShoppingBasket basket : baskets) {
                 if (basket.isItemIn(item.getItemID()) && basket.getShopID() == item.getShopId())
-                    return false; // Item already exists, not added
+                return false; // there is item that already exists, nothing added
             }
+        }
+        
+        List<Integer> shopsIds = new ArrayList<>(); // List to store baskets ids
+        for (ShoppingBasket basket : baskets) {
+            shopsIds.add(basket.getShopID()); // Add the shopID to the list
         }
 
         // Add items to all baskets
+        boolean basketFound = false;
         for (ItemDTO item : items) {
             for (ShoppingBasket basket : baskets) {
                 if (basket.getShopID() == item.getShopId()) {
-                    if (!basket.addItem(item))
-                        return false; // failed to add item
-                    else {
-                        break;
+                    if (!basket.addItem(item)) {
+                        return false; // Item already exists, not added
                     }
-                }
-                else
-                {
-                    // If the basket does not exist for the shop, create a new one
-                    ShoppingBasket newBasket = new ShoppingBasket(item.getShopId());
-                    if (!newBasket.addItem(item))
-                        return false; // failed to add item
                     else {
-                        break;
+                        basketFound = true; // Item added successfully
+                        break; // Item added successfully, exit the loop
                     }
-                }
+                } 
             }
+            if (!basketFound) {
+                // If the basket is not found, create a new one and add the item
+                addBasket(item.getShopId()); // Create a new basket for the shopID
+                ShoppingBasket newBasket = baskets.get(baskets.size() - 1); // Get the newly created basket
+                newBasket.addItem(item); // Add the item to the new basket
+            }
+            basketFound = false; // Reset the flag for the next item
         }
         return true;
     }
@@ -119,12 +124,9 @@ public class ShoppingCart {
             basket.clearBasket(); // Clear the basket
         }
     }
+    
 
-    public List<ShoppingBasket> getBaskets() {
-        return baskets;
-    }
-
-    public void addBasket(int shopID) {
+    private void addBasket(int shopID) {
         ShoppingBasket basket = new ShoppingBasket(shopID);
         baskets.add(basket);
     }
