@@ -1,9 +1,8 @@
 package Tests;
 
 import Domain.*;
-import Domain.DTOs.ItemDTO;
+import Domain.Registered;
 import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.util.*;
 

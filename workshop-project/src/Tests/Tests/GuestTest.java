@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import Domain.Guest;
-import Domain.IRole;
-import Domain.ShoppingCart;
 
 public class GuestTest {
     private Guest guest;

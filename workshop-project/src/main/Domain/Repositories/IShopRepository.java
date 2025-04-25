@@ -1,7 +1,6 @@
 package Domain.Repositories;
 
 import Domain.Shop;
-import Domain.DTOs.ShopDTO;
 
 import java.util.HashMap;
 

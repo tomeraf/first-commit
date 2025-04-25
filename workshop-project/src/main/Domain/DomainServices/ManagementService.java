@@ -1,6 +1,5 @@
 package Domain.DomainServices;
 
-import java.util.List;
 import java.util.Set;
 
 import Domain.Category;
@@ -10,8 +9,6 @@ import Domain.Owner;
 import Domain.Permission;
 import Domain.Registered;
 import Domain.Shop;
-import Domain.DTOs.ShopDTO;
-import Domain.DTOs.UserDTO;
 
 public class ManagementService {
     private static ManagementService instance = null;
