@@ -7,13 +7,16 @@ public class Order {
     private int totalPrice;
     private int orderID;
 
-    // items Map: <<itemID, shopID>, <price, quantity>>
     public Order(List<ItemDTO> items, int totalPrice, int orderID) {
         this.items = items;
         this.totalPrice = totalPrice;
         this.orderID = orderID;
     }
 
+    public List<ItemDTO> getItems() {
+        return items;
+    }
+    
     public String getOrderDetails() {
         StringBuilder details = new StringBuilder("Order ID: " + orderID + "\n");
         details.append("Items:\n");
