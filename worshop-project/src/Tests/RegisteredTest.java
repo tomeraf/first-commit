@@ -13,10 +13,17 @@ public class RegisteredTest {
     private static final int APPOINTER_ID = 1;
     private static final int APPOINTEE_ID = 2;
     private static final int SHOP_ID = 10;
+    private Registered user;
+
+    public RegisteredTest() {
+        Guest guest = new Guest();
+        guest.enterToSystem("guestSessionToken", APPOINTER_ID); // Assuming a valid session token and cart ID
+        user = guest.register("bob", "hunter2", LocalDate.of(1990, 1, 1));
+        user.setSessionToken("userSessionToken"); // login
+    }
 
     @Test
     void testAddPermission() {
-        Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
         Manager mgrRole = new Manager(APPOINTER_ID, SHOP_ID, new HashSet<>());
         user.setRoleToShop(SHOP_ID, mgrRole);
 
@@ -26,13 +33,11 @@ public class RegisteredTest {
 
     @Test
     void testAddPermissionNoRole() {
-        Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
         assertFalse(user.addPermission(SHOP_ID, Permission.VIEW));
     }
 
     @Test
     void testRemovePermission() {
-        Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
         Manager mgrRole = new Manager(APPOINTER_ID, SHOP_ID, new HashSet<>(Collections.singleton(Permission.VIEW)));
         user.setRoleToShop(SHOP_ID, mgrRole);
 
@@ -42,14 +47,12 @@ public class RegisteredTest {
 
     @Test
     void testRemovePermissionNoRole() {
-        Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
         assertFalse(user.removePermission(SHOP_ID, Permission.VIEW));
     }
 
     @Test
     void testAddAppointmentSuccess() {
-        Registered appointer = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
-        appointer.setUserID(APPOINTER_ID);
+        Registered appointer = user;
         // Owner always has APPOINTMENT permission
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         appointer.setRoleToShop(SHOP_ID, owner);
@@ -65,26 +68,29 @@ public class RegisteredTest {
 
     @Test
     void testAddAppointmentNoPermission() {
+        Registered appointer = user;
+
         // Manager without APPOINTMENT permission
-        Registered appointer = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
-        appointer.setUserID(APPOINTER_ID);
         Manager manager = new Manager(APPOINTER_ID, SHOP_ID, new HashSet<>());
-        appointer.setRoleToShop(SHOP_ID, manager)
-        ;
-        Registered appointee = new Registered("Alice", "password", LocalDate.of(2000, 1, 1));
-        appointer.setUserID(APPOINTEE_ID);
+        appointer.setRoleToShop(SHOP_ID, manager);
+
+        Guest guest = new Guest();
+        guest.enterToSystem("guestSessionToken", APPOINTEE_ID); // Assuming a valid session token and cart ID
+        Registered alice = guest.register("Alice", "password", LocalDate.of(2000, 1, 1));
+        alice.setSessionToken("aliceSessionToken"); // login
+    
+        Registered appointee = alice;
         Manager appointeeRole = new Manager(APPOINTEE_ID, SHOP_ID, new HashSet<>());
         
         assertFalse(appointer.addAppointment(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
-        assertNull(appointer.getAppointments(SHOP_ID));             // no appointments recorded
+        assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());             // no appointments recorded
         assertEquals(-1, appointee.getAppointer(SHOP_ID));         // no appointer
     }
 
     @Test
     void testRemoveAppointmentSuccess() {
-        Registered appointer = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
-        appointer.setUserID(APPOINTER_ID);
+        Registered appointer = user;
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         appointer.setRoleToShop(SHOP_ID, owner);
 
@@ -93,25 +99,21 @@ public class RegisteredTest {
 
         assertTrue(appointer.removeAppointment(SHOP_ID, APPOINTEE_ID));
         assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());
-
-        
     }
 
     @Test
     void testRemoveAppointmentNoRole() {
-        Registered appointer = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
+        Registered appointer = user;
         assertFalse(appointer.removeAppointment(SHOP_ID, APPOINTEE_ID));
     }
 
     @Test
     void testGetAppointmentsNoRole() {
-        Registered user = new Registered("alice", "pw", LocalDate.of(2001, 2, 3));
         assertNull(user.getAppointments(SHOP_ID));
     }
 
     @Test
     void testGetAppointerNoRole() {
-        Registered user = new Registered("alice", "pw", LocalDate.of(2001, 2, 3));
         assertEquals(-1, user.getAppointer(SHOP_ID));
     }
 
@@ -123,8 +125,6 @@ public class RegisteredTest {
 
     @Test
     void testRemoveShopRoleSuccess() {
-        Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
-        user.setUserID(APPOINTER_ID);
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         user.setRoleToShop(SHOP_ID, owner);
 

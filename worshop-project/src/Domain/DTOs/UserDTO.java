@@ -7,4 +7,10 @@ public class UserDTO {
     public String username;
     public String password;
     public LocalDate dateOfBirth;
+    public UserDTO(int id, String username, String password, LocalDate dateOfBirth) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+    }
 }

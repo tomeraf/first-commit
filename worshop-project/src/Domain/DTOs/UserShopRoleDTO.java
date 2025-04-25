@@ -1,6 +1,6 @@
 package Domain.DTOs;
 
-public class UserRoleDTO {
+public class UserShopRoleDTO {
     public int userId;
     public int shopId;
     public String role; // could also be an enum or serialized string

@@ -41,7 +41,15 @@ public class Registered extends Guest {
         }
         return null;
     }
-    
+    public boolean logout() {
+        if (!isInSession()) {
+            System.out.println("Unauthorized Action: already logged out.");
+            return false;
+        }
+        this.sessionToken = null;
+        System.out.println("Registered logout successful.");
+        return true;
+    }
     public void setRoleToShop(int shopID, IRole newRole) {
         this.roleInShops.put(shopID, newRole);
     }
@@ -123,6 +131,9 @@ public class Registered extends Guest {
     public int getAge() {
         return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
     public boolean removeShopRole(int shopID) {
         if (!roleInShops.containsKey(shopID)) {
             System.out.println("No role found for shop ID: " + shopID);
@@ -131,5 +142,13 @@ public class Registered extends Guest {
         roleInShops.get(shopID).removeAppointment((int)this.getUserID());
         roleInShops.remove(shopID);
         return true;
+    }
+    public String getPermissions(int shopID) {
+        if(roleInShops.containsKey(shopID)) {
+            return roleInShops.get(shopID).getPermissionsString();
+        } else {
+            System.out.println("No role found for shop ID: " + shopID);
+            return null;
+        }
     }
 }
