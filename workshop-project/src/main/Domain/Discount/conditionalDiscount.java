@@ -2,8 +2,8 @@ package Domain.Discount;
 
 import java.time.LocalDate;
 
-import others.Guest;
-import others.Item;
+import Domain.Guest;
+import Domain.Item;
 import Domain.Rules.Rule;
 
 public class conditionalDiscount extends OpenDiscount {

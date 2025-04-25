@@ -7,8 +7,8 @@ import java.util.HashSet;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import others.Manager;
-import others.Permission;
+import Domain.Manager;
+import Domain.Permission;
 
 public class ManagerTest {
     private Manager manager;

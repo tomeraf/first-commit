@@ -1,7 +1,7 @@
 package Domain.Rules;
 
-import others.Guest;
-import others.Item;
+import Domain.Guest;
+import Domain.Item;
 
 @FunctionalInterface
 public interface Rule {

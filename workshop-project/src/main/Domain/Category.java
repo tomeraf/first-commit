@@ -1,4 +1,4 @@
-package others;
+package Domain;
 
 public enum Category {
     ELECTRONICS,

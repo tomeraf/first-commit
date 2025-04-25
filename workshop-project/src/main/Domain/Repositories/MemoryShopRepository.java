@@ -2,7 +2,7 @@ package Domain.Repositories;
 
 import java.util.HashMap;
 
-import others.Shop;
+import Domain.Shop;
 
 public class MemoryShopRepository implements IShopRepository {
     private HashMap<Integer, Shop> shops = new HashMap<>();

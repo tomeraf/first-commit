@@ -1,4 +1,4 @@
-package others;
+package Domain;
 
 public class Item {
     private String name;

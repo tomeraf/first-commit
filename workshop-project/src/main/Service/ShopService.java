@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import others.Category;
-import others.Item;
+import Domain.Category;
+import Domain.Item;
 import Domain.DTOs.ItemDTO;
-import others.Registered;
-import others.Shop;
+import Domain.Registered;
+import Domain.Shop;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
@@ -17,7 +17,7 @@ import Domain.DomainServices.ManagementService;
 import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
-import others.Permission;
+import Domain.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ShopService {

@@ -8,14 +8,15 @@ import java.util.List;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
-import others.Guest;
-import others.Item;
-import others.Registered;
-import others.ShoppingCart;
+import Domain.DomainServices.ManagementService;
+
+import Domain.Guest;
+import Domain.Item;
+import Domain.Registered;
+import Domain.ShoppingCart;
 import Domain.Adapters_and_Interfaces.JWTAdapter;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
-import Domain.DomainServices.ManagmentService;
 import Domain.DomainServices.PurchaseService;
 import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
@@ -28,7 +29,7 @@ public class UserService {
     private IShopRepository shopRepository;
     private IOrderRepository orderRepository;
     
-    private ManagmentService managmentService = new ManagmentService();
+    private ManagementService managmentService = new ManagementService();
     private PurchaseService purchaseService = new PurchaseService();
     ObjectMapper objectMapper = new ObjectMapper();
     

@@ -1,6 +1,6 @@
 package Domain.Repositories;
 
-import others.Shop;
+import Domain.Shop;
 
 import java.util.HashMap;
 

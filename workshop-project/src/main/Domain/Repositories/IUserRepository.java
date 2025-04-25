@@ -1,7 +1,7 @@
 package Domain.Repositories;
 
-import others.Guest;
-import others.Registered;
+import Domain.Guest;
+import Domain.Registered;
 import java.util.Map;
 
 public interface IUserRepository {

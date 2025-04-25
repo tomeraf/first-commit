@@ -1,4 +1,4 @@
-package others;
+package Domain;
 
 import java.util.Map;
 public abstract class IRole {

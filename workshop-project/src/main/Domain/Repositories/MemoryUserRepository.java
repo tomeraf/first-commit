@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import others.Guest;
-import others.Registered;
+import Domain.Guest;
+import Domain.Registered;
 
 public class MemoryUserRepository implements IUserRepository {
 

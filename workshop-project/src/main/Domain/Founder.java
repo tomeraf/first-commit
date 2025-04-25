@@ -1,4 +1,4 @@
-package others;
+package Domain;
 
 public class Founder extends Owner {
 

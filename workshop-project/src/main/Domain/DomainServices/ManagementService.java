@@ -2,13 +2,13 @@ package Domain.DomainServices;
 
 import java.util.Set;
 
-import others.Category;
-import others.Founder;
-import others.Manager;
-import others.Owner;
-import others.Permission;
-import others.Registered;
-import others.Shop;
+import Domain.Category;
+import Domain.Founder;
+import Domain.Manager;
+import Domain.Owner;
+import Domain.Permission;
+import Domain.Registered;
+import Domain.Shop;
 
 public class ManagementService {
     private static ManagementService instance = null;
