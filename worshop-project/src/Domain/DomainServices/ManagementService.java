@@ -4,15 +4,33 @@ import java.util.List;
 import java.util.Set;
 
 import Domain.Category;
+import Domain.Founder;
 import Domain.Manager;
 import Domain.Owner;
 import Domain.Permission;
 import Domain.Registered;
 import Domain.Shop;
+import Domain.DTOs.ShopDTO;
+import Domain.DTOs.UserDTO;
 
-public class ManagmentService {
+public class ManagementService {
+    private static ManagementService instance = null;
+    private ManagementService() {
+        // private constructor to prevent instantiation
+    }
+    public static ManagementService getInstance() {
+        if (instance == null) {
+            instance = new ManagementService();
+        }
+        return instance;
+    }
 
-
+    public Shop createShop(int shopId, Registered user, String name, String description) {
+        Shop shop = new Shop(shopId, name, description);
+        user.setRoleToShop(shopId, new Founder(shopId));
+        return shop;
+    }
+    
     public void addOwner(Registered appointer, Shop shop, Registered appointee) {
         Owner owner = new Owner((int)appointer.getUserID(),shop.getId());
         appointer.addAppointment(shop.getId(), (int)appointee.getUserID(), owner);
@@ -94,5 +112,40 @@ public class ManagmentService {
         } else {
             System.out.println("You don't have permission to update item category");
         }
+    }
+    //Not to forget purchase and sale policy
+    public void updateItemDescription(Registered supplyManager, Shop shop, int itemID, String description) {
+        if (supplyManager.hasPermission(shop.getId(), Permission.UPDATE_ITEM_DESCRIPTION)) {
+            shop.updateItemDescription(itemID, description);
+        } else {
+            System.out.println("You don't have permission to update item description");
+        }
+    }
+    
+    public void updatePurchaseType(Registered supplyManager, Shop shop, String purchaseType) {
+        if( supplyManager.hasPermission(shop.getId(), Permission.UPDATE_PURCHASE_POLICY)) {
+            shop.updatePurchaseType(purchaseType);
+        } else {
+            System.out.println("You don't have permission to update purchase type");
+        }
+    }
+
+    public void updateDiscountType(Registered supplyManager, Shop shop, String discountType) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateDiscountType'");
+    }
+
+    public void closeShop(Registered supplyManager, Shop shop) {
+        if (supplyManager.hasPermission(shop.getId(), Permission.CLOSE_SHOP)) {
+            shop.closeShop();
+        } else {
+            System.out.println("You don't have permission to close the shop");
+        }
+    }
+
+    public void getMembersPermissions(Registered supplyManager, Shop s) {
+        // TODO Auto-generated method stub
+        //need to figure out how to get the permissions of the members of the shop
+        throw new UnsupportedOperationException("Unimplemented method 'getMembersPermissions'");
     }
 }
