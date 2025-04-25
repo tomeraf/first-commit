@@ -130,6 +130,11 @@ public class ShoppingCart {
         ShoppingBasket basket = new ShoppingBasket(shopID);
         baskets.add(basket);
     }
+
+    public List<ShoppingBasket> getBaskets()
+    {
+        return baskets;
+    }
 }
 
 
