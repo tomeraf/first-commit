@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.security.Permission;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale.Category;
 
@@ -15,6 +16,7 @@ import org.junit.platform.commons.logging.LoggerFactory;
 import Domain.Guest;
 import Domain.Item;
 import Domain.Registered;
+import Domain.Shop;
 import Domain.ShoppingCart;
 import Domain.Adapters_and_Interfaces.JWTAdapter;
 import Domain.DTOs.ItemDTO;
@@ -137,9 +139,19 @@ public class UserService {
             }
             int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(userID); // Get the guest user by I
-            List<ItemDTO> items = purchaseService.checkCartContent(guest);
+            List<Shop> shops = new ArrayList<>();
+            for (int i = 0; i < guest.getCart().getBaskets().size(); i++) {
+                int shopID = guest.getCart().getBaskets().get(i).getShopID();
+                Shop shop = shopRepository.getShopById(shopID); // Get the shop by ID
+                shops.add(shop); // Add the shop to the list of shops
+            }
+            List<Item> items = purchaseService.checkCartContent(guest, shops);
+            List<ItemDTO> itemDTOs = items.stream()
+                    .map(item -> new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(), item.getId(), item.getQuantity(), item.getRating()))
+                    .toList(); // Convert Item to ItemDTO
+
             logger.info(() -> "All items were listed successfully");
-            return items; // Check the cart content
+            return itemDTOs; // Check the cart content
         } 
         catch (Exception e) {
             logger.error(() -> "Error viewing cart: " + e.getMessage());
@@ -192,7 +204,14 @@ public class UserService {
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-            purchaseService.buyCartContent(guest);
+            List<Shop> shops = new ArrayList<>();
+            for (int i = 0; i < guest.getCart().getBaskets().size(); i++) {
+                int shopID = guest.getCart().getBaskets().get(i).getShopID();
+                Shop shop = shopRepository.getShopById(shopID); // Get the shop by ID
+                shops.add(shop); // Add the shop to the list of shops
+            }
+            
+            purchaseService.buyCartContent(guest, shops); // Buy the cart content
 
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
         } catch (Exception e) {
