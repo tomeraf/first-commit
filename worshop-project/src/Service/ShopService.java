@@ -333,16 +333,20 @@ public class ShopService {
             managementService.closeShop(user, shop);
         }
     }
-    public void getMembersPermissions(String sessionToken, int shopID) {
+    public String getMembersPermissions(String sessionToken, int shopID) {
         if(authenticationAdapter.validateToken(sessionToken)){
             String username=authenticationAdapter.getUsername(sessionToken);
             Registered user=userRepository.getUserByName(username);
             Shop shop=shopRepository.getShopById(shopID);
-            managementService.getMembersPermissions(user, shop);
+            List<Integer> membersIds=managementService.getMembersPermissions(user, shop);
+            StringBuilder permissions = new StringBuilder();
+            for (Integer id : membersIds) {
+                Registered member=userRepository.getUserById(id);
+                permissions.append(member.getPermissions());
+            }
+            return permissions.toString();
         }
     }
-    // 1. missing method to open shop. is it interactionService because of the notification?
     // 2. 3.5 - send message to shop.
     // 3. 4.12 - shopOwner responds to message.
-    // 4. 4.13 - shop owner gets purchase history.
 }
