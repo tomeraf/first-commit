@@ -1,5 +1,14 @@
 {
   "java.project.referencedLibraries": [
     "workshop-project/src/libs/**/*.jar"
-  ]
+  ],
+  "java.project.sourcePaths": [
+    "workshop-project/src/main",
+    "workshop-project/src/Tests"
+  ],
+  "java.import.gradle.enabled": false,
+  "java.import.maven.enabled": false,
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.format.settings.url": ".vscode/formatter.xml",
+  "java.format.settings.profile": "GoogleStyle",
 }
