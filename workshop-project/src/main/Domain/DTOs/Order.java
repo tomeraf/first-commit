@@ -1,31 +1,45 @@
 package Domain.DTOs;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Order {
-    private List<ItemDTO> items;
-    private int totalPrice;
     private int orderID;
+    private String userName;
+    private int totalPrice;
+    private HashMap<Integer, List<ItemDTO>> items; // <Integer, List<ItemDTO> = shopId, List<ItemDTO> = items in the shop
 
-    public Order(List<ItemDTO> items, int totalPrice, int orderID) {
-        this.items = items;
-        this.totalPrice = totalPrice;
+    public Order(int orderID, String userName, int totalPrice, HashMap<Integer, List<ItemDTO>> items) {
         this.orderID = orderID;
+        this.userName = userName;
+        this.totalPrice = totalPrice;
+        this.items = items;
     }
 
     public List<ItemDTO> getItems() {
-        return items;
+        return items.values().stream().flatMap(List::stream).toList(); // Flatten the list of lists into a single list
+    }
+
+    public List<ItemDTO> getShopItems(int shopId) {
+        return items.get(shopId); // Return the list of items for the specified shop ID or null if not found
     }
     
+    public int getId() {
+        return orderID;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
     public String getOrderDetails() {
-        StringBuilder details = new StringBuilder("Order ID: " + orderID + "\n");
-        details.append("Items:\n");
-        for (ItemDTO item : items) {
-            details.append("Item ID: ").append(item.getItemID()).append(", Name: ").append(item.getName())
-                    .append(", Price: ").append(item.getPrice()).append(", Quantity: ").append(item.getQuantity())
-                    .append("\n");
+        StringBuilder details = new StringBuilder("Order ID: " + orderID + "\nUser: " + userName + "\nTotal Price: " + totalPrice + "\nItems:\n");
+        for (int shopId : items.keySet()) {
+            details.append("Shop ID: ").append(shopId).append("\nItems:\n");
+            for (ItemDTO item : items.get(shopId)) {
+                details.append(item.toString()).append("\n");
+            }
         }
-        details.append("Total Price: ").append(totalPrice).append("\n");
         return details.toString();
     }
 }
