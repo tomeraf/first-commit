@@ -7,10 +7,11 @@ import java.util.ArrayList;
 
 import Domain.Category;
 import Domain.DTOs.ItemDTO;
+import Domain.ShoppingBasket;
 
 public class BasketTest {
     
-    private Domain.ShoppingBasket basket;
+    private ShoppingBasket basket;
     private ItemDTO item1;
     private ItemDTO item2;
     private ItemDTO item3;
@@ -25,7 +26,7 @@ public class BasketTest {
         itemNotInBasket = new ItemDTO("Item 4", Category.BEAUTY, 10.0, -1, 104, 5, 4.5);
         
         // Initialize the ShoppingBasket with a shop ID and items
-         basket = new Domain.ShoppingBasket(-1);
+         basket = new ShoppingBasket(-1);
     }
     
     @Test

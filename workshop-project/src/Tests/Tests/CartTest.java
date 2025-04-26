@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import Domain.DTOs.ItemDTO;
+import Domain.Category;
+import Domain.ShoppingBasket;
+import Domain.ShoppingCart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,28 +17,28 @@ import java.util.Map;
 
 public class CartTest {
     
-    private Domain.ShoppingCart cart;
-    private Domain.ShoppingBasket basket1;
-    private Domain.ShoppingBasket basket2;
+    private ShoppingCart cart;
+    private ShoppingBasket basket1;
+    private ShoppingBasket basket2;
     private ItemDTO item1, item2, item3, item4, item5, item6;
     
     @BeforeEach
     public void setUp() {
         // Create ItemDTO objects
-        item1 = new ItemDTO("Item 1", Domain.Category.BEAUTY, 10.0, -1, 101, 5, 4.5);
-        item2 = new ItemDTO("Item 2", Domain.Category.BEAUTY, 10.0, -1, 102, 5, 4.5);
-        item3 = new ItemDTO("Item 3", Domain.Category.BEAUTY, 10.0, -1, 103, 5, 4.5);
-        item4 = new ItemDTO("Item 4", Domain.Category.BEAUTY, 10.0, -2, 201, 5, 4.5);
-        item5 = new ItemDTO("Item 5", Domain.Category.BEAUTY, 10.0, -2, 202, 5, 4.5);
-        item6 = new ItemDTO("Item 6", Domain.Category.BEAUTY, 10.0, -2, 203, 5, 4.5);
+        item1 = new ItemDTO("Item 1", Category.BEAUTY, 10.0, -1, 101, 5, 4.5);
+        item2 = new ItemDTO("Item 2", Category.BEAUTY, 10.0, -1, 102, 5, 4.5);
+        item3 = new ItemDTO("Item 3", Category.BEAUTY, 10.0, -1, 103, 5, 4.5);
+        item4 = new ItemDTO("Item 4", Category.BEAUTY, 10.0, -2, 201, 5, 4.5);
+        item5 = new ItemDTO("Item 5", Category.BEAUTY, 10.0, -2, 202, 5, 4.5);
+        item6 = new ItemDTO("Item 6", Category.BEAUTY, 10.0, -2, 203, 5, 4.5);
         
         // Create ShoppingBasket objects with shopIDs
         // and initialize them with empty item lists
-        basket1 = new Domain.ShoppingBasket(-1);
-        basket2 = new Domain.ShoppingBasket(-2);
+        basket1 = new ShoppingBasket(-1);
+        basket2 = new ShoppingBasket(-2);
 
         // Create a ShoppingCart object with a cartID and a list of baskets
-        cart = new Domain.ShoppingCart(Arrays.asList(basket1, basket2), -1);
+        cart = new ShoppingCart(Arrays.asList(basket1, basket2), -1);
     }
     
 

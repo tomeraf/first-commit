@@ -1,5 +1,5 @@
 {
   "java.project.referencedLibraries": [
-    "worshop-project/libs/**/*.jar"
+    "workshop-project/src/libs/**/*.jar"
   ]
 }

@@ -2,7 +2,6 @@ package Domain;
 
 import java.time.LocalDateTime;
 
-import Domain.DTOs.ShopDTO;
 import Domain.Discount.DiscountPolicy;
 import Domain.Purchase.PurchasePolicy;
 
@@ -12,11 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import Domain.Discount.DiscountPolicy;
 import Domain.Purchase.AuctionPurchase;
 import Domain.Purchase.BidPurchase;
-import Domain.Purchase.PurchasePolicy;
-import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 
 public class Shop {

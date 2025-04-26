@@ -13,7 +13,6 @@ import Domain.Shop;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
-import Domain.DTOs.UserDTO;
 import Domain.DomainServices.ManagementService;
 import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
