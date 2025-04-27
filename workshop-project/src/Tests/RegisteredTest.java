@@ -136,10 +136,4 @@ public class RegisteredTest {
         Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
         assertFalse(user.removeRoleFromShop(SHOP_ID));
     }
-
-    @Test
-    void shouldfail() {
-        assertTrue(false);
-
-    }
 }
