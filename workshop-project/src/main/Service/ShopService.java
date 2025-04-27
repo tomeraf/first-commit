@@ -24,6 +24,7 @@ import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
 import Domain.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class ShopService {
     
@@ -45,6 +46,7 @@ public class ShopService {
         this.orderRepository = orderRepository;
         this.authenticationAdapter = authenticationAdapter;
         this.objectMapper = new ObjectMapper();
+        this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         this.shoppingService = new ShoppingService();
     }
     

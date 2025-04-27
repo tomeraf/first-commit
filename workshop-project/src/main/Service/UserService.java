@@ -122,13 +122,23 @@ public class UserService {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User is not logged in");
             }
-            int idToAssign = userRepository.getIdToAssign();
-            Guest guest = new Guest();
+
+            int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+
+            Guest guest = userRepository.getUserById(userID);
+            // if getUsername() is non-null, they’re already registered
+            if (guest.getUsername() != null) {
+                throw new Exception("Unauthorized register attempt for ID=" + userID);
+            }
+
+            //int idToAssign = userRepository.getIdToAssign();
+            //Guest guest = new Guest();
             
-            guest.setSessionToken(sessionToken); // Set the session token for the guest
-            guest.setCart(new ShoppingCart(idToAssign));
+            //guest.setSessionToken(sessionToken); // Set the session token for the guest
+            //guest.setCart(new ShoppingCart(idToAssign));
             // Stays with same token
             Registered registered = guest.register(username, password, dateOfBirth);
+            userRepository.removeGuestById(userID); // Remove the guest from the repository
             userRepository.saveUser(registered);
         } catch (Exception e) {
             logger.error(() -> "Error registering user: " + e.getMessage());
@@ -155,10 +165,14 @@ public class UserService {
             if (!registered.getPassword().equals(password)) {
                 throw new Exception("Username and password do not match");
             }
-            registered.setSessionToken(sessionToken); // Set the session token for the registered user
+            
+            String newSessionToken = jwtAdapter.generateToken(registered.getUserID()+"");
+            registered.setSessionToken(newSessionToken); // Set the session token for the registered user
+            
             int guestUserID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            String newSessionToken = jwtAdapter.generateToken(guestUserID+"");
-            userRepository.removeGuestById(guestUserID);
+            Guest maybeOld = userRepository.getUserById(guestUserID);
+            if (registered.getUserID() != maybeOld.getUserID())    // only true Guests return null
+                userRepository.removeGuestById(guestUserID);
             
             logger.info(() -> "User logged in successfully with session token: " + sessionToken);
             return newSessionToken;
@@ -180,13 +194,11 @@ public class UserService {
                 throw new Exception("User not logged in");
             }
             int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            
+            System.out.println("User ID: " + userID);
+            
             Guest guest = userRepository.getUserById(userID);
-            List<Shop> shops = new ArrayList<>();
-            for (int i = 0; i < guest.getCart().getBaskets().size(); i++) {
-                int shopID = guest.getCart().getBaskets().get(i).getShopID();
-                Shop shop = shopRepository.getShopById(shopID);
-                shops.add(shop);
-            }
+
             List<ItemDTO> itemDTOs = purchaseService.checkCartContent(guest);
 
             logger.info(() -> "All items were listed successfully");
