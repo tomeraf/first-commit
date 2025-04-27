@@ -1,4 +1,3 @@
-package Tests;
 
 import Domain.*;
 import Domain.Registered;
