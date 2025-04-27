@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import Domain.Adapters_and_Interfaces.IMessage;
+import Domain.Adapters_and_Interfaces.IMessageListener;
 import Domain.DTOs.ItemDTO;
 
-public class Registered extends Guest {
+public class Registered extends Guest implements IMessageListener {
     private Map<Integer, IRole> roleInShops; //<shopID, role>
     private String username;
     private String password;
+    private HashMap<Integer, IMessage> inbox = new HashMap<>();
 
     private LocalDate dateOfBirth;
     
@@ -165,4 +168,10 @@ public class Registered extends Guest {
             return null;
         }
     }
+    @Override  
+    public void acceptMessage(IMessage message) {
+        inbox.put(message.getId(), message);
+        System.out.println("Message received from " + message.getSenderName() + ".");
+    }
+
 }
