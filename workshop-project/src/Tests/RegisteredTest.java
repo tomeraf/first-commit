@@ -141,7 +141,7 @@ public class RegisteredTest {
 
     @Test
     void shouldfail() {
-        assertEquals(1,0);
+        assertTrue(false);
 
     }
 }
