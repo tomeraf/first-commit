@@ -37,7 +37,7 @@ public class ShoppingService {
     // it should be in UserService (by doing IOrderRepository.getOrdersByCustomerId(userId))
 
     public List<Order> shopPurchaseHistory(int ownerId, List<Order> allShopOrders, Shop shop) {
-        if (shop.getOwnerIds().contains(ownerId)) {
+        if (shop.getOwnerIDs().contains(ownerId)) {
             // The user is the owner of the shop, proceed to display the purchase history
             return allShopOrders;
         }
