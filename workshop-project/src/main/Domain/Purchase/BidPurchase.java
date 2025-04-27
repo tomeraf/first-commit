@@ -4,26 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BidPurchase extends Purchase {
-    private int submitterId;
-    private List<Integer> AcceptingMembers;
-    private int rejecterID=-1;
+    private String submitterUsername;
+    private List<String> AcceptingMembers;
+    private String rejecterUsername="";
     private int isAccepted = 0; // 0 = not accepted, 1 = accepted, -1 = rejected
     private int CounterBidID=-1;
 
-    public BidPurchase(int id,double bidAmount, int itemId, int buyerId,int submitterId) {
-        super(id, bidAmount, itemId, buyerId);
-        this.submitterId = submitterId;
+    public BidPurchase(int id,double bidAmount, int itemId, String buyerUsername,String submitterUsername) {
+        super(id, bidAmount, itemId, buyerUsername);
+        this.submitterUsername = submitterUsername;
         this.AcceptingMembers = new ArrayList<>();
-        this.AcceptingMembers.add(submitterId);
+        this.AcceptingMembers.add(submitterUsername);
     }
-    public int getSubmitterId() {
-        return submitterId;
+    public String getSubmitterUsername() {
+        return submitterUsername;
     }
-    public List<Integer> getAcceptingMembers() {
+    public List<String> getAcceptingMembers() {
         return AcceptingMembers;
     }
-    public int getRejecterID() {
-        return rejecterID;
+    public String getRejecterUsername() {
+        return rejecterUsername;
     }
     public boolean isAccepted() {
         return isAccepted==1;
@@ -35,7 +35,7 @@ public class BidPurchase extends Purchase {
             isAccepted = 1;
     }
     */
-    public void rejected(int rejecterID){
+    public void rejected(String rejecterUsername) {
         this.rejecterID = rejecterID;
         isAccepted = -1;
     }
