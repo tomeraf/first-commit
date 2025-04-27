@@ -1,5 +1,7 @@
 package Domain.DomainServices;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import Domain.Category;
@@ -146,9 +148,11 @@ public class ManagementService {
         }
     }
 
-    public void getMembersPermissions(Registered supplyManager, Shop s) {
-        // TODO Auto-generated method stub
-        //need to figure out how to get the permissions of the members of the shop
-        throw new UnsupportedOperationException("Unimplemented method 'getMembersPermissions'");
+    public List<String> getMembersPermissions(Registered supplyManager, Shop shop) {
+        List<String> permissions = new ArrayList<>();
+        if(supplyManager.hasPermission(shop.getId(), Permission.VIEW)){
+            permissions.add(shop.getManagerUserNames());
+            permissions.add(shop.getOwnerUserNames());
+        }
     }
 }
