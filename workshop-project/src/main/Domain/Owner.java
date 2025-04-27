@@ -28,19 +28,9 @@ public class Owner extends IRole {
         //No implementation needed for owner
     }
 
-    
-    public void addAppointment(int nomineeID, IRole role) {
+    @Override    
+    public void addOwner(int nomineeID, IRole role) {
         appointments.put(nomineeID, role);
-    }
-
-    @Override
-    public void removeAppointment(int appointeeID) {
-        if (!appointments.containsKey(appointeeID)) {
-            System.out.println("No appointment found for user ID: " + appointeeID);
-            return;
-        }
-        appointments.get(appointeeID).removeAllAppointments();
-        appointments.remove(appointeeID);
     }
 
     @Override
