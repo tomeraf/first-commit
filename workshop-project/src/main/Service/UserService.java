@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -19,6 +22,7 @@ import Domain.ShoppingCart;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IPayment;
 import Domain.Adapters_and_Interfaces.IShipment;
+import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.JWTAdapter;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
@@ -36,26 +40,23 @@ public class UserService {
     private IAuthentication jwtAdapter;
     private IPayment payment;
     private IShipment shipment;
+    private final ConcurrencyHandler ConcurrencyHandler;
 
     private PurchaseService purchaseService = new PurchaseService();
     ObjectMapper objectMapper = new ObjectMapper();
     
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment shipment) {
+    public UserService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment ishipment, ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
         this.payment = payment;
         this.shipment = shipment;
         this.jwtAdapter = jwtAdapter;
+        this.ConcurrencyHandler = concurrencyHandler;
     }
     
-    /**
-     * Enters the system as a guest, generates a session token, and persists the user.
-     *
-     * @return the newly generated session token for the guest
-     */
     public String enterToSystem() {
         logger.info(() -> "User entered the system");
         int guestUserID = userRepository.getIdToAssign(); // Get a unique ID for the guest user
@@ -68,11 +69,6 @@ public class UserService {
         return sessionToken;
     }
 
-    /**
-     * Exits a guest session by validating and removing the guest from the repository.
-     *
-     * @param sessionToken the token of the guest session to terminate
-     */
     public void exitAsGuest(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
@@ -86,12 +82,7 @@ public class UserService {
         }
     }
 
-    /**
-     * Logs out a registered user, converts back to a guest session, and returns a new token.
-     *
-     * @param sessionToken the current token of the registered user
-     * @return a new session token as a guest, or empty string on failure
-     */
+    // After logout - the user remains in the system, as guest
     public String logoutRegistered(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
@@ -108,15 +99,6 @@ public class UserService {
         }
     }
 
-    /**
-     * Registers a new user using the provided credentials and date of birth.
-     * The guest keeps the same session token and is upgraded to Registered.
-     *
-     * @param sessionToken the current guest session token
-     * @param username desired username
-     * @param password desired password
-     * @param dateOfBirth user's date of birth
-     */
     public void registerUser(String sessionToken, String username, String password, LocalDate dateOfBirth) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
@@ -135,14 +117,7 @@ public class UserService {
         }
     }
 
-    /**
-     * Authenticates and logs in a registered user, issuing a new session token.
-     *
-     * @param sessionToken current guest session token
-     * @param username registered user's username
-     * @param password registered user's password
-     * @return the new session token if login succeeds, or null on failure
-     */
+    // Returns session token
     public String loginUser(String sessionToken, String username, String password) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
@@ -161,36 +136,33 @@ public class UserService {
             userRepository.removeGuestById(guestUserID);
             
             logger.info(() -> "User logged in successfully with session token: " + sessionToken);
-            return newSessionToken;
+            return sessionToken;
         } catch (Exception e) {
             logger.error(() -> "Error logging in user: " + e.getMessage());
             return null;
         }
     }
 
-    /**
-     * Retrieves the contents of the user's shopping cart.
-     *
-     * @param sessionToken current session token
-     * @return list of ItemDTOs in the cart, or null on error
-     */
     public List<ItemDTO> checkCartContent(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(userID);
+            Guest guest = userRepository.getUserById(userID); // Get the guest user by I
             List<Shop> shops = new ArrayList<>();
             for (int i = 0; i < guest.getCart().getBaskets().size(); i++) {
                 int shopID = guest.getCart().getBaskets().get(i).getShopID();
-                Shop shop = shopRepository.getShopById(shopID);
-                shops.add(shop);
+                Shop shop = shopRepository.getShopById(shopID); // Get the shop by ID
+                shops.add(shop); // Add the shop to the list of shops
             }
             List<ItemDTO> itemDTOs = purchaseService.checkCartContent(guest);
+            // List<ItemDTO> itemDTOs = items.stream()
+            //         .map(item -> new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(), item.getId(), item.getQuantity(), item.getRating()))
+            //         .toList(); // Convert Item to ItemDTO
 
             logger.info(() -> "All items were listed successfully");
-            return itemDTOs;
+            return itemDTOs; // Check the cart content
         } 
         catch (Exception e) {
             logger.error(() -> "Error viewing cart: " + e.getMessage());
@@ -198,24 +170,18 @@ public class UserService {
         }
     }
 
-    /**
-     * Adds items to the user's shopping cart.
-     *
-     * @param sessionToken current session token
-     * @param itemDTOs list of items to add
-     */
     public void addItemsToCart(String sessionToken, List<ItemDTO> itemDTOs) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID);
+            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             List<Item> items = itemDTOs.stream()
                     .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
-                    .toList();
+                    .toList(); // Convert ItemDTO to Item
 
-            purchaseService.addItemsToCart(guest, items);
+            purchaseService.addItemsToCart(guest, items); // Add items to the cart
 
             logger.info(() -> "Items added to cart successfully");
         } catch (Exception e) {
@@ -223,24 +189,18 @@ public class UserService {
         }
     }
 
-    /**
-     * Removes items from the user's shopping cart.
-     *
-     * @param sessionToken current session token
-     * @param itemDTOs list of items to remove
-     */
     public void removeItemsFromCart(String sessionToken, List<ItemDTO> itemDTOs) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID); 
+            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             List<Item> items = itemDTOs.stream()
                     .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
-                    .toList(); 
+                    .toList(); // Convert ItemDTO to Item
 
-            purchaseService.removeItemsFromCart(guest, items);
+            purchaseService.removeItemsFromCart(guest, items); // Save the updated cart to the repository
             
             logger.info(() -> "Items removed from cart successfully");
         } catch (Exception e) {
@@ -248,85 +208,96 @@ public class UserService {
         }
     }
 
-    /**
-     * Executes purchase of all items in the cart, creates and records an Order.
-     *
-     * @param sessionToken current session token
-     * @return the created Order, or null on failure
-     */
     public Order buyCartContent(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID); 
+            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             List<Shop> shops = new ArrayList<>();
             for (int i = 0; i < guest.getCart().getBaskets().size(); i++) {
                 int shopID = guest.getCart().getBaskets().get(i).getShopID();
-                Shop shop = shopRepository.getShopById(shopID); 
+                Shop shop = shopRepository.getShopById(shopID); // Get the shop by ID
                 shops.add(shop); // Add the shop to the list of shops
             }
             
-            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment);
-            orderRepository.addOrder(order); 
+            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment); // Buy the cart content
+            orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
-            return order; 
+            return order; // Return the order details
         } catch (Exception e) {
             logger.error(() -> "Error buying cart content: " + e.getMessage());
         }
         return null;
     }
 
-    /**
-     * Submits a bid offer for a specific item.
-     *
-     * @param sessionToken current session token
-     * @param itemID the item to bid on
-     * @param offerPrice the bid amount
-     */
-    public void submitBidOffer(String sessionToken, int itemID, double offerPrice) {
-        try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
-                throw new Exception("User not logged in");
-            }
-            int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-            purchaseService.submitBidOffer(guest, itemID, offerPrice);
+    public void submitBidOffer(String sessionToken, int itemID, double offerPrice, int shopId) {
+        Lock shopRead = ConcurrencyHandler.getShopReadLock(shopId);
+        ReentrantLock itemLock = ConcurrencyHandler.getItemLock(shopId, itemID);
 
-            logger.info(() -> "Bid offer submitted successfully for item ID: " + itemID);
-        } catch (Exception e) {
-            logger.error(() -> "Error submitting bid offer: " + e.getMessage());
+        shopRead.lock();     
+        try {
+            itemLock.lockInterruptibly();
+
+            try {
+                if (!jwtAdapter.validateToken(sessionToken)) {
+                    throw new Exception("User not logged in");
+                }
+                int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+                Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+                purchaseService.submitBidOffer(guest, itemID, offerPrice);
+    
+                logger.info(() -> "Bid offer submitted successfully for item ID: " + itemID);
+            } 
+            catch (Exception e) {
+                logger.error(() -> "Error submitting bid offer: " + e.getMessage());
+            }
+            finally {
+                itemLock.unlock();
+            }
+        } 
+        catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            // handle interruption…
+        } finally {
+            shopRead.unlock();
         }
     }
 
-    /**
-     * Performs a direct purchase of a single item.
-     *
-     * @param sessionToken current session token
-     * @param itemID the item to purchase
-     */
-    public void directPurchase(String sessionToken, int itemID) {
-        try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
-                throw new Exception("User not logged in");
-            }
-            int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-            purchaseService.directPurchase(guest, itemID);
+    public void directPurchase(String sessionToken, int itemID, int shopId) {
+        Lock shopRead = ConcurrencyHandler.getShopReadLock(shopId);
+        ReentrantLock itemLock = ConcurrencyHandler.getItemLock(shopId, itemID);
 
-            logger.info(() -> "Direct purchase completed successfully for item ID: " + itemID);
-        } catch (Exception e) {
-            logger.error(() -> "Error completing direct purchase: " + e.getMessage());
+        shopRead.lock();     
+        try {
+            itemLock.lockInterruptibly();
+        
+            try {
+                if (!jwtAdapter.validateToken(sessionToken)) {
+                    throw new Exception("User not logged in");
+                }
+                int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+                Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+                purchaseService.directPurchase(guest, itemID);
+    
+                logger.info(() -> "Direct purchase completed successfully for item ID: " + itemID);
+            } catch (Exception e) {
+                logger.error(() -> "Error completing direct purchase: " + e.getMessage());
+            }
+            finally {
+                itemLock.unlock();
+            }
+        }
+        
+        catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            // handle interruption…
+        } finally {
+            shopRead.unlock();
         }
     }
 
-    /**
-     * Retrieves the personal order history for the user.
-     *
-     * @param sessionToken current session token
-     * @return list of past Orders, or null on error
-     */
     public List<Order> viewPersonalOrderHistory(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
