@@ -15,6 +15,7 @@ import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
 import Domain.DTOs.UserDTO;
 import Domain.DomainServices.ManagementService;
+import Domain.DomainServices.ShoppingService;
 import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
@@ -27,16 +28,19 @@ public class ShopService {
     private IShopRepository shopRepository;
     private IOrderRepository orderRepository; 
     private ManagementService managementService = ManagementService.getInstance();
+    private ShoppingService shoppingService;
     private IAuthentication authenticationAdapter;
     private int shopIdCounter = 1;
     private ObjectMapper objectMapper;
     
 
-    public ShopService(IUserRepository userRepository, IShopRepository shopRepository, IAuthentication authenticationAdapter) {
+    public ShopService(IUserRepository userRepository, IShopRepository shopRepository,IOrderRepository orderRepository, IAuthentication authenticationAdapter) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
+        this.orderRepository = orderRepository;
         this.authenticationAdapter = authenticationAdapter;
         this.objectMapper = new ObjectMapper();
+        this.shoppingService = new ShoppingService();
     }
     
     public List<ShopDTO> showAllShops() {
@@ -179,9 +183,7 @@ public class ShopService {
             managementService.updateItemDescription(user, shop, itemID, newDescription);
         }
     }
-    //need to implement after the shipping service is implemented
-    /* 
-    public void rateShop(String sessionToken, int shopID, double rating) {
+    public void rateShop(String sessionToken, int shopID, int rating) {
         // If logged in, rate the shop with the provided rating
         if(!authenticationAdapter.validateToken(sessionToken)){
             System.out.println("Please log in or register to add items to the shop.");
@@ -191,20 +193,8 @@ public class ShopService {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
             Registered user = this.userRepository.getUserByName(userName);
             Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByCustomerName(user.getUsername());
-            boolean canRate = false;
-            for (Order order : orders) {
-                List<ItemDTO> items = order.getItems();
-                for(ItemDTO itemDto : items) {
-                    if (itemDto.getShopId() == shopID) {
-                        canRate = true;
-                        break;
-                    }
-                }
-            }
-            if(canRate){
-                shop.updateRating(rating);
-            }   
+            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
+            shoppingService.rateShop(shop,orders ,rating);
         }
     }
 
@@ -239,7 +229,7 @@ public class ShopService {
             }   
         }
     }
-    */
+    
     public void updateDiscountType(String sessionToken, int shopID, String discountType) {
         // Check if the user is logged in
         // If not, prompt to log in or register
