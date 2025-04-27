@@ -331,4 +331,13 @@ public class ShopService {
         return null;
     }
 
+    public void answerBid(String sessionToken,int shopID, int bidID,boolean accept) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            Registered user = (Registered)this.userRepository.getUserById(userID);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.answerBid(user, shop, bidID, accept);
+        }
+    }
+
 }

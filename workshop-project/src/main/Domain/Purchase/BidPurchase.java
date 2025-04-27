@@ -42,6 +42,10 @@ public class BidPurchase extends Purchase {
         }
     }
     public void receiveDecision(int memberId, boolean answer) {
+        if(isAccepted==-1)
+        {
+            throw new IllegalStateException("Bid Purchase has already been rejected by " + rejecterId);
+        }
         if (answer) {
             addAcceptingMember(memberId);
         } else {

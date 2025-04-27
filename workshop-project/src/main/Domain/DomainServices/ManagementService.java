@@ -156,4 +156,11 @@ public class ManagementService {
         }
         return permissions;
     }
+	public void answerBid(Registered user, Shop shop, int bidID, boolean accept) {
+        if (user.hasPermission(shop.getId(), Permission.ANSWER_BID)) {
+            shop.addBidDecision(user.getUserID(),bidID, accept);
+        } else {
+            System.out.println("You don't have permission to answer bids");
+        }
+	}
 }
