@@ -11,9 +11,11 @@ import Domain.DTOs.ItemDTO;
 import Domain.Registered;
 import Domain.Shop;
 import Domain.Adapters_and_Interfaces.IAuthentication;
+import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
 import Domain.DTOs.UserDTO;
+import Domain.DomainServices.InteractionService;
 import Domain.DomainServices.ManagementService;
 import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
@@ -30,6 +32,8 @@ public class ShopService {
     private IAuthentication authenticationAdapter;
     private int shopIdCounter = 1;
     private ObjectMapper objectMapper;
+    private InteractionService interactionService = InteractionService.getInstance();
+    private int messageIdCounter = 1;
     
 
     public ShopService(IUserRepository userRepository, IShopRepository shopRepository, IAuthentication authenticationAdapter) {
@@ -342,8 +346,36 @@ public class ShopService {
             managementService.getMembersPermissions(user, shop);
         }
     }
-    // 1. missing method to open shop. is it interactionService because of the notification?
-    // 2. 3.5 - send message to shop.
-    // 3. 4.12 - shopOwner responds to message.
-    // 4. 4.13 - shop owner gets purchase history.
+    public void sendMessage(String sessionToken, int shopId, String title, String content) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopId);
+            if(user.getRoleInShop(shopId).equals("Owner")){
+                IMessage message = interactionService.createMessage(messageIdCounter, shop.getId(), shop.getName(), shop.getId(), title, content);
+                interactionService.sendMessage(user, message);
+                messageIdCounter++;
+            } 
+            else {
+                System.out.println("You don't have permission to send messages in this shop.");
+            }
+        }
+    }
+
+    public void respondToMessage(String sessionToken, int shopId, int messageId, String title, String content) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopId);
+            IMessage parentMessage = shop.getAllMessages().get(messageId);
+            if(user.getRoleInShop(shopId).equals("Owner")){
+                IMessage responseMessage = interactionService.createMessage(this.messageIdCounter, shop.getId(), shop.getName(), shop.getId(), title, content);
+                interactionService.respondToMessage(parentMessage, responseMessage);
+                messageIdCounter++;
+            } 
+            else {
+                System.out.println("You don't have permission to respond to messages in this shop.");
+            }
+        }
+    }
 }

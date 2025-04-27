@@ -322,6 +322,22 @@ public class Shop implements IMessageListener {
     @Override
     public void acceptMessage(IMessage message) {
         inbox.put(message.getId(), message);
+        System.out.println("Message received from " + message.getSenderName() + ".");
+        //will need to update all owners.
+    }
+
+    public IMessage getMessage(int messageId) {
+        if (inbox.containsKey(messageId)) {
+            return inbox.get(messageId);
+        }
+        else {
+            System.out.println("Message ID does not exist in the inbox.");
+            return null;
+        }
+    }
+
+    public HashMap<Integer, IMessage> getAllMessages() {
+        return inbox;
     }
 }
 

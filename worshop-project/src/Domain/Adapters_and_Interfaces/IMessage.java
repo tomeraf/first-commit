@@ -8,5 +8,10 @@ public interface IMessage {
     void setNext(IMessage next);
     void setPrevious(IMessage previous);
     int getId();
+    int getSenderId();
+    String getSenderName();
+    boolean canSend();
+    int getReceiverId();
+    Object getContent();
 }
 
