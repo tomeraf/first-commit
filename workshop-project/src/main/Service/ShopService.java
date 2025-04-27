@@ -368,6 +368,8 @@ public class ShopService {
             else {
                 System.out.println("You don't have permission to respond to messages in this shop.");
             }
+        }
+    }
 
     public void answerBid(String sessionToken,int shopID, int bidID,boolean accept) {
         if(authenticationAdapter.validateToken(sessionToken)){

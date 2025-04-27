@@ -31,7 +31,6 @@ public class UserService {
     private IShopRepository shopRepository;
     private IOrderRepository orderRepository;
     
-    private ManagementService managmentService = new ManagementService();
     private PurchaseService purchaseService = new PurchaseService();
     ObjectMapper objectMapper = new ObjectMapper();
     
@@ -213,6 +212,7 @@ public class UserService {
         } catch (Exception e) {
             logger.error(() -> "Error buying cart content: " + e.getMessage());
         }
+        return null;
     }
 
     public void submitBidOffer(String sessionToken, int itemID, double offerPrice) {

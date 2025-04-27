@@ -10,7 +10,7 @@ import Domain.Registered;
 
 public class MemoryUserRepository implements IUserRepository {
 
-    private Map<Integer, Guest> users = new HashMap<>(); // Map to store users by ID
+    private Map<Integer, Guest> users = new HashMap<>(); // Map to store users by cartID
 
     private int idCounter = 0; // Unique ID for each user
     private List<Integer> removedIds = new ArrayList<>(); // List of removed IDs
