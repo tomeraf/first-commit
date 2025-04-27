@@ -307,8 +307,7 @@ public class Shop {
     }
 
     public void updatePurchaseType(String purchaseType) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updatePurchaseType'");
+        purchasePolicy.updatePurchaseType(purchaseType);
     }
 
 	public void submitCounterBid(int userID, int bidID, double offerAmount) {

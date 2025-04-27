@@ -68,9 +68,9 @@ public class ManagementService {
         }
     }
     
-    public void addItemToShop(Registered supplyManager, Shop shop, String name, Category category, double price) {
+    public void addItemToShop(Registered supplyManager, Shop shop, String name, Category category, double price, String description) {
         if (supplyManager.hasPermission(shop.getId(), Permission.UPDATE_SUPPLY)){
-            shop.addItem(name, category, price);
+            shop.addItem(name, category, price, description);
         }
         else {
             System.out.println("You don't have permission to add items to the shop");

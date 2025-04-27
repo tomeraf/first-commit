@@ -122,7 +122,7 @@ public class ShopService {
         }
     }
 
-    public void addItemToShop(String sessionToken, int shopID, String itemName, Category category, double itemPrice) {
+    public void addItemToShop(String sessionToken, int shopID, String itemName, Category category, double itemPrice, String description) {
         //need to add the Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, add the item to the shop with the provided details
@@ -134,7 +134,7 @@ public class ShopService {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            this.managementService.addItemToShop(user, shop, itemName, category, itemPrice);
+            this.managementService.addItemToShop(user, shop, itemName, category, itemPrice, description);
         }
     }
     public void removeItemFromShop(String sessionToken, int shopID, int itemID) {
