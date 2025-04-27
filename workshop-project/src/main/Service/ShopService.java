@@ -193,11 +193,11 @@ public class ShopService {
             Registered user = this.userRepository.getUserByName(userName);
             Shop shop = this.shopRepository.getShopById(shopID);
             List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
-            shoppingService.rateShop(shop,orders ,rating);
+            shoppingService.RateShop(shop,orders ,rating);
         }
     }
 
-    public void rateItem(String sessionToken, int itemID, double rating) {
+    public void rateItem(String sessionToken,int shopID, int itemID, int rating) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, rate the item with the provided rating
@@ -208,24 +208,10 @@ public class ShopService {
         else {
             String userName = this.authenticationAdapter.getUsername(sessionToken);
             Registered user = this.userRepository.getUserByName(userName);
-            List<Order> orders = orderRepository.getOrdersByCustomerId(user.g);
-            boolean canRate = false;
-            int shopID = -1;
-            for (Order order : orders) {
-                List<ItemDTO> items = order.getItems();
-                for(ItemDTO itemDto : items){
-                    if (itemDto.getItemID() == itemID) {
-                        canRate = true;
-                        shopID = itemDto.getShopId();
-                        break;
-                    }
-                }
-            }
-            if(canRate){
-                Shop shop = shopRepository.getShopById(shopID);
-                //maybe should add method to shop that rate item instead of using the item directly
-                shop.getItems().get(itemID).updateRating(rating);
-            }   
+            Shop shop = this.shopRepository.getShopById(shopID);
+            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
+            shoppingService.RateItem(shop,itemID,orders, rating);
+            
         }
     }
     
@@ -327,15 +313,14 @@ public class ShopService {
             String username=authenticationAdapter.getUsername(sessionToken);
             Registered user=userRepository.getUserByName(username);
             Shop shop=shopRepository.getShopById(shopID);
-            List<Integer> membersIds=managementService.getMembersPermissions(user, shop);
+            List<String> membersUserName=managementService.getMembersPermissions(user, shop);
             StringBuilder permissions = new StringBuilder();
-            for (Integer id : membersIds) {
-                Registered member=userRepository.getUserById(id);
-                permissions.append(member.getPermissions());
+            for(String name: membersUserName){
+                Registered member=userRepository.getUserByName(name);
+                permissions.append(member.getPermissions(shopID)).append("\n");
             }
             return permissions.toString();
         }
+        return null;
     }
-    // 2. 3.5 - send message to shop.
-    // 3. 4.12 - shopOwner responds to message.
 }
