@@ -68,9 +68,9 @@ public class ManagementService {
         }
     }
     
-    public void addItemToShop(Registered supplyManager, Shop shop, String name, Category category, double price) {
+    public void addItemToShop(Registered supplyManager, Shop shop, String name, Category category, double price, String description) {
         if (supplyManager.hasPermission(shop.getId(), Permission.UPDATE_SUPPLY)){
-            shop.addItem(name, category, price);
+            shop.addItem(name, category, price, description);
         }
         else {
             System.out.println("You don't have permission to add items to the shop");
@@ -155,5 +155,19 @@ public class ManagementService {
             permissions.addAll(shop.getOwnerIDs());
         }
         return permissions;
+    }
+	public void answerBid(Registered user, Shop shop, int bidID, boolean accept) {
+        if (user.hasPermission(shop.getId(), Permission.ANSWER_BID)) {
+            shop.addBidDecision(user.getUserID(),bidID, accept);
+        } else {
+            System.out.println("You don't have permission to answer bids");
+        }
+	}
+    public void submitCounterBid(Registered user, Shop shop, int bidID, double offerAmount) {
+        if (user.hasPermission(shop.getId(), Permission.ANSWER_BID)) {
+            shop.submitCounterBid(user.getUserID(), bidID, offerAmount);
+        } else {
+            System.out.println("You don't have permission to submit counter bids");
+        }
     }
 }

@@ -162,7 +162,7 @@ public class UserService {
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             List<Item> items = itemDTOs.stream()
-                    .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID()))
+                    .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
                     .toList(); // Convert ItemDTO to Item
 
             purchaseService.addItemsToCart(guest, items); // Add items to the cart
@@ -181,7 +181,7 @@ public class UserService {
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             List<Item> items = itemDTOs.stream()
-                    .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID()))
+                    .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
                     .toList(); // Convert ItemDTO to Item
 
             purchaseService.removeItemsFromCart(guest, items); // Save the updated cart to the repository

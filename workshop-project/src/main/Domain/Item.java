@@ -5,17 +5,20 @@ public class Item {
     private Category category;
     private double price;
     private int quantity;
+    private String description;
     private int shopId;
     private int id;
     private double rating;
     private int numOfOrders;
+    
 
-    public Item(String name,Category category, double price, int shopId,int id) {
+    public Item(String name,Category category, double price, int shopId, int id, String description) {
         this.name = name;
         this.category = category;
         this.price = price;
         this.shopId = shopId;
         this.id = id;
+        this.description=description;
         this.quantity = 0;
         this.rating = 0.0;
         this.numOfOrders = 0;
@@ -91,6 +94,12 @@ public class Item {
     }
     public void setCategory(Category category) {
         this.category = category;
+    }
+    public String getDescription(){
+        return description;
+    }
+    public void setDescription(String description){
+        this.description = description;
     }
 
     public String toString() {
