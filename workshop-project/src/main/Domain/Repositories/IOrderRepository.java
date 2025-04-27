@@ -3,6 +3,7 @@ package Domain.Repositories;
 import java.util.HashMap;
 import java.util.List;
 
+import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
 
 public interface IOrderRepository {
@@ -11,5 +12,5 @@ public interface IOrderRepository {
     Order getOrder(int orderId);
     HashMap<Integer,Order> getAllOrders();
     List<Order> getOrdersByUserName(String userName);
-    List<Order> getOrdersByShopId(int shopId);
+    List<ItemDTO> getOrdersByShopId(int shopId);
 }

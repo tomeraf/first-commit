@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
 
 public class MemoryOrderRepository implements IOrderRepository {
@@ -41,11 +42,12 @@ public class MemoryOrderRepository implements IOrderRepository {
     }
 
     @Override
-    public List<Order> getOrdersByShopId(int shopId) {
-        List<Order> orderList = new ArrayList<>();
+    public List<ItemDTO> getOrdersByShopId(int shopId) {
+        List<ItemDTO> orderList = new ArrayList<>();
         for (Order order : orders.values()) {
-            if (order.getShopId() == shopId) {
-                orderList.add(order);
+            List<ItemDTO> items = order.getShopItems(shopId);
+            if (items != null) {
+                orderList.addAll(items);
             }
         }
         return orderList;
