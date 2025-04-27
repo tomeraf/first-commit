@@ -163,4 +163,11 @@ public class ManagementService {
             System.out.println("You don't have permission to answer bids");
         }
 	}
+    public void submitCounterBid(Registered user, Shop shop, int bidID, double offerAmount) {
+        if (user.hasPermission(shop.getId(), Permission.ANSWER_BID)) {
+            shop.submitCounterBid(user.getUserID(), bidID, offerAmount);
+        } else {
+            System.out.println("You don't have permission to submit counter bids");
+        }
+    }
 }

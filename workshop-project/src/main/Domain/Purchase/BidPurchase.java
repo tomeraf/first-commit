@@ -32,7 +32,7 @@ public class BidPurchase extends Purchase {
             isAccepted = 1;
     }
     */
-    public void rejected(int rejecterID) {
+    public void reject(int rejecterID) {
         this.rejecterId = rejecterID;
         isAccepted = -1;
     }
@@ -49,11 +49,19 @@ public class BidPurchase extends Purchase {
         if (answer) {
             addAcceptingMember(memberId);
         } else {
-            rejected(memberId);
+            reject(memberId);
         }
     }
-    public void submitCounterBid(int counterID) {
-        this.CounterBidID = counterID;
+    public BidPurchase submitCounterBid(int submitterId,double offerAmount,int counterID) {
+        if (isAccepted == 1) {
+            throw new IllegalStateException("Bid Purchase has already been accepted.");
+        }
+        if (isAccepted == -1) {
+            throw new IllegalStateException("Bid Purchase has already been rejected by " + rejecterId);
+        }
+        BidPurchase counterBid = new BidPurchase(counterID, offerAmount, getItemId(),getBuyerId(), submitterId);
+        counterBid.setCounterBidID(counterID);
+        return counterBid;
     }
     /* getMembersWithPermission() is a placeholder for the actual implementation of getting members with permission.
     public String showStatus(){
@@ -76,6 +84,9 @@ public class BidPurchase extends Purchase {
         }
     }
     */
+    private void setCounterBidID(int counterID) {
+        this.CounterBidID = counterID;
+    }
 
 
 }

@@ -5,6 +5,7 @@ import Domain.Category;
 public class ItemDTO {
     private String name;
     private Category category;
+    private String description;
     
     // for single item
     private double price;
@@ -16,7 +17,7 @@ public class ItemDTO {
     private int quantity;
     private double rating;
 
-    public ItemDTO(String name,Category category, double price, int shopId, int itemID, int quantity, double rating) {
+    public ItemDTO(String name,Category category, double price, int shopId, int itemID, int quantity, double rating, String description) {
         this.name = name;
         this.category = category;
         this.price = price;
@@ -24,6 +25,7 @@ public class ItemDTO {
         this.itemID = itemID;
         this.quantity = quantity;
         this.rating = rating;
+        this.description = description;
     }
     public String getName() {
         return name;
@@ -45,5 +47,8 @@ public class ItemDTO {
     }
     public double getRating() {
         return rating;
+    }
+    public String getDescription(){
+        return description;
     }
 }

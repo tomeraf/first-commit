@@ -339,5 +339,13 @@ public class ShopService {
             managementService.answerBid(user, shop, bidID, accept);
         }
     }
+    public void submitCounterBid(String sessionToken,int shopID, int bidID,double offerAmount) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            Registered user = (Registered)this.userRepository.getUserById(userID);
+            Shop shop=shopRepository.getShopById(shopID);
+            managementService.submitCounterBid(user, shop, bidID, offerAmount);
+        }
+    }
 
 }

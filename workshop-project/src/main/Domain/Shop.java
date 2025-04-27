@@ -71,13 +71,13 @@ public class Shop {
     public void setDiscountPolicy(DiscountPolicy discountPolicy) { this.discountPolicy = discountPolicy; }
     public void setOpen(boolean isOpen) { this.isOpen = isOpen; }
 
-    public boolean addItem(String name, Category category, double price){
+    public boolean addItem(String name, Category category, double price, String description){
         if (price < 0) {
             System.out.println("Item price cannot be negative.");
             return false;
         } 
         else{
-            Item item = new Item(name, category, price, this.id, counterItemId);
+            Item item = new Item(name, category, price, this.id, counterItemId, description);
             items.put(item.getId(), item);
             counterItemId++; // Increment the item ID counter for the next item
             return true;
@@ -138,6 +138,15 @@ public class Shop {
         if (items.containsKey(itemId)) {
             Item item = items.get(itemId);
             item.setCategory(category);
+        } 
+        else{
+            System.out.println("Item ID does not exist in the shop.");
+        }
+    }
+        public void updateItemDescription(int itemId, String description) {
+        if (items.containsKey(itemId)) {
+            Item item = items.get(itemId);
+            item.setDescription(description);
         } 
         else{
             System.out.println("Item ID does not exist in the shop.");
@@ -297,14 +306,20 @@ public class Shop {
         return filteredItems;
     }
 
-    public void updateItemDescription(int itemID, String description2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateItemDescription'");
-    }
-
     public void updatePurchaseType(String purchaseType) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updatePurchaseType'");
+    }
+
+	public void submitCounterBid(int userID, int bidID, double offerAmount) {
+        if (bidPurchaseItems.containsKey(bidID)) {
+            BidPurchase bidPurchase = bidPurchaseItems.get(bidID);
+            BidPurchase counter= bidPurchase.submitCounterBid(userID,offerAmount,bidPurchaseCounter);
+            bidPurchaseCounter++;
+            bidPurchaseItems.put(counter.getId(), counter);
+        } else {
+            System.out.println("Bid ID does not exist in the shop.");
+        }
     }
 }
 
