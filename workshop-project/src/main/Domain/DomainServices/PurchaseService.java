@@ -20,11 +20,15 @@ public class PurchaseService {
         cart.addItems(convertToItemDTO(items));
     }
 
-    public void removeItemsFromCart(Guest user, Map<Integer, Integer> items)
+    public void removeItemsFromCart(Guest user, List<Item> items)
     {
         // Use case #2.4.b: Delete items from cart
         ShoppingCart cart = user.getCart();
-        cart.deleteItems(items);
+        HashMap<Integer,Integer> itemsMap = new HashMap<>();
+        for (Item item : items)
+            itemsMap.put(item.getId(),item.getShopId());
+
+        cart.deleteItems(itemsMap);
     }
 
     public boolean canPurchaseCart(Guest user,List<Shop> shops) {
@@ -67,7 +71,7 @@ public class PurchaseService {
     public Order buyCartContent(Guest user,List<Shop> shops)
     {
         ShoppingCart cart = user.getCart();
-        int totalCost = 0;
+        double totalCost = 0;
         for (ShoppingBasket basket : cart.getBaskets()) {
             int shopId = basket.getShopID();
             Shop currentShop = null;
@@ -87,7 +91,7 @@ public class PurchaseService {
 
         }
 
-        return new Order(cart.getItems(),totalCost,cart.getCartID()); // orderID???
+        return new Order(cart.getCartID(),user.getUserID(),totalCost,OrderHash(cart)); // orderID???
     }
 
 
@@ -132,5 +136,14 @@ public class PurchaseService {
 
         return items;
     }
+
+    private HashMap<Integer,List<ItemDTO>> OrderHash (ShoppingCart cart){
+        HashMap<Integer,List<ItemDTO>> map = new HashMap<>();
+        for (ShoppingBasket basket: cart.getBaskets())
+            map.put(basket.getShopID(), basket.getItems());
+        return map;
+    }
+
+
 
 }
