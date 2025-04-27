@@ -1,3 +1,5 @@
+package Tests;
+
 import Domain.*;
 import Domain.Registered;
 import org.junit.jupiter.api.Test;
@@ -135,5 +137,11 @@ public class RegisteredTest {
     void testRemoveShopRoleNoRole() {
         Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
         assertFalse(user.removeRoleFromShop(SHOP_ID));
+    }
+
+    @Test
+    void shouldfail() {
+        assertTrue(false);
+
     }
 }
