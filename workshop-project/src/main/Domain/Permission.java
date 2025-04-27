@@ -3,7 +3,6 @@ package Domain;
 public enum Permission {
     FOUNDER,
     OWNER,
-
     UPDATE_ITEM_QUANTITY,
     UPDATE_ITEM_PRICE,
     UPDATE_ITEM_DESCRIPTION,
@@ -14,5 +13,6 @@ public enum Permission {
     UPDATE_SUPPLY,
     UPDATE_ITEM_RATING, 
     APPOINTMENT,
-    CLOSE_SHOP
+    CLOSE_SHOP,
+    ANSWER_BID,
 }

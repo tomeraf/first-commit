@@ -28,6 +28,15 @@ public class PurchasePolicy {
     public void removePurchaseRole(Rule purchaseRule) {
         this.purchaseRules.remove(purchaseRule);
     }
+    public void updatePurchaseType(String purchaseType){
+        PurchaseType type = PurchaseType.fromString(purchaseType);
+        if (this.purchaseTypes.contains(type)) {
+            this.purchaseTypes.remove(type);
+        } else {
+            this.purchaseTypes.add(type);
+        }
+
+    }
     //need to implement to check that a basket is valid for purchase
     
 }

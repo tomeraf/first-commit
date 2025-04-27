@@ -118,7 +118,7 @@ public class PurchaseService {
     private List<ItemDTO> convertToItemDTO(List<Item> items)
     {
         List<ItemDTO> itemDTOs = items.stream()
-                .map(item -> new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(), item.getId(), item.getQuantity(), item.getRating()))
+                .map(item -> new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(), item.getId(), item.getQuantity(), item.getRating(), item.getDescription()))
                 .toList();
 
         return itemDTOs;
@@ -127,7 +127,7 @@ public class PurchaseService {
     private List<Item> convertToItem(List<ItemDTO> itemDTOs)
     {
         List<Item> items = itemDTOs.stream()
-                .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID()))
+                .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
                 .toList();
 
         return items;
