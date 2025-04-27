@@ -14,5 +14,6 @@
  "maven.explorer.enabled": false,
 
  // 3) Stop VS Code from ever trying to update build configs from ANY build tool
- "java.configuration.updateBuildConfiguration": "disabled",
+"java.configuration.updateBuildConfiguration": "disabled",
+"java.debug.settings.onBuildFailureProceed": true,
 }
