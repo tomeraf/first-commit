@@ -318,12 +318,14 @@ public class ShopService {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop=shopRepository.getShopById(shopID);
-            List<String> membersUserName=managementService.getMembersPermissions(user, shop);
+            List<Integer> membersUserIds=managementService.getMembersPermissions(user, shop);
             StringBuilder permissions = new StringBuilder();
-            for(String name: membersUserName){
-                Registered member=userRepository.getUserByName(name);
+            for(int memberId : membersUserIds){
+                Registered member = (Registered)userRepository.getUserById(memberId);
+                permissions.append(member.getUsername()).append(": ");
                 permissions.append(member.getPermissions(shopID)).append("\n");
             }
+
             return permissions.toString();
         }
         return null;

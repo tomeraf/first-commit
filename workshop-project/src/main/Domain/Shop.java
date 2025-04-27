@@ -23,8 +23,8 @@ public class Shop {
     private PurchasePolicy purchasePolicy;
     private DiscountPolicy discountPolicy;
     private HashMap<Integer, Item> items; // itemId -> item
-    private Set<String> ownerUsernames;
-    private Set<String> managerUsernames;
+    private Set<Integer> ownerIDs;
+    private Set<Integer> managerIDs;
     private boolean isOpen;
     private int counterItemId; // Counter for item IDs
     private double rating;
@@ -34,16 +34,16 @@ public class Shop {
     private int bidPurchaseCounter; // Counter for bid purchases
     private int auctionPurchaseCounter; // Counter for auction purchases
 
-    public Shop(int id,String founder, String name, String description) {
+    public Shop(int id,int founderID, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.purchasePolicy = new PurchasePolicy();
         this.discountPolicy = new DiscountPolicy();
         this.items = new HashMap<>();
-        this.ownerUsernames = new HashSet<>();
-        ownerUsernames.add(founder); 
-        this.managerUsernames = new HashSet<>(); 
+        this.ownerIDs = new HashSet<>();
+        this.managerIDs = new HashSet<>();
+        ownerIDs.add(founderID); // Add the founder as an owner
         this.isOpen = false;
         this.counterItemId = 1; // Initialize the item ID counter
         this.rating = 0.0;
@@ -61,8 +61,8 @@ public class Shop {
     public PurchasePolicy getPurchasePolicy() { return purchasePolicy; }
     public DiscountPolicy getDiscountPolicy() { return discountPolicy; }
     public HashMap<Integer, Item> getItems() { return items; }
-    public Set<String> getOwnerUsernames() { return ownerUsernames; }
-    public Set<String> getManagerUsernames() { return managerUsernames; }
+    public Set<Integer> getOwnerIDs() { return ownerIDs; }
+    public Set<Integer> getManagerIDs() { return managerIDs; }
     public double getRating() { return rating; }
 
     public void setName(String name) { this.name = name; }
@@ -241,45 +241,46 @@ public class Shop {
         }
     }
 
-    public void addOwner(String ownerUsername) {
-        if (!ownerUsername.contains(ownerUsername)) {
-            ownerUsernames.add(ownerUsername);
-        } else {
+    public void addOwner(int ownerID) {
+        if (!ownerIDs.contains(ownerID)) {
+            ownerIDs.add(ownerID);
+        }
+        else {
             System.out.println("Owner ID already exists in the shop.");
         }
     }
 
-    public void removeOwner(String ownerUsername) {
-        if (ownerUsername.contains(ownerUsername)) {
-            ownerUsernames.remove(ownerUsername);
+    public void removeOwner(int ownerID) {
+        if (ownerIDs.contains(ownerID)) {
+            ownerIDs.remove(ownerID);
         } else {
             System.out.println("Owner ID does not exist in the shop.");
         }
     }
 
-    public void addManager(String managerUsername) {
-        if (!managerUsernames.contains(managerUsername)) {
-            managerUsernames.add(managerUsername);
+    public void addManager(int managerID) {
+        if (!managerIDs.contains(managerID)) {
+            managerIDs.add(managerID);
         } else {
             System.out.println("Manager ID already exists in the shop.");
         }
     }
 
-    public void removeManager(String managerUsername) {
-        if (managerUsernames.contains(managerUsername)) {
-            managerUsernames.remove(managerUsername);
+    public void removeManager(int managerID) {
+        if (managerIDs.contains(managerID)) {
+            managerIDs.remove(managerID);
         } else {
             System.out.println("Manager ID does not exist in the shop.");
         }
     }
 
-    public void addBidDecision(String ownerUsername, int bidId, boolean decision) {
+    public void addBidDecision(int memberId, int bidId, boolean decision) {
         if(!bidPurchaseItems.containsKey(bidId)) {
             System.out.println("Bid ID does not exist in the shop.");
         } 
         else {
             BidPurchase bidPurchase = bidPurchaseItems.get(bidId);
-            bidPurchase.receiveDecision(ownerUsername, decision);
+            bidPurchase.receiveDecision(memberId, decision);
         }
     }
 

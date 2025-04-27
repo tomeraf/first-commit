@@ -4,13 +4,13 @@ public abstract class Purchase {
     private int id;
     private double amount;
     private int itemId;
-    private String buyerUsername;
+    private int buyerId;
 
-    public Purchase(int id,double amount, int itemId, String buyerUsername) {
+    public Purchase(int id,double amount, int itemId, int buyerId) {
         this.id = id;
         this.amount = amount;
         this.itemId = itemId;
-        this.buyerUsername = buyerUsername;
+        this.buyerId = buyerId;
     }
     public int getId() {
         return id;
@@ -21,11 +21,11 @@ public abstract class Purchase {
     public int getItemId() {
         return itemId;
     }
-    public String getBuyerUsername() {
-        return buyerUsername;
+    public int getBuyerId() {
+        return buyerId;
     }
-    public void setBuyerUserName(String buyerUsername) {
-        this.buyerUsername = buyerUsername;
+    public void setBuyerId(int buyerId) {
+        this.buyerId = buyerId;
     }
 
 
