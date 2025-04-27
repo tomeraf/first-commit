@@ -31,23 +31,6 @@ public class Manager extends IRole {
         }
     }
 
-    public void addAppointment(int nomineeID, IRole role) {
-        if (this.permission.contains(Permission.APPOINTMENT)) {
-            appointments.put(nomineeID, role);
-        } else {
-            System.out.println("No permission to add appointment");
-        }
-    }
-
-    @Override
-    public void removeAppointment(int appointeeID) {
-        if (!appointments.containsKey(appointeeID)) {
-            System.out.println("No appointment found for user ID: " + appointeeID);
-            return;
-        }
-        appointments.get(appointeeID).removeAllAppointments();
-    }
-
     @Override
     public Map<Integer, IRole> getAppointments() {
         // no implementation needed for manager

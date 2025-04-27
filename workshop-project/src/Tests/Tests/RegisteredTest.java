@@ -57,7 +57,7 @@ public class RegisteredTest {
         appointer.setRoleToShop(SHOP_ID, owner);
 
         Manager appointeeRole = new Manager(APPOINTEE_ID, SHOP_ID, new HashSet<>());
-        assertTrue(appointer.addAppointment(SHOP_ID, APPOINTEE_ID, appointeeRole));
+        assertTrue(appointer.addManager(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
         Map<Integer, IRole> apps = appointer.getAppointments(SHOP_ID);
         assertNotNull(apps);
@@ -81,7 +81,7 @@ public class RegisteredTest {
         Registered appointee = alice;
         Manager appointeeRole = new Manager(APPOINTEE_ID, SHOP_ID, new HashSet<>());
         
-        assertFalse(appointer.addAppointment(SHOP_ID, APPOINTEE_ID, appointeeRole));
+        assertFalse(appointer.addManager(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
         assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());             // no appointments recorded
         assertEquals(-1, appointee.getAppointer(SHOP_ID));         // no appointer
@@ -93,8 +93,10 @@ public class RegisteredTest {
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         appointer.setRoleToShop(SHOP_ID, owner);
 
+
         Owner appointeeRole = new Owner(APPOINTER_ID, SHOP_ID);
-        assertTrue(appointer.addAppointment(SHOP_ID, APPOINTEE_ID, appointeeRole));
+        new Registered("alice", "eve", LocalDate.of(2000, 1, 1)).setRoleToShop(SHOP_ID, appointeeRole);
+        assertTrue(appointer.addOwner(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
         assertTrue(appointer.removeAppointment(SHOP_ID, APPOINTEE_ID));
         assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());
@@ -127,13 +129,13 @@ public class RegisteredTest {
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         user.setRoleToShop(SHOP_ID, owner);
 
-        assertTrue(user.removeShopRole(SHOP_ID));
+        assertTrue(user.removeRoleFromShop(SHOP_ID));
         assertNull(user.getRoleInShop(SHOP_ID));
     }
 
     @Test
     void testRemoveShopRoleNoRole() {
         Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
-        assertFalse(user.removeShopRole(SHOP_ID));
+        assertFalse(user.removeRoleFromShop(SHOP_ID));
     }
 }

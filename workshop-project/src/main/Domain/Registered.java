@@ -50,8 +50,18 @@ public class Registered extends Guest {
         return true;
     }
     public void setRoleToShop(int shopID, IRole newRole) {
+        newRole.setUser(this);
         this.roleInShops.put(shopID, newRole);
     }
+    public boolean removeRoleFromShop(int shopID) {
+        if (!roleInShops.containsKey(shopID)) {
+            System.out.println("No role found for shop ID: " + shopID);
+            return false;
+        }
+        roleInShops.remove(shopID);
+        return true;
+    }
+    
     public boolean hasPermission(int shopID, Permission permission) {
         if(roleInShops.containsKey(shopID)) {
             return roleInShops.get(shopID).hasPermission(permission);
@@ -79,7 +89,7 @@ public class Registered extends Guest {
     }
 
     // As and owner or manager
-    public boolean addAppointment(int shopID, int nomineeID, IRole nominee) {
+    public boolean addManager(int shopID, int nomineeID, Manager nominee) {
         if (!roleInShops.containsKey(shopID)) {
             System.out.println("No role found for shop ID: " + shopID);
             return false;
@@ -88,7 +98,20 @@ public class Registered extends Guest {
             System.out.println("No permission to add appointment in shop ID: " + shopID);
             return false;
         }
-        roleInShops.get(shopID).addAppointment(nomineeID, nominee);      
+        roleInShops.get(shopID).addManager(nomineeID, nominee);      
+        return true;      
+    }
+
+    public boolean addOwner(int shopID, int nomineeID, Owner nominee) {
+        if (!roleInShops.containsKey(shopID)) {
+            System.out.println("No role found for shop ID: " + shopID);
+            return false;
+        }
+        if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
+            System.out.println("No permission to add appointment in shop ID: " + shopID);
+            return false;
+        }
+        roleInShops.get(shopID).addOwner(nomineeID, nominee);      
         return true;      
     }
     
@@ -133,15 +156,7 @@ public class Registered extends Guest {
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
-    public boolean removeShopRole(int shopID) {
-        if (!roleInShops.containsKey(shopID)) {
-            System.out.println("No role found for shop ID: " + shopID);
-            return false;
-        }
-        roleInShops.get(shopID).removeAppointment((int)this.getUserID());
-        roleInShops.remove(shopID);
-        return true;
-    }
+    
     public String getPermissions(int shopID) {
         if(roleInShops.containsKey(shopID)) {
             return roleInShops.get(shopID).getPermissionsString();

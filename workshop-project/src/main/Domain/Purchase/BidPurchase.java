@@ -6,24 +6,21 @@ import java.util.List;
 public class BidPurchase extends Purchase {
     private int submitterId;
     private List<Integer> AcceptingMembers;
-    private int rejecterID=-1;
+    private int rejecterId=-1;
     private int isAccepted = 0; // 0 = not accepted, 1 = accepted, -1 = rejected
     private int CounterBidID=-1;
 
-    public BidPurchase(int id,double bidAmount, int itemId, int buyerId,int submitterId) {
-        super(id, bidAmount, itemId, buyerId);
-        this.submitterId = submitterId;
+    public BidPurchase(int id,double bidAmount, int itemId, int buyerID,int submitterID) {
+        super(id, bidAmount, itemId, buyerID);
+        this.submitterId = submitterID;
         this.AcceptingMembers = new ArrayList<>();
-        this.AcceptingMembers.add(submitterId);
-    }
-    public int getSubmitterId() {
-        return submitterId;
+        this.AcceptingMembers.add(submitterID);
     }
     public List<Integer> getAcceptingMembers() {
         return AcceptingMembers;
     }
-    public int getRejecterID() {
-        return rejecterID;
+    public int getRejecterId() {
+        return rejecterId;
     }
     public boolean isAccepted() {
         return isAccepted==1;
@@ -35,8 +32,8 @@ public class BidPurchase extends Purchase {
             isAccepted = 1;
     }
     */
-    public void rejected(int rejecterID){
-        this.rejecterID = rejecterID;
+    public void rejected(int rejecterID) {
+        this.rejecterId = rejecterID;
         isAccepted = -1;
     }
     public void addAcceptingMember(int memberId) {

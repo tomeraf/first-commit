@@ -140,10 +140,10 @@ public class UserService {
                 Shop shop = shopRepository.getShopById(shopID); // Get the shop by ID
                 shops.add(shop); // Add the shop to the list of shops
             }
-            List<Item> items = purchaseService.checkCartContent(guest, shops);
-            List<ItemDTO> itemDTOs = items.stream()
-                    .map(item -> new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(), item.getId(), item.getQuantity(), item.getRating()))
-                    .toList(); // Convert Item to ItemDTO
+            List<ItemDTO> itemDTOs = purchaseService.checkCartContent(guest);
+            // List<ItemDTO> itemDTOs = items.stream()
+            //         .map(item -> new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(), item.getId(), item.getQuantity(), item.getRating()))
+            //         .toList(); // Convert Item to ItemDTO
 
             logger.info(() -> "All items were listed successfully");
             return itemDTOs; // Check the cart content
@@ -192,7 +192,7 @@ public class UserService {
         }
     }
 
-    public void buyCartContent(String sessionToken) {
+    public Order buyCartContent(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -206,9 +206,10 @@ public class UserService {
                 shops.add(shop); // Add the shop to the list of shops
             }
             
-            purchaseService.buyCartContent(guest, shops); // Buy the cart content
-
+            Order order = purchaseService.buyCartContent(guest, shops); // Buy the cart content
+            orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
+            return order; // Return the order details
         } catch (Exception e) {
             logger.error(() -> "Error buying cart content: " + e.getMessage());
         }

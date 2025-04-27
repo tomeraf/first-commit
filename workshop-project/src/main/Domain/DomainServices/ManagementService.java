@@ -1,5 +1,7 @@
 package Domain.DomainServices;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import Domain.Category;
@@ -23,25 +25,31 @@ public class ManagementService {
     }
 
     public Shop createShop(int shopId, Registered user, String name, String description) {
-        Shop shop = new Shop(shopId, name, description);
+        Shop shop = new Shop(shopId,user.getUserID(), name, description);
         user.setRoleToShop(shopId, new Founder(shopId));
         return shop;
     }
     
     public void addOwner(Registered appointer, Shop shop, Registered appointee) {
-        Owner owner = new Owner((int)appointer.getUserID(),shop.getId());
-        appointer.addAppointment(shop.getId(), (int)appointee.getUserID(), owner);
+        Owner owner = new Owner(appointer.getUserID(),shop.getId());
+        if (shop.getOwnerIDs().contains(appointee.getUserID())) {
+            System.out.println("User is already an owner of the shop");
+            return;
+        }
+        appointer.addOwner(shop.getId(), (int)appointee.getUserID(), owner);
         appointee.setRoleToShop(shop.getId(), owner);
     }
 
     public void removeAppointment(Registered appointer, Shop shop, Registered userToRemove) {
-        appointer.removeAppointment(shop.getId(), (int)userToRemove.getUserID());
-        userToRemove.removeShopRole(shop.getId());
-
+        appointer.removeAppointment(shop.getId(), userToRemove.getUserID());
     }
     public void addManager(Registered appointer, Shop shop, Registered appointee, Set<Permission> permission) {
-        Manager manager = new Manager((int)appointer.getUserID(),shop.getId(), permission);
-        appointer.addAppointment(shop.getId(), (int)appointee.getUserID(), manager);
+        Manager manager = new Manager(appointer.getUserID(),shop.getId(), permission);
+        if (shop.getManagerIDs().contains(appointee.getUserID())) {
+            System.out.println("User is already a manager of the shop");
+            return;
+        }
+        appointer.addManager(shop.getId(), appointee.getUserID(), manager);
         appointee.setRoleToShop(shop.getId(), manager);   
     }
 
@@ -140,9 +148,12 @@ public class ManagementService {
         }
     }
 
-    public void getMembersPermissions(Registered supplyManager, Shop s) {
-        // TODO Auto-generated method stub
-        //need to figure out how to get the permissions of the members of the shop
-        throw new UnsupportedOperationException("Unimplemented method 'getMembersPermissions'");
+    public List<Integer> getMembersPermissions(Registered supplyManager, Shop shop) {
+        List<Integer> permissions = new ArrayList<>();
+        if(supplyManager.hasPermission(shop.getId(), Permission.VIEW)){
+            permissions.addAll(shop.getManagerIDs());
+            permissions.addAll(shop.getOwnerIDs());
+        }
+        return permissions;
     }
 }

@@ -23,8 +23,8 @@ public class Shop {
     private PurchasePolicy purchasePolicy;
     private DiscountPolicy discountPolicy;
     private HashMap<Integer, Item> items; // itemId -> item
-    private Set<Integer> ownerIds;
-    private Set<Integer> managerIds;
+    private Set<Integer> ownerIDs;
+    private Set<Integer> managerIDs;
     private boolean isOpen;
     private int counterItemId; // Counter for item IDs
     private double rating;
@@ -34,18 +34,16 @@ public class Shop {
     private int bidPurchaseCounter; // Counter for bid purchases
     private int auctionPurchaseCounter; // Counter for auction purchases
 
-    public Shop(int id, String name, String description) {
+    public Shop(int id,int founderID, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.purchasePolicy = new PurchasePolicy();
         this.discountPolicy = new DiscountPolicy();
         this.items = new HashMap<>();
-        this.ownerIds = new HashSet<>();
-        /////////
-        /// TODO: add ownerId to the set of owners
-        /////////
-        this.managerIds = new HashSet<>(); 
+        this.ownerIDs = new HashSet<>();
+        this.managerIDs = new HashSet<>();
+        ownerIDs.add(founderID); // Add the founder as an owner
         this.isOpen = false;
         this.counterItemId = 1; // Initialize the item ID counter
         this.rating = 0.0;
@@ -63,8 +61,8 @@ public class Shop {
     public PurchasePolicy getPurchasePolicy() { return purchasePolicy; }
     public DiscountPolicy getDiscountPolicy() { return discountPolicy; }
     public HashMap<Integer, Item> getItems() { return items; }
-    public Set<Integer> getOwnerIds() { return ownerIds; }
-    public Set<Integer> getManagerIds() { return managerIds; }
+    public Set<Integer> getOwnerIDs() { return ownerIDs; }
+    public Set<Integer> getManagerIDs() { return managerIDs; }
     public double getRating() { return rating; }
 
     public void setName(String name) { this.name = name; }
@@ -217,7 +215,6 @@ public class Shop {
         }
     }
 
-// not sure if needed - need to check
     public void addBidPurchase(int itemId, double bidAmount, int buyerId) {  
         if (items.containsKey(itemId)) {
             BidPurchase bidPurchase = new BidPurchase(bidPurchaseCounter, bidAmount, itemId, buyerId, buyerId);
@@ -227,8 +224,6 @@ public class Shop {
             System.out.println("Item ID does not exist in the shop.");
         }
     }
-
-// not sure if needed - need to check
     public void addAuctionPurchase(int itemId, double startingAmount, LocalDateTime startTime, LocalDateTime endTime){
         if (items.containsKey(itemId) && items.get(itemId).getQuantity() > 0) {
             AuctionPurchase auctionPurchase = new AuctionPurchase(auctionPurchaseCounter, startingAmount, itemId, startTime, endTime);
@@ -243,45 +238,46 @@ public class Shop {
         }
     }
 
-    public void addOwner(int ownerId) {
-        if (!ownerIds.contains(ownerId)) {
-            ownerIds.add(ownerId);
-        } else {
+    public void addOwner(int ownerID) {
+        if (!ownerIDs.contains(ownerID)) {
+            ownerIDs.add(ownerID);
+        }
+        else {
             System.out.println("Owner ID already exists in the shop.");
         }
     }
 
-    public void removeOwner(int ownerId) {
-        if (ownerIds.contains(ownerId)) {
-            ownerIds.remove(ownerId);
+    public void removeOwner(int ownerID) {
+        if (ownerIDs.contains(ownerID)) {
+            ownerIDs.remove(ownerID);
         } else {
             System.out.println("Owner ID does not exist in the shop.");
         }
     }
 
-    public void addManager(int managerId) {
-        if (!managerIds.contains(managerId)) {
-            managerIds.add(managerId);
+    public void addManager(int managerID) {
+        if (!managerIDs.contains(managerID)) {
+            managerIDs.add(managerID);
         } else {
             System.out.println("Manager ID already exists in the shop.");
         }
     }
 
-    public void removeManager(int managerId) {
-        if (managerIds.contains(managerId)) {
-            managerIds.remove(managerId);
+    public void removeManager(int managerID) {
+        if (managerIDs.contains(managerID)) {
+            managerIDs.remove(managerID);
         } else {
             System.out.println("Manager ID does not exist in the shop.");
         }
     }
 
-    public void addBidDecision(int ownerId, int bidId, boolean decision) {
+    public void addBidDecision(int memberId, int bidId, boolean decision) {
         if(!bidPurchaseItems.containsKey(bidId)) {
             System.out.println("Bid ID does not exist in the shop.");
         } 
         else {
             BidPurchase bidPurchase = bidPurchaseItems.get(bidId);
-            bidPurchase.receiveDecision(ownerId, decision);
+            bidPurchase.receiveDecision(memberId, decision);
         }
     }
 
