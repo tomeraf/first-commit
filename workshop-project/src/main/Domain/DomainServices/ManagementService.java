@@ -32,7 +32,7 @@ public class ManagementService {
     
     public void addOwner(Registered appointer, Shop shop, Registered appointee) {
         Owner owner = new Owner(appointer.getUserID(),shop.getId());
-        if (shop.getOwnerIds().contains(appointee.getUserID())) {
+        if (shop.getOwnerUsernames().contains(appointee.getUsername())) {
             System.out.println("User is already an owner of the shop");
             return;
         }
@@ -45,7 +45,7 @@ public class ManagementService {
     }
     public void addManager(Registered appointer, Shop shop, Registered appointee, Set<Permission> permission) {
         Manager manager = new Manager(appointer.getUserID(),shop.getId(), permission);
-        if (shop.getManagerIds().contains(appointee.getUserID())) {
+        if (shop.getManagerUsernames().contains(appointee.getUsername())) {
             System.out.println("User is already a manager of the shop");
             return;
         }
@@ -151,8 +151,8 @@ public class ManagementService {
     public List<String> getMembersPermissions(Registered supplyManager, Shop shop) {
         List<String> permissions = new ArrayList<>();
         if(supplyManager.hasPermission(shop.getId(), Permission.VIEW)){
-            permissions.addAll(shop.getManagerUserNames());
-            permissions.addAll(shop.getOwnerUserNames());
+            permissions.addAll(shop.getManagerUsernames());
+            permissions.addAll(shop.getOwnerUsernames());
         }
         return permissions;
     }

@@ -61,8 +61,8 @@ public class Shop {
     public PurchasePolicy getPurchasePolicy() { return purchasePolicy; }
     public DiscountPolicy getDiscountPolicy() { return discountPolicy; }
     public HashMap<Integer, Item> getItems() { return items; }
-    public Set<String> getownerUsername() { return ownerUsernames; }
-    public Set<String> getmanagerUsernames() { return managerUsernames; }
+    public Set<String> getOwnerUsernames() { return ownerUsernames; }
+    public Set<String> getManagerUsernames() { return managerUsernames; }
     public double getRating() { return rating; }
 
     public void setName(String name) { this.name = name; }
