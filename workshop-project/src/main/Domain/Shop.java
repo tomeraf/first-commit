@@ -221,14 +221,18 @@ public class Shop implements IMessageListener {
         return result;
     }
 
-    public void purchaseBasket(HashMap <Integer, Integer> itemsToPurchase){ //will need to be synchronized later on
+    public double purchaseBasket(HashMap <Integer, Integer> itemsToPurchase){ //will need to be synchronized later on
         List<Item> allItems = new ArrayList<Item>();
         for(Integer itemId: itemsToPurchase.keySet()){
             allItems.add(items.get(itemId)); 
         }
+        double totalPrice;
         for(Item item: allItems){
-            item.buyItem(itemsToPurchase.get(item.getId())); 
+            item.buyItem(itemsToPurchase.get(item.getId()));
+            totalPrice = totalPrice + item.getPrice() * itemsToPurchase.get(item.getId()); 
+            //will need to check the discount policy
         }
+        return totalPrice; 
     }
 
     public void addBidPurchase(int itemId, double bidAmount, int buyerId) {  
