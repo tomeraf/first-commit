@@ -4,11 +4,15 @@
   ],
   "java.project.sourcePaths": [
     "workshop-project/src/main",
-    "workshop-project/src/Tests"
+    "workshop-project/src/Tests",
+    "workshop-project/src"
   ],
-  "java.import.gradle.enabled": false,
-  "java.import.maven.enabled": false,
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "java.format.settings.url": ".vscode/formatter.xml",
-  "java.format.settings.profile": "GoogleStyle",
+ // 1) Turn off VS Code’s built-in Maven importer
+ "java.import.maven.enabled": false,
+
+ // 2) Turn off the “Maven for Java” extension’s explorer
+ "maven.explorer.enabled": false,
+
+ // 3) Stop VS Code from ever trying to update build configs from ANY build tool
+ "java.configuration.updateBuildConfiguration": "disabled",
 }

@@ -29,19 +29,25 @@ public class ManagementService {
     }
     
     public void addOwner(Registered appointer, Shop shop, Registered appointee) {
-        Owner owner = new Owner((int)appointer.getUserID(),shop.getId());
-        appointer.addAppointment(shop.getId(), (int)appointee.getUserID(), owner);
+        Owner owner = new Owner(appointer.getUserID(),shop.getId());
+        if (shop.getOwnerIds().contains(appointee.getUserID())) {
+            System.out.println("User is already an owner of the shop");
+            return;
+        }
+        appointer.addOwner(shop.getId(), (int)appointee.getUserID(), owner);
         appointee.setRoleToShop(shop.getId(), owner);
     }
 
     public void removeAppointment(Registered appointer, Shop shop, Registered userToRemove) {
-        appointer.removeAppointment(shop.getId(), (int)userToRemove.getUserID());
-        userToRemove.removeShopRole(shop.getId());
-
+        appointer.removeAppointment(shop.getId(), userToRemove.getUserID());
     }
     public void addManager(Registered appointer, Shop shop, Registered appointee, Set<Permission> permission) {
-        Manager manager = new Manager((int)appointer.getUserID(),shop.getId(), permission);
-        appointer.addAppointment(shop.getId(), (int)appointee.getUserID(), manager);
+        Manager manager = new Manager(appointer.getUserID(),shop.getId(), permission);
+        if (shop.getManagerIds().contains(appointee.getUserID())) {
+            System.out.println("User is already a manager of the shop");
+            return;
+        }
+        appointer.addManager(shop.getId(), appointee.getUserID(), manager);
         appointee.setRoleToShop(shop.getId(), manager);   
     }
 
