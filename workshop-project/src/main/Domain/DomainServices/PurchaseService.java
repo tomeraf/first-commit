@@ -102,9 +102,14 @@ public class PurchaseService {
             System.out.println("Error: payment not valid.");
             return null;
         }
+        String userName = "guest";
+        if(user instanceof Registered)
+        {
+            userName = ((Registered)user).getUsername();
 
+        }
 
-        return new Order(cart.getCartID(),user.getUserID(),totalCost,OrderHash(cart)); // orderID???
+        return new Order(cart.getCartID(),userName,totalCost,OrderHash(cart)); // orderID???
     }
 
 
