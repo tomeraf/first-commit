@@ -1,10 +1,9 @@
 package Tests;
 
-import Domain.Registered;
+import Domain.*;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.*;
-import Domain.Guest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
