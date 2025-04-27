@@ -226,7 +226,7 @@ public class Shop implements IMessageListener {
         for(Integer itemId: itemsToPurchase.keySet()){
             allItems.add(items.get(itemId)); 
         }
-        double totalPrice;
+        double totalPrice =0;
         for(Item item: allItems){
             item.buyItem(itemsToPurchase.get(item.getId()));
             totalPrice = totalPrice + item.getPrice() * itemsToPurchase.get(item.getId()); 
