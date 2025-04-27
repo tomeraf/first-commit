@@ -19,6 +19,9 @@ import Domain.Item;
 import Domain.Registered;
 import Domain.Shop;
 import Domain.ShoppingCart;
+import Domain.Adapters_and_Interfaces.IAuthentication;
+import Domain.Adapters_and_Interfaces.IPayment;
+import Domain.Adapters_and_Interfaces.IShipment;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.JWTAdapter;
 import Domain.DTOs.ItemDTO;
@@ -30,21 +33,27 @@ import Domain.Repositories.IUserRepository;
 
 public class UserService {
 
-    private JWTAdapter jwtAdapter = new JWTAdapter();
+    //private JWTAdapter jwtAdapter = new JWTAdapter();
     private IUserRepository userRepository;
     private IShopRepository shopRepository;
     private IOrderRepository orderRepository;
+    private IAuthentication jwtAdapter;
+    private IPayment payment;
+    private IShipment shipment;
     private final ConcurrencyHandler ConcurrencyHandler;
-    
+
     private PurchaseService purchaseService = new PurchaseService();
     ObjectMapper objectMapper = new ObjectMapper();
     
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, ConcurrencyHandler concurrencyHandler) {
+    public UserService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment ishipment, ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
+        this.payment = payment;
+        this.shipment = shipment;
+        this.jwtAdapter = jwtAdapter;
         this.ConcurrencyHandler = concurrencyHandler;
     }
     
@@ -213,7 +222,7 @@ public class UserService {
                 shops.add(shop); // Add the shop to the list of shops
             }
             
-            Order order = purchaseService.buyCartContent(guest, shops); // Buy the cart content
+            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment); // Buy the cart content
             orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
             return order; // Return the order details
@@ -289,7 +298,7 @@ public class UserService {
         }
     }
 
-    public List<Order> viewPersonalSearchHistory(String sessionToken) {
+    public List<Order> viewPersonalOrderHistory(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
