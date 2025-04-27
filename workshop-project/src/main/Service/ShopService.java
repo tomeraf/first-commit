@@ -15,7 +15,6 @@ import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
 
-import Domain.DTOs.UserDTO;
 import Domain.DomainServices.InteractionService;
 
 import Domain.DomainServices.ManagementService;
@@ -106,7 +105,7 @@ public class ShopService {
         return itemDTOs;
     }
 
-    public Shop createShop(String sessionToken, String name, String description) {
+    public ShopDTO createShop(String sessionToken, String name, String description) {
         if(!authenticationAdapter.validateToken(sessionToken)){
             System.out.println("Please log in or register to add items to the shop.");
             throw new RuntimeException("Please login.");
@@ -114,7 +113,9 @@ public class ShopService {
         int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
         Shop shop = managementService.createShop(shopRepository.getAllShops().size(),(Registered)userRepository.getUserById(userID), name, description);
         shopRepository.addShop(shop);
-        return shop;
+        ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
+        
+        return shopDto;
     }
 
     public ShopDTO getShopInfo(String sessionToken, int shopID) {
@@ -202,9 +203,9 @@ public class ShopService {
         }
         else {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            //Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
+            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
             shoppingService.RateShop(shop,orders ,rating);
         }
     }
@@ -219,9 +220,9 @@ public class ShopService {
         }
         else {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            //Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
+            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
             shoppingService.RateItem(shop,itemID,orders, rating);
             
         }
