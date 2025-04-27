@@ -34,12 +34,17 @@ public abstract class IRole {
             return;
         }
         appointments.get(appointeeID).removeAllAppointments();
-        appointments.get(appointeeID).user.removeRoleFromShop(appointments.get(appointeeID).shopID);
+        Registered registered = appointments.get(appointeeID).getUser();
+        registered.removeRoleFromShop(appointments.get(appointeeID).shopID);
         appointments.remove(appointeeID);
     }
 
     public void removeAllAppointments() {
         List<Integer> appointeeIDs = new ArrayList<>(appointments.keySet());
+        if(appointeeIDs.isEmpty()) {
+            System.out.println("No appointments to remove");
+            return;
+        }
         for (int appointeeID : appointeeIDs) {
             appointments.get(appointeeID).removeAllAppointments();
             appointments.get(appointeeID).user.removeRoleFromShop(appointments.get(appointeeID).shopID);
@@ -57,6 +62,8 @@ public abstract class IRole {
         return appointerID;
     }
     abstract String getPermissionsString();
-
+    public Registered getUser() {
+        return user;
+    }
     
 }

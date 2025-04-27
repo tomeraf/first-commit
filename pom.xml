@@ -11,8 +11,8 @@
     <packaging>jar</packaging>
 
     <build>
-        <sourceDirectory>workshop-project/src/main/Domain</sourceDirectory>
-        <testSourceDirectory>workshop-project/src/Tests</testSourceDirectory>
+        <sourceDirectory>workshop-project/src/main</sourceDirectory>
+        <testSourceDirectory>workshop-project/src/Tests/Tests</testSourceDirectory>
 
         <resources>
             <resource>
@@ -35,8 +35,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
         </plugins>

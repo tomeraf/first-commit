@@ -17,6 +17,7 @@ import Domain.Category;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,6 +50,16 @@ public class endToEndTest_1 {
         userService = new UserService(userRepository, shopRepository, orderRepository, jwtAdapter, payment, shipment);
         shopService = new ShopService(userRepository, shopRepository, orderRepository, jwtAdapter);
     }
+
+    @Test
+    public void successfullGuestLogin() {
+        String guestToken = userService.enterToSystem();
+        assertNotNull(guestToken, "Guest login failed: token is null.");
+        List<ItemDTO> items = userService.checkCartContent(guestToken);
+        assertNotNull(items, "Guest login failed: cart content is null.");
+        assertTrue(items.isEmpty(), "Guest login failed: cart is not empty.");
+    }
+
 
     @Test
     public void addItemToAShopTest() {
@@ -141,6 +152,7 @@ public class endToEndTest_1 {
         ShopDTO shop = shopService.createShop(registeredToken, "TSLA", "A place to buy stocks");
         Set<Permission> permissions = new HashSet<>();
         permissions.add(Permission.APPOINTMENT);
+        
         
         
         List<Manager> managers = shopService.getManagersByShopId(shop.getId());
