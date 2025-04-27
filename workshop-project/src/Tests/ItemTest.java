@@ -1,4 +1,3 @@
-package Tests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ public class ItemTest {
 
     @BeforeEach
     void setUp() {
-        item = new Item("Test Item",Category.FOOD, 10.0, 5,1); // Create a new item with name, price, and quantity
+        item = new Item("Test Item",Category.FOOD, 10.0, 5,1,"item1"); // Create a new item with name, price, and quantity
     }
 
     @Test

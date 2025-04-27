@@ -11,6 +11,24 @@
     <packaging>jar</packaging>
 
     <build>
+        <sourceDirectory>workshop-project/src/main/Domain</sourceDirectory>
+        <testSourceDirectory>workshop-project/src/Tests</testSourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>src/Domain</directory>
+            </resource>
+            <resource>
+                <directory>src/Service</directory>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/Tests</directory>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
