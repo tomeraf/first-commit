@@ -25,7 +25,7 @@ public class ManagementService {
     }
 
     public Shop createShop(int shopId, Registered user, String name, String description) {
-        Shop shop = new Shop(shopId, name, description);
+        Shop shop = new Shop(shopId,user.getUsername(), name, description);
         user.setRoleToShop(shopId, new Founder(shopId));
         return shop;
     }
@@ -151,8 +151,9 @@ public class ManagementService {
     public List<String> getMembersPermissions(Registered supplyManager, Shop shop) {
         List<String> permissions = new ArrayList<>();
         if(supplyManager.hasPermission(shop.getId(), Permission.VIEW)){
-            permissions.add(shop.getManagerUserNames());
-            permissions.add(shop.getOwnerUserNames());
+            permissions.addAll(shop.getManagerUserNames());
+            permissions.addAll(shop.getOwnerUserNames());
         }
+        return permissions;
     }
 }
