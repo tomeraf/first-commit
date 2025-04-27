@@ -215,7 +215,6 @@ public class Shop {
         }
     }
 
-// not sure if needed - need to check
     public void addBidPurchase(int itemId, double bidAmount, int buyerId) {  
         if (items.containsKey(itemId)) {
             BidPurchase bidPurchase = new BidPurchase(bidPurchaseCounter, bidAmount, itemId, buyerId, buyerId);
@@ -225,8 +224,6 @@ public class Shop {
             System.out.println("Item ID does not exist in the shop.");
         }
     }
-
-// not sure if needed - need to check
     public void addAuctionPurchase(int itemId, double startingAmount, LocalDateTime startTime, LocalDateTime endTime){
         if (items.containsKey(itemId) && items.get(itemId).getQuantity() > 0) {
             AuctionPurchase auctionPurchase = new AuctionPurchase(auctionPurchaseCounter, startingAmount, itemId, startTime, endTime);
