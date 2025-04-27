@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -16,6 +19,7 @@ import Domain.Item;
 import Domain.Registered;
 import Domain.Shop;
 import Domain.ShoppingCart;
+import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.JWTAdapter;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
@@ -30,14 +34,18 @@ public class UserService {
     private IUserRepository userRepository;
     private IShopRepository shopRepository;
     private IOrderRepository orderRepository;
+    private final ConcurrencyHandler ConcurrencyHandler;
     
     private PurchaseService purchaseService = new PurchaseService();
     ObjectMapper objectMapper = new ObjectMapper();
     
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(IUserRepository userRepository) {
+    public UserService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
+        this.shopRepository = shopRepository;
+        this.orderRepository = orderRepository;
+        this.ConcurrencyHandler = concurrencyHandler;
     }
     
     public String enterToSystem() {
@@ -215,33 +223,69 @@ public class UserService {
         return null;
     }
 
-    public void submitBidOffer(String sessionToken, int itemID, double offerPrice) {
-        try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
-                throw new Exception("User not logged in");
-            }
-            int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-            purchaseService.submitBidOffer(guest, itemID, offerPrice);
+    public void submitBidOffer(String sessionToken, int itemID, double offerPrice, int shopId) {
+        Lock shopRead = ConcurrencyHandler.getShopReadLock(shopId);
+        ReentrantLock itemLock = ConcurrencyHandler.getItemLock(shopId, itemID);
 
-            logger.info(() -> "Bid offer submitted successfully for item ID: " + itemID);
-        } catch (Exception e) {
-            logger.error(() -> "Error submitting bid offer: " + e.getMessage());
+        shopRead.lock();     
+        try {
+            itemLock.lockInterruptibly();
+
+            try {
+                if (!jwtAdapter.validateToken(sessionToken)) {
+                    throw new Exception("User not logged in");
+                }
+                int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+                Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+                purchaseService.submitBidOffer(guest, itemID, offerPrice);
+    
+                logger.info(() -> "Bid offer submitted successfully for item ID: " + itemID);
+            } 
+            catch (Exception e) {
+                logger.error(() -> "Error submitting bid offer: " + e.getMessage());
+            }
+            finally {
+                itemLock.unlock();
+            }
+        } 
+        catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            // handle interruption…
+        } finally {
+            shopRead.unlock();
         }
     }
 
-    public void directPurchase(String sessionToken, int itemID) {
-        try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
-                throw new Exception("User not logged in");
-            }
-            int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-            purchaseService.directPurchase(guest, itemID);
+    public void directPurchase(String sessionToken, int itemID, int shopId) {
+        Lock shopRead = ConcurrencyHandler.getShopReadLock(shopId);
+        ReentrantLock itemLock = ConcurrencyHandler.getItemLock(shopId, itemID);
 
-            logger.info(() -> "Direct purchase completed successfully for item ID: " + itemID);
-        } catch (Exception e) {
-            logger.error(() -> "Error completing direct purchase: " + e.getMessage());
+        shopRead.lock();     
+        try {
+            itemLock.lockInterruptibly();
+        
+            try {
+                if (!jwtAdapter.validateToken(sessionToken)) {
+                    throw new Exception("User not logged in");
+                }
+                int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+                Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+                purchaseService.directPurchase(guest, itemID);
+    
+                logger.info(() -> "Direct purchase completed successfully for item ID: " + itemID);
+            } catch (Exception e) {
+                logger.error(() -> "Error completing direct purchase: " + e.getMessage());
+            }
+            finally {
+                itemLock.unlock();
+            }
+        }
+        
+        catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            // handle interruption…
+        } finally {
+            shopRead.unlock();
         }
     }
 
