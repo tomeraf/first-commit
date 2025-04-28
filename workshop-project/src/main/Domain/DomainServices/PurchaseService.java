@@ -50,8 +50,7 @@ public class PurchaseService {
                         currentShop= shop;
 
                 if (currentShop == null) {
-                    System.out.println("Error: shop not found.");
-                    return false;
+                    throw new IllegalArgumentException("Error: shop not found.");
                 }
 
                 HashMap<Integer, Integer> items = new HashMap<>();
@@ -64,8 +63,7 @@ public class PurchaseService {
         }
 
         else {
-            System.out.println("Purchase failed. Your cart is empty.");
-            return false;
+            throw new IllegalArgumentException("Error: cart is empty.");
         }
 
         return true;
@@ -81,8 +79,7 @@ public class PurchaseService {
                 if (shop.getId() == shopId)
                     currentShop = shop;
             if (currentShop == null) {
-                System.out.println("Error: shop not found.");
-                return null;
+                throw new IllegalArgumentException("Error: shop not found.");
             }
 
             HashMap<Integer, Integer> items = new HashMap<>();
@@ -99,8 +96,7 @@ public class PurchaseService {
         }
         else
         {
-            System.out.println("Error: payment not valid.");
-            return null;
+            throw new IllegalArgumentException("Error: payment or shipment not valid.");
         }
         String userName = "guest";
         if(user instanceof Registered)

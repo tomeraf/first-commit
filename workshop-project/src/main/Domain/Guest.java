@@ -8,44 +8,36 @@ public class Guest {
     
     public Guest() {}
 
-    public Registered register(String username, String password, LocalDate dateOfBirth) {
+    public Registered register(String username, String password, LocalDate dateOfBirth){
         if (!isInSession()) {
-            System.out.println("Unauthorized Action: User didn't entered the system yet. TempID: " + cart.getCartID());
-            return null;
+            throw new IllegalArgumentException("Unauthorized Action: User didn't entered the system yet. TempID: " + cart.getCartID());
         }
         if (!validPassword(password) || !validUsername(username)) {
-            System.out.println("Invalid registration details.");
-            return null;
+            throw new IllegalArgumentException("Unauthorized Action: invalid registration details.");
         }
         Registered newUser = new Registered(username, password, dateOfBirth);
         newUser.setCart(getCart());
-        System.out.println("Guest registration successful. UserID: " + newUser.getUserID());
         return newUser;
     }
 
     public boolean enterToSystem(String sessionToken, int cartID) {
         if (isInSession()) {
-            System.out.println("Unauthorized Action: already logged in as guest. TempID: " + getUserID());
-            return false;
+            throw new IllegalArgumentException("Unauthorized Action: already logged in as guest. TempID: " + getUserID());
         }
         if (cartID < 0) {
-            System.out.println("Unauthorized Action: invalid cart ID (negative)");
-            return false;
+            throw new IllegalArgumentException("Unauthorized Action: invalid cart ID (negative)");
         }
         this.sessionToken = sessionToken;
         this.cart = new ShoppingCart(cartID); // According to the USE-CASE guest has an empty cart. 
-        System.out.println("Guest login successful. Assigned TempID: " + cartID);
         return true;
     }
 
     public boolean logout() {
         if (!isInSession()) {
-            System.out.println("Unauthorized Action: already logged out.");
             return false;
         }
         this.sessionToken = null;
         this.cart = null; // Clear the cart on logout.
-        System.out.println("Guest logout successful. TempID cleared.");
         return true;
     }
 

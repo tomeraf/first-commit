@@ -55,12 +55,15 @@ public class MemoryUserRepository implements IUserRepository {
 
     @Override
     public void removeGuestById(int id) throws RuntimeException {
-        if (!users.containsKey(id)) {
-            throw new RuntimeException("User is not logged in");
+        try{
+            if (!users.containsKey(id)) {
+                throw new RuntimeException("User is not logged in");
+            }
+            Guest user = users.get(id);
+            user.logout();
+            users.remove(id); // Remove the user from the list  
+        } catch (Exception e) {
         }
-        Guest user = users.get(id);
-        user.logout();
-        users.remove(id); // Remove the user from the list
     }
 
     @Override

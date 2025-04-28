@@ -29,7 +29,13 @@ public class PurchasePolicy {
         this.purchaseRules.remove(purchaseRule);
     }
     public void updatePurchaseType(String purchaseType){
-        PurchaseType type = PurchaseType.fromString(purchaseType);
+        PurchaseType type;
+        try{
+            type = PurchaseType.fromString(purchaseType);
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("not valid purchase Type");
+        }
         if (this.purchaseTypes.contains(type)) {
             this.purchaseTypes.remove(type);
         } else {

@@ -33,12 +33,11 @@ public class Item {
         } 
         this.rating = (this.rating * numOfOrders + newRating) / (numOfOrders);
     }
-    public boolean updateQuantity(int quantity) {
+    public void updateQuantity(int quantity) {
         if (quantity >= 0) {
             this.quantity = quantity;
-            return true;
         } else {
-            return false;
+            throw new IllegalArgumentException("quantity cannot be negative");
         }
     }
     public boolean quantityCheck(int quantity) {

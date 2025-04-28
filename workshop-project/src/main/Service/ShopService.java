@@ -60,9 +60,8 @@ public class ShopService {
     }
 
     public Response<List<ShopDTO>> showAllShops() {
-        ArrayList<Shop> s = new ArrayList<Shop>(shopRepository.getAllShops().values());
+        ArrayList<Shop> s = new ArrayList<Shop>(shopRepository.getAllShops().values().stream().filter((shop)->shop.isOpen()).toList());
         List<ShopDTO> shopDTOs = new ArrayList<>();
-
         for (Shop shop : s) {
             ShopDTO shopDTO = objectMapper.convertValue(shop, ShopDTO.class);
             shopDTOs.add(shopDTO);
@@ -71,49 +70,67 @@ public class ShopService {
     }
 
     public Response<List<ItemDTO>> showShopItems(int shopId) {
-        ArrayList<Item> items = new ArrayList<Item>(shopRepository.getShopById(shopId).getItems().values());
-        List<ItemDTO> itemDTOs = new ArrayList<>();
-        for (Item item : items) {
-            ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
-            itemDTOs.add(itemDTO);
+        try{
+            Shop shop = shopRepository.getShopById(shopId);
+            List<Item> items = shop.getItems().values().stream().toList();
+            List<ItemDTO> itemDTOs = new ArrayList<>();
+            for (Item item : items) {
+                ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+                itemDTOs.add(itemDTO);
+            }
+            return Response.ok(itemDTOs);
+            }  
+        catch (Exception e) {
+            logger.error(()->"Error showing shop items: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
-        return Response.ok(itemDTOs);
     }
 
     public Response<List<ItemDTO>> filterItemsAllShops(HashMap<String, String> filters) {
-        String category = filters.get("category");
-        String name = filters.get("name");
-        double minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
-        double maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
-        int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
-        int shopRating = filters.get("shopRating") != null ? Integer.parseInt(filters.get("shopRating")) : 0;
-        List<Item> filteredItems = new ArrayList<>();
-        for (Shop shop : shopRepository.getAllShops().values()) {
-            filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, shopRating));
+        try{
+            String category = filters.get("category");
+            String name = filters.get("name");
+            int minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
+            int maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
+            int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
+            int shopRating = filters.get("shopRating") != null ? Integer.parseInt(filters.get("shopRating")) : 0;
+            List<Item> filteredItems = new ArrayList<>();
+            for (Shop shop : shopRepository.getAllShops().values()) {
+                filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, shopRating));
+            }
+            List<ItemDTO> itemDTOs = new ArrayList<>();
+            for (Item item : filteredItems) {
+                ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+                itemDTOs.add(itemDTO);
+            }
+            return Response.ok(itemDTOs);
+        } catch (Exception e) {
+            logger.error(()->"Error filtering items in all shops: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
-        List<ItemDTO> itemDTOs = new ArrayList<>();
-        for (Item item : filteredItems) {
-            ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
-            itemDTOs.add(itemDTO);
-        }
-        return Response.ok(itemDTOs);
     }
 
     public Response<List<ItemDTO>> filterItemsInShop(int shopId, HashMap<String, String> filters) {
-        String category = filters.get("category");
-        String name = filters.get("name");
-        double minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
-        double maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
-        int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
-        List<Item> filteredItems = new ArrayList<>();
-        Shop shop = shopRepository.getShopById(shopId);
-        filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, 0));
-        List<ItemDTO> itemDTOs = new ArrayList<>();
-        for (Item item : filteredItems) {
-            ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
-            itemDTOs.add(itemDTO);
+        try{
+            String category = filters.get("category");
+            String name = filters.get("name");
+            int minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
+            int maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
+            int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
+            List<Item> filteredItems = new ArrayList<>();
+            Shop shop = shopRepository.getShopById(shopId);
+            filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, 0));
+            List<ItemDTO> itemDTOs = new ArrayList<>();
+            for (Item item : filteredItems) {
+                ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+                itemDTOs.add(itemDTO);
+            }
+            return Response.ok(itemDTOs);
+        } 
+        catch (Exception e) {
+            logger.error(()->"Error filtering items in shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
-        return Response.ok(itemDTOs);
     }
 
     public Response<ShopDTO> createShop(String sessionToken, String name, String description) {
