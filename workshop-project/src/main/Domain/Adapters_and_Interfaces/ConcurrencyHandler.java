@@ -20,6 +20,8 @@ public class ConcurrencyHandler {
     private final ReentrantLock globalShopCreationLock = new ReentrantLock();
     private final ConcurrentHashMap<String, ReentrantLock> usernameLocks = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ReentrantLock> shopUserLocks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ReentrantLock> bidLocks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ReentrantLock> messageLocks = new ConcurrentHashMap<>();
 
 
     private ReentrantReadWriteLock getShopRWLock(int shopId) {
@@ -72,5 +74,23 @@ public class ConcurrencyHandler {
     public ReentrantLock getShopUserLock(int shopId, String userName) {
         String key = "shop:" + shopId + ":user:" + userName;
         return shopUserLocks.computeIfAbsent(key, k -> new ReentrantLock());
+    }
+
+    /**
+     * For operations that need to lock a bid for specific shop.
+     * This is a global lock to prevent multiple threads from creating the same user at the same time.
+     */
+    public ReentrantLock getBidLock(int shopId, int bidId) {
+        String key = "shop:" + shopId + ":bid:" + bidId;
+        return bidLocks.computeIfAbsent(key, k -> new ReentrantLock());
+    }
+
+    /**
+     * For operations that need to lock a message for specific shop.
+     * This is a global lock to prevent multiple threads from creating the same user at the same time.
+     */
+    public ReentrantLock getMessageLock(int shopId, int messageId) {
+        String key = "shop:" + shopId + ":bid:" + messageId;
+        return messageLocks.computeIfAbsent(key, k -> new ReentrantLock());
     }
 }
