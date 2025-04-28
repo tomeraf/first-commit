@@ -61,7 +61,7 @@ public class Guest {
         if (this.getCart() == null) return -1;
         return this.getCart().getCartID();
     }
-
+    public String getUsername() { return null; }
     public ShoppingCart getCart() {
         return this.cart;
     }
