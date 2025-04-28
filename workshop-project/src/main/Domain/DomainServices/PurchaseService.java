@@ -1,7 +1,10 @@
 package Domain.DomainServices;
 
 import Domain.*;
+import Domain.Adapters_and_Interfaces.IPayment;
+import Domain.Adapters_and_Interfaces.IShipment;
 import Domain.DTOs.ItemDTO;
+import Domain.DTOs.PaymentDetailsDTO;
 import Domain.DTOs.ShopDTO;
 import Domain.Purchase.BidPurchase;
 import Domain.Repositories.IShopRepository;
@@ -31,7 +34,7 @@ public class PurchaseService {
         cart.deleteItems(itemsMap);
     }
 
-    public boolean canPurchaseCart(Guest user,List<Shop> shops) {
+    public boolean canPurchaseCart(Guest user, List<Shop> shops) {
         // Use case #2.5: Purchase cart
 
         ShoppingCart cart = user.getCart();
@@ -68,8 +71,7 @@ public class PurchaseService {
         return true;
     }
 
-    public Order buyCartContent(Guest user,List<Shop> shops)
-    {
+    public Order buyCartContent(Guest user, List<Shop> shops, IShipment ship, IPayment pay, PaymentDetailsDTO payDTO ,String shipmentDetails ) {
         ShoppingCart cart = user.getCart();
         double totalCost = 0;
         for (ShoppingBasket basket : cart.getBaskets()) {
@@ -91,7 +93,23 @@ public class PurchaseService {
 
         }
 
-        return new Order(cart.getCartID(),user.getUserID(),totalCost,OrderHash(cart)); // orderID???
+        if (pay.validatePaymentDetails(payDTO) && ship.validateShipmentDetails(shipmentDetails)){
+            pay.processPayment(totalCost,payDTO);
+            ship.processShipment(totalCost,shipmentDetails);
+        }
+        else
+        {
+            System.out.println("Error: payment not valid.");
+            return null;
+        }
+        String userName = "guest";
+        if(user instanceof Registered)
+        {
+            userName = ((Registered)user).getUsername();
+
+        }
+
+        return new Order(cart.getCartID(),userName,totalCost,OrderHash(cart)); // orderID???
     }
 
 

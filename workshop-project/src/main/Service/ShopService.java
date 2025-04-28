@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 import Domain.Category;
 import Domain.Item;
@@ -11,6 +12,7 @@ import Domain.DTOs.ItemDTO;
 import Domain.Registered;
 import Domain.Response;
 import Domain.Shop;
+import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.Order;
@@ -39,9 +41,10 @@ public class ShopService {
     private ObjectMapper objectMapper;
     private InteractionService interactionService = InteractionService.getInstance();
     private int messageIdCounter = 1;
+    private final ConcurrencyHandler concurrencyHandler;
     
 
-    public ShopService(IUserRepository userRepository, IShopRepository shopRepository,IOrderRepository orderRepository, IAuthentication authenticationAdapter) {
+    public ShopService(IUserRepository userRepository, IShopRepository shopRepository,IOrderRepository orderRepository, IAuthentication authenticationAdapter, ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
@@ -49,6 +52,7 @@ public class ShopService {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         this.shoppingService = new ShoppingService();
+        this.concurrencyHandler = concurrencyHandler;
     }
     
     public Response<List<ShopDTO>> showAllShops() {
@@ -318,13 +322,22 @@ public class ShopService {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, close the shop with the provided details
-        if(authenticationAdapter.validateToken(sessionToken)){
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop=shopRepository.getShopById(shopID);
-            managementService.closeShop(user, shop);
+        Lock shopWrite = concurrencyHandler.getShopWriteLock(shopID);
+        shopWrite.lock();
+        try {
+            // now exclusive: no reads or other writes
+            if(authenticationAdapter.validateToken(sessionToken)){
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered)this.userRepository.getUserById(userID);
+                Shop shop=shopRepository.getShopById(shopID);
+                managementService.closeShop(user, shop);
+            }
+        }
+        finally {
+            shopWrite.unlock();
         }
     }
+
     public Response<String> getMembersPermissions(String sessionToken, int shopID) {
         if(authenticationAdapter.validateToken(sessionToken)){
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
