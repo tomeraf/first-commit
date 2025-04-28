@@ -1,11 +1,13 @@
 package Tests;
 
 import Domain.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 public class RegisteredTest {
     private static final int APPOINTER_ID = 1;
@@ -13,7 +15,9 @@ public class RegisteredTest {
     private static final int SHOP_ID = 10;
     private Registered user;
 
-    public RegisteredTest() {
+
+    @BeforeEach
+    public void setUp() {
         Guest guest = new Guest();
         guest.enterToSystem("guestSessionToken", APPOINTER_ID); // Assuming a valid session token and cart ID
         user = guest.register("bob", "hunter2", LocalDate.of(1990, 1, 1));
@@ -40,7 +44,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testRemovePermission() {
+    public void testRemovePermission() {
         Manager mgrRole = new Manager(APPOINTER_ID, SHOP_ID, new HashSet<>(Collections.singleton(Permission.VIEW)));
         user.setRoleToShop(SHOP_ID, mgrRole);
 
@@ -49,7 +53,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testRemovePermissionNoRole() {
+    public void testRemovePermissionNoRole() {
         try{
             user.removePermission(SHOP_ID, Permission.VIEW);
             fail("didnt catch");
@@ -59,7 +63,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testAddAppointmentSuccess() {
+    public void testAddAppointmentSuccess() {
         Registered appointer = user;
         // Owner always has APPOINTMENT permission
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
@@ -75,7 +79,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testAddAppointmentNoPermission() {
+    public void testAddAppointmentNoPermission() {
         Registered appointer = user;
 
         // Manager without APPOINTMENT permission
@@ -97,7 +101,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testRemoveAppointmentSuccess() {
+    public void testRemoveAppointmentSuccess() {
         Registered appointer = user;
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         appointer.setRoleToShop(SHOP_ID, owner);
@@ -112,7 +116,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testRemoveAppointmentNoRole() {
+    public void testRemoveAppointmentNoRole() {
         Registered appointer = user;
         try{
             appointer.removeAppointment(SHOP_ID, APPOINTEE_ID);
@@ -123,7 +127,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testGetAppointmentsNoRole() {
+    public void testGetAppointmentsNoRole() {
         try{
             user.getAppointments(SHOP_ID);
             fail("didnt catch");
@@ -133,18 +137,18 @@ public class RegisteredTest {
     }
 
     @Test
-    void testGetAppointerNoRole() {
+    public void testGetAppointerNoRole() {
         assertEquals(-1, user.getAppointer(SHOP_ID));
     }
 
     @Test
-    void testGetAgeAlwaysZero() {
+    public void testGetAgeAlwaysZero() {
         Registered user = new Registered("d", "d", LocalDate.of(LocalDate.now().getYear()-10, 5, 5));
         assertEquals(9, user.getAge());
     }
 
     @Test
-    void testRemoveShopRoleSuccess() {
+    public void testRemoveShopRoleSuccess() {
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         user.setRoleToShop(SHOP_ID, owner);
 
@@ -153,7 +157,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testRemoveShopRoleNoRole() {
+    public void testRemoveShopRoleNoRole() {
         Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
         try{
             user.removeRoleFromShop(SHOP_ID);

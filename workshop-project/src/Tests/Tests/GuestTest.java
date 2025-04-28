@@ -10,12 +10,12 @@ public class GuestTest {
     private Guest guest;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         guest = new Guest(); // Use any dummy role
     }
 
     @Test
-    void testSuccessfulLogin() {
+    public void testSuccessfulLogin() {
         boolean result = guest.enterToSystem("1", 0);
         assertTrue(result);
         assertTrue(guest.isInSession());
@@ -23,7 +23,7 @@ public class GuestTest {
     }
 
     @Test
-    void testLoginTwiceShouldNotOverride() {
+    public void testLoginTwiceShouldNotOverride() {
         boolean result1 = guest.enterToSystem("1", 0);
         try {
             guest.enterToSystem("1", 1); // Should not take effect
@@ -36,7 +36,7 @@ public class GuestTest {
     }
 
     @Test
-    void testSuccessfulLogout() {
+    public void testSuccessfulLogout() {
         boolean result1 = guest.enterToSystem("1", 0);
         assertTrue(result1); // First login should succeed
         assertTrue(guest.isInSession());
@@ -50,14 +50,14 @@ public class GuestTest {
     }
 
     @Test
-    void testLogoutWithoutLogin() {
+    public void testLogoutWithoutLogin() {
         boolean result = guest.logout();
 
         assertFalse(result);
     }
 
     @Test
-    void testDoubleLogout() {
+    public void testDoubleLogout() {
         guest.enterToSystem("1", 0);
         assertTrue(guest.logout());
         assertFalse(guest.logout()); // Second one should fail
@@ -68,7 +68,7 @@ public class GuestTest {
     }
 
     @Test
-    void testLoginWithNegativeID() {
+    public void testLoginWithNegativeID() {
         try {
             guest.enterToSystem("1", -1);
             fail("Should have thrown an exception");
