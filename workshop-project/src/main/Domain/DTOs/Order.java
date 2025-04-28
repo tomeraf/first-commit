@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Order {
     private final int orderID;
-    private final String UserName;
+    private final int userId;
     private final double totalPrice;
     private final HashMap<Integer, List<ItemDTO>> items; // <Integer, List<ItemDTO> = shopId, List<ItemDTO> = items in the shop
 
-    public Order(int orderID, String UserName, double totalPrice, HashMap<Integer, List<ItemDTO>> items) {
+    public Order(int orderID, int userId, double totalPrice, HashMap<Integer, List<ItemDTO>> items) {
         this.orderID = orderID;
         this.totalPrice = totalPrice;
         this.items = items;
-        this.UserName = UserName;
+        this.userId = userId;
     }
 
     public List<ItemDTO> getItems() {
@@ -27,12 +27,12 @@ public class Order {
     public int getId() {
         return orderID;
     }
-    public String getUserName() {
-        return UserName;
+    public int getUserID() {
+        return userId;
     }
 
     public String getOrderDetails() {
-        StringBuilder details = new StringBuilder("Order ID: " + orderID + "\nUserName: " + UserName + "\nTotal Price: " + totalPrice + "\nItems:\n");
+        StringBuilder details = new StringBuilder("Order ID: " + orderID + "\nUserId: " + userId + "\nTotal Price: " + totalPrice + "\nItems:\n");
         for (int shopId : items.keySet()) {
             details.append("Shop ID: ").append(shopId).append("\nItems:\n");
             for (ItemDTO item : items.get(shopId)) {
