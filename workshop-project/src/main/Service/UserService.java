@@ -100,20 +100,31 @@ public class UserService {
     }
 
     public void registerUser(String sessionToken, String username, String password, LocalDate dateOfBirth) {
+        ReentrantLock usernameLock = ConcurrencyHandler.getUsernameLock(username);
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
-                throw new Exception("User is not logged in");
+            usernameLock.lockInterruptibly();  // lock specifically for that username
+        
+            try {
+                if (!jwtAdapter.validateToken(sessionToken)) {
+                    throw new Exception("User is not logged in");
+                }
+                int idToAssign = userRepository.getIdToAssign();
+                Guest guest = new Guest();
+                
+                guest.setSessionToken(sessionToken); // Set the session token for the guest
+                guest.setCart(new ShoppingCart(idToAssign));
+                // Stays with same token
+                Registered registered = guest.register(username, password, dateOfBirth);
+                userRepository.saveUser(registered);
+            } catch (Exception e) {
+                logger.error(() -> "Error registering user: " + e.getMessage());
             }
-            int idToAssign = userRepository.getIdToAssign();
-            Guest guest = new Guest();
-            
-            guest.setSessionToken(sessionToken); // Set the session token for the guest
-            guest.setCart(new ShoppingCart(idToAssign));
-            // Stays with same token
-            Registered registered = guest.register(username, password, dateOfBirth);
-            userRepository.saveUser(registered);
-        } catch (Exception e) {
-            logger.error(() -> "Error registering user: " + e.getMessage());
+            finally {
+                usernameLock.unlock();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error(() -> "Registration interrupted for username: " + username);
         }
     }
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import Domain.Category;
 import Domain.Item;
@@ -17,6 +18,7 @@ import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
 
+import Domain.DTOs.UserDTO;
 import Domain.DomainServices.InteractionService;
 
 import Domain.DomainServices.ManagementService;
@@ -109,17 +111,23 @@ public class ShopService {
         return itemDTOs;
     }
 
-    public ShopDTO createShop(String sessionToken, String name, String description) {
+    public Shop createShop(String sessionToken, String name, String description) {
         if(!authenticationAdapter.validateToken(sessionToken)){
             System.out.println("Please log in or register to add items to the shop.");
             throw new RuntimeException("Please login.");
         }
-        int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-        Shop shop = managementService.createShop(shopRepository.getAllShops().size(),(Registered)userRepository.getUserById(userID), name, description);
-        shopRepository.addShop(shop);
-        ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
+        Lock creationLock = concurrencyHandler.getGlobalShopCreationLock();
+        creationLock.lock();
+
+        try {
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            Shop shop = managementService.createShop(shopRepository.getAllShops().size(),(Registered)userRepository.getUserById(userID), name, description);
+            shopRepository.addShop(shop);
+            return shop;
+        } finally {
+            creationLock.unlock();
+        }
         
-        return shopDto;
     }
 
     public ShopDTO getShopInfo(String sessionToken, int shopID) {
@@ -207,9 +215,9 @@ public class ShopService {
         }
         else {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            //Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
+            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
             shoppingService.RateShop(shop,orders ,rating);
         }
     }
@@ -224,9 +232,9 @@ public class ShopService {
         }
         else {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            //Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
+            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
             shoppingService.RateItem(shop,itemID,orders, rating);
             
         }
@@ -263,26 +271,51 @@ public class ShopService {
             this.managementService.updatePurchaseType(user, shop, purchaseType);
         }
     }
+
     public void addShopOwner(String sessionToken, int shopID, String appointeeName) {
         if(!authenticationAdapter.validateToken(sessionToken)){
             System.out.println("Please log in or register to add items to the shop.");
             return;
         }
         else {
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Registered appointee = this.userRepository.getUserByName(appointeeName);
-            Shop shop = this.shopRepository.getShopById(shopID);
-            this.managementService.addOwner(user, shop, appointee);
+            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+
+            try {
+                lock.lockInterruptibly();
+                try {
+                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                    Registered user = (Registered)this.userRepository.getUserById(userID);
+                    Registered appointee = this.userRepository.getUserByName(appointeeName);
+                    Shop shop = this.shopRepository.getShopById(shopID);
+                    this.managementService.addOwner(user, shop, appointee);
+                } finally {
+                    lock.unlock();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                // handle interruption
+            }
         }
     }
     public void addShopManager(String sessionToken, int shopID, String appointeeName, Set<Permission> permission) {
        if(authenticationAdapter.validateToken(sessionToken)){
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Registered appointee=userRepository.getUserByName(appointeeName);
-            Shop shop=shopRepository.getShopById(shopID);
-            managementService.addManager(user, shop, appointee, permission);
+            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+
+            try {
+                lock.lockInterruptibly();
+                try {
+                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                    Registered user = (Registered)this.userRepository.getUserById(userID);
+                    Registered appointee=userRepository.getUserByName(appointeeName);
+                    Shop shop=shopRepository.getShopById(shopID);
+                    managementService.addManager(user, shop, appointee, permission);
+                } finally {
+                    lock.unlock();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                // handle interruption
+            }
         }
     }
     public void removeShopOwner(String sessionToken, int shopID, String appointeeName) {
@@ -296,21 +329,48 @@ public class ShopService {
     }
     public void addShopManagerPermission(String sessionToken, int shopID,String appointeeName, Permission  permission) {
         if(authenticationAdapter.validateToken(sessionToken)){
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Registered appointee=userRepository.getUserByName(appointeeName);
-            Shop shop=shopRepository.getShopById(shopID);
-            managementService.addPermission(user, shop, appointee, permission);
+            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+
+            try {
+                lock.lockInterruptibly();
+                try {
+                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                    Registered user = (Registered)this.userRepository.getUserById(userID);
+                    Registered appointee=userRepository.getUserByName(appointeeName);
+                    Shop shop=shopRepository.getShopById(shopID);
+                    managementService.addPermission(user, shop, appointee, permission); 
+                }
+                finally {
+                    lock.unlock();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                // handle interruption
+            }
         }
     }
     
     public void removeShopManagerPermission(String sessionToken, int shopID,String appointeeName , Permission permission) {
         if(authenticationAdapter.validateToken(sessionToken)){
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Registered appointee=userRepository.getUserByName(appointeeName);
-            Shop shop=shopRepository.getShopById(shopID);
-            managementService.removePermission(user, shop, appointee, permission);
+            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+
+            try {
+                lock.lockInterruptibly();
+                try {
+                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                    Registered user = (Registered)this.userRepository.getUserById(userID);
+                    Registered appointee=userRepository.getUserByName(appointeeName);
+                    Shop shop=shopRepository.getShopById(shopID);
+                    managementService.removePermission(user, shop, appointee, permission);
+                }
+                finally {
+                    lock.unlock();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                // handle interruption
+            }
+            
         }
     }
 
