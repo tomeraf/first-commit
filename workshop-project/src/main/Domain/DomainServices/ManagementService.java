@@ -141,7 +141,7 @@ public class ManagementService {
     }
 
     public void closeShop(Registered supplyManager, Shop shop) {
-        if (supplyManager.hasPermission(shop.getId(), Permission.CLOSE_SHOP)) {
+        if (supplyManager.hasPermission(shop.getId(), Permission.CLOSE_SHOP) || supplyManager.isSystemManager()) {
             shop.closeShop();
         } else {
             System.out.println("You don't have permission to close the shop");

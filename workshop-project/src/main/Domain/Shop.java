@@ -39,6 +39,7 @@ public class Shop implements IMessageListener {
     private int bidPurchaseCounter; // Counter for bid purchases
     private int auctionPurchaseCounter; // Counter for auction purchases
     private HashMap<Integer, IMessage> inbox; // 
+    int messageIdCounter = 1; // Counter for message IDs
 
     public Shop(int id,int founderID, String name, String description) {
         this.id = id;
@@ -344,13 +345,16 @@ public class Shop implements IMessageListener {
             return inbox.get(messageId);
         }
         else {
-            System.out.println("Message ID does not exist in the inbox.");
-            return null;
+            throw new IllegalArgumentException("Message ID does not exist in the inbox.");
         }
     }
 
     public HashMap<Integer, IMessage> getAllMessages() {
         return inbox;
+    }
+
+    public int getNextMessageId() {
+        return messageIdCounter++;
     }
 }
 
