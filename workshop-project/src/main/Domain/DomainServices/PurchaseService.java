@@ -71,7 +71,7 @@ public class PurchaseService {
         return true;
     }
 
-    public Order buyCartContent(Guest user, List<Shop> shops, IShipment ship, IPayment pay, PaymentDetailsDTO payDTO ,String shipmentDetails ) {
+    public Order buyCartContent(Guest user, List<Shop> shops, IShipment ship, IPayment pay ) {
         ShoppingCart cart = user.getCart();
         double totalCost = 0;
         for (ShoppingBasket basket : cart.getBaskets()) {
@@ -93,9 +93,9 @@ public class PurchaseService {
 
         }
 
-        if (pay.validatePaymentDetails(payDTO) && ship.validateShipmentDetails(shipmentDetails)){
-            pay.processPayment(totalCost,payDTO);
-            ship.processShipment(totalCost,shipmentDetails);
+        if (pay.validatePaymentDetails() && ship.validateShipmentDetails()){
+            pay.processPayment(totalCost);
+            ship.processShipment(totalCost);
         }
         else
         {
