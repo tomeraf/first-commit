@@ -78,16 +78,15 @@ public class Shop implements IMessageListener {
     public void setDiscountPolicy(DiscountPolicy discountPolicy) { this.discountPolicy = discountPolicy; }
     public void setOpen(boolean isOpen) { this.isOpen = isOpen; }
 
-    public boolean addItem(String name, Category category, double price, String description){
+    public Item addItem(String name, Category category, double price, String description){
         if (price < 0) {
-            System.out.println("Item price cannot be negative.");
-            return false;
+            throw new IllegalArgumentException("Price cannot be negative.");
         } 
         else{
             Item item = new Item(name, category, price, this.id, counterItemId, description);
             items.put(item.getId(), item);
             counterItemId++; // Increment the item ID counter for the next item
-            return true;
+            return item;
         }
     }
     

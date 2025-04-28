@@ -6,6 +6,7 @@ import java.util.Set;
 
 import Domain.Category;
 import Domain.Founder;
+import Domain.Item;
 import Domain.Manager;
 import Domain.Owner;
 import Domain.Permission;
@@ -68,12 +69,12 @@ public class ManagementService {
         }
     }
     
-    public void addItemToShop(Registered supplyManager, Shop shop, String name, Category category, double price, String description) {
+    public Item addItemToShop(Registered supplyManager, Shop shop, String name, Category category, double price, String description) {
         if (supplyManager.hasPermission(shop.getId(), Permission.UPDATE_SUPPLY)){
-            shop.addItem(name, category, price, description);
+            return shop.addItem(name, category, price, description);
         }
         else {
-            System.out.println("You don't have permission to add items to the shop");
+            throw new IllegalArgumentException("You don't have permission to add items to the shop");
         }
     }
     public void removeItemFromShop(Registered supplyManager, Shop shop, int itemID) {

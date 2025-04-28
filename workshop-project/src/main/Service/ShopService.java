@@ -145,7 +145,7 @@ public class ShopService {
         }
     }
 
-    public Response<Void> addItemToShop(String sessionToken, int shopID, String itemName, Category category,
+    public Response<ItemDTO> addItemToShop(String sessionToken, int shopID, String itemName, Category category,
             double itemPrice, String description) {
         // need to add the Check if the user is logged in
         // If not, prompt to log in or register
@@ -155,13 +155,14 @@ public class ShopService {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Registered user = (Registered) this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            this.managementService.addItemToShop(user, shop, itemName, category, itemPrice, description);
+            Item newItem=managementService.addItemToShop(user, shop, itemName, category, itemPrice, description);
+            ItemDTO itemDto = objectMapper.convertValue(newItem, ItemDTO.class);
             logger.info(()->"Item added to shop: " + itemName + " in shop: " + shop.getName() + " by user: " + userID);
+            return Response.ok(itemDto);
         } catch (Exception e) {
             logger.error(()->"Error adding item to shop: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
-        return Response.ok();
     }
 
     public Response<Void> removeItemFromShop(String sessionToken, int shopID, int itemID) {
