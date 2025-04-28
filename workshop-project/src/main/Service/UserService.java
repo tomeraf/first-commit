@@ -3,7 +3,6 @@ package Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.platform.commons.logging.Logger;
@@ -12,9 +11,8 @@ import org.junit.platform.commons.logging.LoggerFactory;
 import Domain.Guest;
 import Domain.Registered;
 import Domain.Response;
+import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
-import Domain.DTOs.Order;
-import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IUserRepository;
 
 public class UserService {
@@ -22,16 +20,16 @@ public class UserService {
     //private JWTAdapter jwtAdapter = new JWTAdapter();
     private IUserRepository userRepository;
     private IAuthentication jwtAdapter;
-    
-
+    private final ConcurrencyHandler concurrencyHandler;
 
     ObjectMapper objectMapper = new ObjectMapper();
     
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(IUserRepository userRepository, IAuthentication jwtAdapter) {
+    public UserService(IUserRepository userRepository, IAuthentication jwtAdapter, ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.jwtAdapter = jwtAdapter;
+        this.concurrencyHandler = concurrencyHandler;
     }
     /**
      * Enters the system as a guest, generates a session token, and persists the user.
@@ -105,7 +103,7 @@ public class UserService {
      * @param dateOfBirth user's date of birth
      */
     public Response<Void> registerUser(String sessionToken, String username, String password, LocalDate dateOfBirth) {
-        ReentrantLock usernameLock = ConcurrencyHandler.getUsernameLock(username);
+        ReentrantLock usernameLock = concurrencyHandler.getUsernameLock(username);
 
         try {
             usernameLock.lockInterruptibly();  // lock specifically for that username
@@ -129,6 +127,7 @@ public class UserService {
                 return Response.ok();
             } catch (Exception e) {
                 logger.error(() -> "Error registering user: " + e.getMessage());
+                return Response.error("Error registering user: " + e.getMessage());
             }
 
             finally {
@@ -137,6 +136,7 @@ public class UserService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             logger.error(() -> "Registration interrupted for username: " + username);
+            return Response.error("Registration interrupted for username: " + username);
         }
     }
 
