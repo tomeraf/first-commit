@@ -25,11 +25,14 @@ public class GuestTest {
     @Test
     void testLoginTwiceShouldNotOverride() {
         boolean result1 = guest.enterToSystem("1", 0);
-        boolean result2 = guest.enterToSystem("1", 1); // Should not take effect
-        assertTrue(result1); // First login should succeed
-        assertFalse(result2); // Login should fail since already logged in
-        assertTrue(guest.isInSession());
-        assertEquals(0, guest.getUserID());
+        try {
+            guest.enterToSystem("1", 1); // Should not take effect
+            fail("Should have thrown an exception");
+        }catch (IllegalArgumentException e){
+            assertTrue(result1); // First login should succeed
+            assertTrue(guest.isInSession());
+            assertEquals(0, guest.getUserID());
+        }
     }
 
     @Test
@@ -66,8 +69,12 @@ public class GuestTest {
 
     @Test
     void testLoginWithNegativeID() {
-        boolean result = guest.enterToSystem("1", -1);
+        try {
+            guest.enterToSystem("1", -1);
+            fail("Should have thrown an exception");
+        }catch (IllegalArgumentException e){
+            assertTrue(true);
+        }
 
-        assertFalse(result);
     }
 }

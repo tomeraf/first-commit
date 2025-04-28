@@ -32,8 +32,13 @@ public class ItemTest {
     @Test
     void testBuyItemNotEnoughStock() {
         item.setQuantity(2); // Set initial quantity
-        item.buyItem(5); // Try to buy 5 items
-        assertEquals(2, item.getQuantity()); // Check if the quantity remains the same
-        assertEquals(0, item.getNumOfOrders()); // Check if the number of orders remains the same
+        try {
+            item.buyItem(5); // Try to buy 5 items
+            fail("Should have thrown an exception");
+
+        }catch (IllegalArgumentException e) {
+            assertEquals(2, item.getQuantity()); // Check if the number of orders remains the same
+            assertEquals(0, item.getNumOfOrders()); // Check if the number of orders remains the same
+        }
     }
 }
