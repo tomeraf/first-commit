@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import Service.ShopService;
 import Service.UserService;
+import main.Domain.ShoppingBasket;
+import main.Domain.ShoppingCart;
 import Domain.DTOs.PaymentDetailsDTO;
 import Domain.Guest;
 import Domain.Manager;
@@ -22,6 +24,7 @@ import Domain.Category;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,8 +50,8 @@ public class endToEndTest_1 {
     private OrderService orderService;
     private ConcurrencyHandler concurrencyHandler;
     
-    
-    public endToEndTest_1() {
+    @BeforeEach
+    public void setUp() {
         shopRepository = new MemoryShopRepository();
         userRepository = new MemoryUserRepository();
         orderRepository = new MemoryOrderRepository();
@@ -63,84 +66,85 @@ public class endToEndTest_1 {
         shopService = new ShopService(userRepository, shopRepository, orderRepository, jwtAdapter, concurrencyHandler);
         orderService = new OrderService(userRepository, shopRepository, orderRepository, jwtAdapter, payment, shipment, concurrencyHandler);
     }
+    
 
-    public String generateloginAsRegistered() {
-        Response<String> ownerGuestResp = userService.enterToSystem();
-        assertTrue(ownerGuestResp.isOk(), "Owner enterToSystem should succeed");
-        String ownerGuestToken = ownerGuestResp.getData();
-        assertNotNull(ownerGuestToken, "Owner guest token must not be null");
+        public String generateloginAsRegistered() {
+            Response<String> ownerGuestResp = userService.enterToSystem();
+            assertTrue(ownerGuestResp.isOk(), "Owner enterToSystem should succeed");
+            String ownerGuestToken = ownerGuestResp.getData();
+            assertNotNull(ownerGuestToken, "Owner guest token must not be null");
 
-        // Owner registers
-        Response<Void> ownerReg = userService.registerUser(
-            ownerGuestToken, "owner", "pwdO", LocalDate.now().minusYears(30)
-        );
-        assertTrue(ownerReg.isOk(), "Owner registration should succeed");
+            // Owner registers
+            Response<Void> ownerReg = userService.registerUser(
+                ownerGuestToken, "owner", "pwdO", LocalDate.now().minusYears(30)
+            );
+            assertTrue(ownerReg.isOk(), "Owner registration should succeed");
 
-        // Owner logs in
-        Response<String> ownerLogin = userService.loginUser(
-            ownerGuestToken, "owner", "pwdO"
-        );
-        assertTrue(ownerLogin.isOk(), "Owner login should succeed");
-        String ownerToken = ownerLogin.getData();
-        assertNotNull(ownerToken, "Owner token must not be null");
-        return ownerToken;
-    }
+            // Owner logs in
+            Response<String> ownerLogin = userService.loginUser(
+                ownerGuestToken, "owner", "pwdO"
+            );
+            assertTrue(ownerLogin.isOk(), "Owner login should succeed");
+            String ownerToken = ownerLogin.getData();
+            assertNotNull(ownerToken, "Owner token must not be null");
+            return ownerToken;
+        }
 
-    public ShopDTO generateShopAndItems(String ownerToken) {
-        // 1) Owner creates the shop
-        Response<ShopDTO> shopResp = shopService.createShop(
-            ownerToken, 
-            "MyShop", 
-            "A shop for tests"
-        );
-        assertTrue(shopResp.isOk(), "Shop creation should succeed");
-        ShopDTO shop = shopResp.getData();
-        assertNotNull(shop, "Returned ShopDTO must not be null");
-        int shopId = shop.getId();
+        public ShopDTO generateShopAndItems(String ownerToken) {
+            // 1) Owner creates the shop
+            Response<ShopDTO> shopResp = shopService.createShop(
+                ownerToken, 
+                "MyShop", 
+                "A shop for tests"
+            );
+            assertTrue(shopResp.isOk(), "Shop creation should succeed");
+            ShopDTO shop = shopResp.getData();
+            assertNotNull(shop, "Returned ShopDTO must not be null");
+            int shopId = shop.getId();
 
-        // 2) Owner adds three items
-        Response<ItemDTO> addA = shopService.addItemToShop(
-            ownerToken, shopId,
-            "Apple", Category.FOOD, 1.00, "fresh apple"
-        );
-        Response<ItemDTO> addB = shopService.addItemToShop(
-            ownerToken, shopId,
-            "Banana", Category.FOOD, 0.50, "ripe banana"
-        );
-        Response<ItemDTO> addL = shopService.addItemToShop(
-            ownerToken, shopId,
-            "Laptop", Category.ELECTRONICS, 999.99, "new laptop"
-        );
-        assertTrue(addA.isOk(), "Adding Apple should succeed");
-        assertTrue(addB.isOk(), "Adding Banana should succeed");
-        assertTrue(addL.isOk(), "Adding Laptop should succeed");
+            // 2) Owner adds three items
+            Response<ItemDTO> addA = shopService.addItemToShop(
+                ownerToken, shopId,
+                "Apple", Category.FOOD, 1.00, "fresh apple"
+            );
+            Response<ItemDTO> addB = shopService.addItemToShop(
+                ownerToken, shopId,
+                "Banana", Category.FOOD, 0.50, "ripe banana"
+            );
+            Response<ItemDTO> addL = shopService.addItemToShop(
+                ownerToken, shopId,
+                "Laptop", Category.ELECTRONICS, 999.99, "new laptop"
+            );
+            assertTrue(addA.isOk(), "Adding Apple should succeed");
+            assertTrue(addB.isOk(), "Adding Banana should succeed");
+            assertTrue(addL.isOk(), "Adding Laptop should succeed");
 
-        // 3) (Optional) bump quantities or prices if you like:
-        //    here we just set Apple's stock to 10 as an example
-        //    first fetch its ID
-        Response<ShopDTO> infoResp = shopService.getShopInfo(ownerToken, shopId);
-        assertTrue(infoResp.isOk(), "getShopInfo should succeed");
-        Map<Integer,ItemDTO> map = infoResp.getData().getItems();
-        assertEquals(3, map.size(), "Shop should contain exactly 3 items");
-        int appleId = map.values().stream()
-                        .filter(i -> i.getName().equals("Apple"))
-                        .findFirst()
-                        .get()
-                        .getItemID();
-        Response<Void> chgQty = shopService.changeItemQuantityInShop(
-            ownerToken, shopId, appleId, 10
-        );
-        assertTrue(chgQty.isOk(), "changeItemQuantityInShop should succeed");
+            // 3) (Optional) bump quantities or prices if you like:
+            //    here we just set Apple's stock to 10 as an example
+            //    first fetch its ID
+            Response<ShopDTO> infoResp = shopService.getShopInfo(ownerToken, shopId);
+            assertTrue(infoResp.isOk(), "getShopInfo should succeed");
+            Map<Integer,ItemDTO> map = infoResp.getData().getItems();
+            assertEquals(3, map.size(), "Shop should contain exactly 3 items");
+            int appleId = map.values().stream()
+                            .filter(i -> i.getName().equals("Apple"))
+                            .findFirst()
+                            .get()
+                            .getItemID();
+            Response<Void> chgQty = shopService.changeItemQuantityInShop(
+                ownerToken, shopId, appleId, 10
+            );
+            assertTrue(chgQty.isOk(), "changeItemQuantityInShop should succeed");
 
-        // 4) Retrieve final list and return it
-        Response<List<ItemDTO>> finalResp = shopService.showShopItems(shopId);
-        assertTrue(finalResp.isOk(), "showShopItems should succeed");
-        List<ItemDTO> items = finalResp.getData();
-        assertNotNull(items, "Returned item list must not be null");
-        assertEquals(3, items.size(), "There should be 3 items in the shop");
+            // 4) Retrieve final list and return it
+            Response<List<ItemDTO>> finalResp = shopService.showShopItems(shopId);
+            assertTrue(finalResp.isOk(), "showShopItems should succeed");
+            List<ItemDTO> items = finalResp.getData();
+            assertNotNull(items, "Returned item list must not be null");
+            assertEquals(3, items.size(), "There should be 3 items in the shop");
 
-        return shop;
-    }
+            return shop;
+        }
     public Order buyCartContent(String sessionToken) {
         PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
             "1234567890123456", "John Doe", "123456789", "12/25", "123"
@@ -180,8 +184,11 @@ public class endToEndTest_1 {
     @Test
     public void successfulGuestRegister() {
         
+        System.out.println("successfulGuestRegister");
         Response<String> guestToken = userService.enterToSystem();
         Response<Void> res = userService.registerUser(guestToken.getData(), "user123", "password", LocalDate.now().minusYears(20));
+        System.out.println(res.getError());
+        
         assertTrue(res.isOk());
         Response<String> userToken = userService.loginUser(guestToken.getData(), "user123", "password");
 
@@ -256,7 +263,7 @@ public class endToEndTest_1 {
         assertNotNull(userToken.getData(), "loginUser should return a valid token after registration");
         Response<String> logoutRespUser = userService.logoutRegistered(userToken.getData());
         assertTrue(logoutRespUser.isOk(), "Logout should succeed");
-        Response<Void> logoutRespGuest = userService.exitAsGuest(guestToken.getData());
+        Response<Void> logoutRespGuest = userService.exitAsGuest(logoutRespUser.getData());
         assertTrue(logoutRespGuest.isOk(), "Logout should succeed");
     }
 
@@ -1047,83 +1054,300 @@ public class endToEndTest_1 {
         String ownerToken = generateloginAsRegistered();
         ShopDTO shop = generateShopAndItems(ownerToken);
 
-        String managerToken = userService.enterToSystem().getData();
+        // 2) Manager setup
+        String managerGuestToken = userService.enterToSystem().getData();
         Response<Void> managerRegResp = userService.registerUser(
-            managerToken, "manager", "pwdM", LocalDate.now().minusYears(30)
+            managerGuestToken, "manager", "pwdM", LocalDate.now().minusYears(30)
         );
         assertTrue(managerRegResp.isOk(), "Manager registration should succeed");
-        // 2) manager logs in
-        Response<String> ownerLoginResp = userService.loginUser(
-            ownerToken, "manager", "pwdM"
+
+        Response<String> managerLoginResp = userService.loginUser(
+            managerGuestToken, "manager", "pwdM"
         );
+        assertTrue(managerLoginResp.isOk(), "Manager login should succeed");
+        String managerToken = managerLoginResp.getData(); // after login
 
+        // 3) Owner adds the manager
         Set<Permission> permissions = new HashSet<>();
-
-        // 2) Owner adds a manager
+        permissions.add(Permission.APPOINTMENT);
         Response<Void> addManagerResp = shopService.addShopManager(
             ownerToken, shop.getId(), "manager", permissions
         );
+        assertTrue(addManagerResp.isOk(), "addShopManager should succeed");
 
         Response<String> res = shopService.getMembersPermissions(ownerToken, shop.getId());
         
         Response<Void> setPermissionsResp = shopService.addShopManagerPermission
         (
-            ownerToken, shop.getId(), "manager", Permission.APPOINTMENT
+            ownerToken, shop.getId(), "manager", Permission.UPDATE_ITEM_PRICE
         );
-
+        assertTrue(setPermissionsResp.isOk(), "setPermissions should succeed");
         assertNotEquals(res.getData(), shopService.getMembersPermissions(ownerToken, shop.getId()).getData());
         
     }
 
     @Test
-    public void searchItemsWithPopulatedShop() {
-        // 1) Enter as guest
-        Response<String> guestResp = userService.enterToSystem();
-        assertTrue(guestResp.isOk(), "enterToSystem should succeed");
-        String guestToken = guestResp.getData();
-        assertNotNull(guestToken, "Guest token must not be null");
+    public void successfulViewShopContent() {
+        // 1) Owner creates shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
 
-        // 2) Register owner
-        Response<Void> regResp = userService.registerUser(guestToken, "owner", "pwd", LocalDate.now().minusYears(30));
-        assertTrue(regResp.isOk(), "Registration should succeed");
+        // 2) Manager setup
+        String mgrGuest = userService.enterToSystem().getData();
+        userService.registerUser(mgrGuest, "mgr", "pwdM", LocalDate.now().minusYears(30));
+        String mgrToken = userService.loginUser(mgrGuest, "mgr", "pwdM").getData();
 
-        // 3) Log in as owner
-        Response<String> loginResp = userService.loginUser(guestToken, "owner", "pwd");
-        assertTrue(loginResp.isOk(), "Owner login should succeed");
-        String ownerToken = loginResp.getData();
-        assertNotNull(ownerToken, "Owner token must not be null");
+        // 3) Owner assigns manager WITH VIEW permission
+        Set<Permission> perms = new HashSet<>();
+        perms.add(Permission.VIEW);
+        Response<Void> addMgr = shopService.addShopManager(ownerToken, shop.getId(), "mgr", perms);
+        assertTrue(addMgr.isOk(), "addShopManager should succeed");
 
-        // 4) Create the shop
-        Response<ShopDTO> createShopResp = shopService.createShop(ownerToken, "MyShop", "desc");
-        assertTrue(createShopResp.isOk(), "Shop creation should succeed");
-        ShopDTO shop = createShopResp.getData();
-        assertNotNull(shop, "ShopDTO must not be null");
+        // 4) Manager views dashboard
+        Response<ShopDTO> viewResp = shopService.getShopInfo(mgrToken, shop.getId());
+        assertTrue(viewResp.isOk(), "viewShopContent should succeed");
+        ShopDTO seen = viewResp.getData();
 
-        // 5) Add three items
-        assertTrue(shopService.addItemToShop(ownerToken, shop.getId(), "Apple", Category.FOOD, 1.00, "fresh apple")
-                .isOk(), "Adding Apple should succeed");
-        assertTrue(shopService.addItemToShop(ownerToken, shop.getId(), "Banana", Category.FOOD, 0.50, "ripe banana")
-                .isOk(), "Adding Banana should succeed");
-        assertTrue(shopService.addItemToShop(ownerToken, shop.getId(), "Laptop", Category.ELECTRONICS, 999.99, "new laptop")
-                .isOk(), "Adding Laptop should succeed");
+        assertEquals(shop.getId(),   seen.getId(),   "Shop ID must match");
+        assertEquals(shop.getName(), seen.getName(), "Shop name must match");
+    }
 
-        // 6) Filter by exact name "Apple"
-        HashMap<String, String> nameFilter = new HashMap<>();
-        nameFilter.put("name", "Apple");
-        Response<List<ItemDTO>> nameFilterResp = shopService.filterItemsAllShops(nameFilter);
-        assertTrue(nameFilterResp.isOk(), "Name filter call should succeed");
-        List<ItemDTO> byName = nameFilterResp.getData();
-        assertNotNull(byName, "Result list must not be null");
-        assertEquals(1, byName.size(), "Only one item should match name 'Apple'");
-        assertEquals("Apple", byName.get(0).getName());
+    @Test
+    public void viewShopNotLoggedIn() {
+        // 1) Owner creates shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
 
-        // 7) Filter by category FOOD (should yield 2 items)
-        HashMap<String, String> catFilter = new HashMap<>();
-        catFilter.put("category", "FOOD");
-        Response<List<ItemDTO>> catFilterResp = shopService.filterItemsAllShops(catFilter);
-        assertTrue(catFilterResp.isOk(), "Category filter call should succeed");
-        List<ItemDTO> byCategory = catFilterResp.getData();
-        assertNotNull(byCategory, "Result list must not be null");
-        assertEquals(2, byCategory.size(), "Two items should match category FOOD");
+        // 2) User never logged in → use an invalid token
+        String badToken = "not-a-valid-token";
+
+        // 3) Attempt to view
+        Response<ShopDTO> resp = shopService.getShopInfo(badToken, shop.getId());
+        assertFalse(resp.isOk(), "Should fail when not logged in");
+    }
+
+    @Test
+    public void userNotManagerOfShop() {
+        // 1) Owner creates shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Some other user logs in
+        String guest = userService.enterToSystem().getData();
+        userService.registerUser(guest, "other", "pwdO", LocalDate.now().minusYears(28));
+        String otherToken = userService.loginUser(guest, "other", "pwdO").getData();
+
+        // 3) That user attempts to view
+        Response<ShopDTO> resp = shopService.getShopInfo(otherToken, shop.getId());
+        assertFalse(resp.isOk(), "Should fail when not a manager");
+    }
+
+    @Test
+    public void userLacksPermission() {
+        // 1) Owner creates shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Manager setup
+        String mgrGuest = userService.enterToSystem().getData();
+        userService.registerUser(mgrGuest, "mgr2", "pwdM2", LocalDate.now().minusYears(30));
+        String mgrToken = userService.loginUser(mgrGuest, "mgr2", "pwdM2").getData();
+
+        // 3) Owner assigns manager WITHOUT VIEW permission
+        Set<Permission> perms = new HashSet<>();  // empty set
+        Response<Void> addMgr = shopService.addShopManager(ownerToken, shop.getId(), "mgr2", perms);
+        assertTrue(addMgr.isOk(), "addShopManager should succeed");
+
+        // 4) Manager tries to view
+        Response<ShopDTO> resp = shopService.getShopInfo(mgrToken, shop.getId());
+        assertFalse(resp.isOk(), "Should fail when lacking VIEW permission");
+    }
+
+    @Test
+    public void successfulEditProduct() {
+        // 1) Owner creates shop + items
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Manager setup
+        String mgrGuestToken = userService.enterToSystem().getData();
+        userService.registerUser(mgrGuestToken, "mgr", "pwdM", LocalDate.now().minusYears(30));
+        String mgrToken = userService.loginUser(mgrGuestToken, "mgr", "pwdM").getData();
+
+        // 3) Owner assigns manager + gives INVENTORY permission
+        Response<Void> addMgr = shopService.addShopManager(ownerToken, shop.getId(), "mgr", new HashSet<>());
+        assertTrue(addMgr.isOk(), "addShopManager should succeed");
+        Response<Void> givePerm = shopService.addShopManagerPermission(
+            ownerToken, shop.getId(), "mgr", Permission.UPDATE_ITEM_QUANTITY
+        );
+        assertTrue(givePerm.isOk(), "addShopManagerPermission should succeed");
+
+        // 4) Manager edits the quantity of an existing item
+        List<ItemDTO> items = shopService.showShopItems(shop.getId()).getData();
+        ItemDTO first = items.get(0);
+        int newQty = first.getQuantity() + 5;
+        Response<Void> editResp = shopService.changeItemQuantityInShop(
+            mgrToken, shop.getId(), first.getItemID(), newQty
+        );
+        assertTrue(editResp.isOk(), "changeItemQuantityInShop should succeed");
+
+        // 5) Verify via service
+        List<ItemDTO> updated = shopService.showShopItems(shop.getId()).getData();
+        ItemDTO updatedFirst = updated.stream()
+            .filter(i -> i.getItemID() == first.getItemID())
+            .findFirst()
+            .orElseThrow();
+        assertEquals(newQty, updatedFirst.getQuantity(), "Quantity should be updated");
+    }
+
+    @Test
+    public void editProductNotLoggedIn() {
+        // 1) Attempt to edit without logging in
+        String invalidToken = "not-a-token";
+        Response<Void> resp = shopService.changeItemQuantityInShop(
+            invalidToken, 1, 42, 10
+        );
+        assertFalse(resp.isOk(), "Should fail if not logged in");
+    }
+
+    @Test
+    public void productNotFound() {
+        // 1) Owner setup
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Owner tries to edit a non-existent product
+        int missingId = 9999;
+        Response<Void> resp = shopService.changeItemQuantityInShop(
+            ownerToken, shop.getId(), missingId, 10
+        );
+        assertFalse(resp.isOk(), "Should fail when product does not exist");
+    }
+
+    @Test
+    public void editProductUserLacksPermission() {
+        // 1) Owner + shop + items
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Manager setup (no inventory permission)
+        String mgrGuest = userService.enterToSystem().getData();
+        userService.registerUser(mgrGuest, "mgrNoInv", "pwdI", LocalDate.now().minusYears(30));
+        String mgrToken = userService.loginUser(mgrGuest, "mgrNoInv", "pwdI").getData();
+
+        // 3) Owner assigns the user as manager—but with an empty permission set
+        Response<Void> addMgr = shopService.addShopManager(ownerToken, shop.getId(), "mgrNoInv", new HashSet<>());
+        assertTrue(addMgr.isOk(), "addShopManager should succeed");
+
+        // 4) Manager attempts to edit the first product’s quantity
+        List<ItemDTO> items = shopService.showShopItems(shop.getId()).getData();
+        int itemId = items.get(0).getItemID();
+        int newQty = items.get(0).getQuantity() + 5;
+
+        Response<Void> resp = shopService.changeItemQuantityInShop(
+            mgrToken, shop.getId(), itemId, newQty
+        );
+
+        // 5) Expect a permission-denied error
+        assertFalse(resp.isOk(), "Should fail when lacking inventory permission");
+    }
+
+
+    @Test
+    public void successfulEditPurchasePolicy() {
+        // 1) Owner + shop + items
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Manager setup
+        String mgrGuest = userService.enterToSystem().getData();
+        userService.registerUser(mgrGuest, "mgrP", "pwdP", LocalDate.now().minusYears(30));
+        String mgrToken = userService.loginUser(mgrGuest, "mgrP", "pwdP").getData();
+
+        // 3) Owner assigns manager WITH purchase‐policy permission
+        Set<Permission> perms = new HashSet<>();
+        perms.add(Permission.UPDATE_PURCHASE_POLICY);
+        Response<Void> addMgr = shopService.addShopManager(ownerToken, shop.getId(), "mgrP", perms);
+        assertTrue(addMgr.isOk(), "addShopManager should succeed");
+
+        // 4) Manager submits valid purchase policy
+        String newPolicy = "AT_LEAST_ONE_FROM_SHOP";  // your domain’s valid format
+        Response<Void> editResp = shopService.updatePurchaseType(mgrToken, shop.getId(), newPolicy);
+        assertTrue(editResp.isOk(), "updatePurchaseType should succeed");
+    }
+
+    @Test
+    public void editPurchasePolicyNotLoggedIn() {
+        // use an invalid token
+        String badToken = "invalid";
+        Response<Void> resp = shopService.updatePurchaseType(badToken, 1, "ANY_POLICY");
+        assertFalse(resp.isOk(), "Should fail when not logged in");
+    }
+
+    @Test
+    public void userLacksPermissionOnPurchasePolicy() {
+        // 1) Owner + shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Manager without that permission
+        String mgrGuest = userService.enterToSystem().getData();
+        userService.registerUser(mgrGuest, "mgrNoP", "pwdX", LocalDate.now().minusYears(30));
+        String mgrToken = userService.loginUser(mgrGuest, "mgrNoP", "pwdX").getData();
+
+        Response<Void> addMgr = shopService.addShopManager(ownerToken, shop.getId(), "mgrNoP", new HashSet<>());
+        assertTrue(addMgr.isOk(), "addShopManager should succeed");
+
+        // 3) Attempt to edit
+        Response<Void> resp = shopService.updatePurchaseType(mgrToken, shop.getId(), "ANY_POLICY");
+        assertFalse(resp.isOk(), "Should fail when lacking permission");
+    }
+
+    @Test
+    public void invalidPurchasePolicyFormat() {
+        // 1) Owner + shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Manager with permission
+        String mgrGuest = userService.enterToSystem().getData();
+        userService.registerUser(mgrGuest, "mgrBadP", "pwdB", LocalDate.now().minusYears(30));
+        String mgrToken = userService.loginUser(mgrGuest, "mgrBadP", "pwdB").getData();
+
+        Set<Permission> perms = new HashSet<>();
+        perms.add(Permission.UPDATE_PURCHASE_POLICY);
+        shopService.addShopManager(ownerToken, shop.getId(), "mgrBadP", perms);
+
+        // 3) Submit malformed policy
+        Response<Void> resp = shopService.updatePurchaseType(mgrToken, shop.getId(), "not a valid format");
+        assertFalse(resp.isOk(), "Should fail on invalid format");
+    }
+
+    @Test
+    public void successfulShopClosing() {
+        // 1) System (owner) creates and opens a shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+
+        // 2) Owner closes it
+        Response<Void> closeResp = shopService.closeShop(ownerToken, shop.getId());
+        assertTrue(closeResp.isOk(), "closeShopByFounder should succeed");
+
+        // 3) After closing, it must no longer show up among open shops
+        List<ShopDTO> openShops = shopService.showAllShops().getData();
+        assertFalse(openShops.stream().anyMatch(s -> s.getId() == shop.getId()),
+                    "Closed shop must not appear in showAllShops()");
+    }
+    @Test
+    public void closingClosedShop() {
+        // 1) Owner creates and closes a shop
+        String ownerToken = generateloginAsRegistered();
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        assertTrue(shopService.closeShop(ownerToken, shop.getId()).isOk(),
+                   "Initial close should succeed");
+
+        // 2) Owner attempts to close it again
+        Response<Void> secondClose = shopService.closeShop(ownerToken, shop.getId());
+        assertFalse(secondClose.isOk(), "Closing an already closed shop should fail");
     }
 }

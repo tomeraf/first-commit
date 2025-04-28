@@ -45,6 +45,7 @@ public class UserService {
         
         guest.enterToSystem(sessionToken, guestUserID);
         userRepository.saveUser(guest); // Save the guest user in the repository
+        System.out.println("Guest ID: " + userRepository.getUserById(guestUserID).getUserID());
         return Response.ok(sessionToken);
     }
 
@@ -114,7 +115,7 @@ public class UserService {
                 }
     
                 int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-    
+                System.out.println("User ID: " + userID);
                 Guest guest = userRepository.getUserById(userID);
                 // if getUsername() is non-null, they’re already registered
                 if (guest.getUsername() != null) {
