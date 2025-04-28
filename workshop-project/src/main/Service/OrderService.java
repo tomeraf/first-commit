@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -79,7 +81,6 @@ public class OrderService {
         }
     }
 
-
     /**
      * Adds items to the user's shopping cart.
      *
@@ -87,12 +88,29 @@ public class OrderService {
      * @param itemDTOs list of items to add
      */
     public Response<Void> addItemsToCart(String sessionToken, List<ItemDTO> itemDTOs) {
+        List<Lock> acquiredLocks = new ArrayList<>();
+
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+
+            Set<Integer> shopIds = itemDTOs.stream()
+                .map(ItemDTO::getShopId)
+                .collect(Collectors.toSet());
+
+            List<Integer> sortedShopIds = new ArrayList<>(shopIds);
+            Collections.sort(sortedShopIds);
+
+            // Lock all needed shops
+            for (int shopId : sortedShopIds) {
+                Lock shopRead = ConcurrencyHandler.getShopReadLock(shopId);
+                shopRead.lock();
+                acquiredLocks.add(shopRead);
+            }
+
             List<Item> items = itemDTOs.stream()
                     .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
                     .toList(); // Convert ItemDTO to Item
@@ -101,9 +119,17 @@ public class OrderService {
 
             logger.info(() -> "Items added to cart successfully");
             return Response.ok();
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             logger.error(() -> "Error adding items to cart: " + e.getMessage());
             return Response.error("Error adding items to cart: " + e.getMessage());
+        }
+        finally {
+            // Unlock in reverse order
+            Collections.reverse(acquiredLocks);
+            for (Lock lock : acquiredLocks) {
+                lock.unlock();
+            }
         }
     }
 
@@ -143,6 +169,7 @@ public class OrderService {
      */
     public Response<Order> buyCartContent(String sessionToken,PaymentDetailsDTO paymentDetailsDTO, String shipmentDetails) {
         List<Lock> acquiredLocks = new ArrayList<>();
+
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -150,27 +177,42 @@ public class OrderService {
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             
-            List<Pair<Integer, Integer>> shopItemPairs = new ArrayList<>();
+            List<Pair<Integer, Integer>> locksToAcquire = new ArrayList<>();
+        
+            // First add shops (with itemID = -1 to indicate shop lock)
+            Set<Integer> shopIds = guest.getCart().getBaskets().stream()
+                    .map(ShoppingBasket::getShopID)
+                    .collect(Collectors.toSet());
+            for (int shopId : shopIds) {
+                locksToAcquire.add(new Pair<>(shopId, -1));
+            }
 
+            // Then add items
             for (ShoppingBasket basket : guest.getCart().getBaskets()) {
                 int shopID = basket.getShopID();
                 for (ItemDTO item : basket.getItems()) {
-                    shopItemPairs.add(new Pair<>(shopID, item.getItemID()));
+                    locksToAcquire.add(new Pair<>(shopID, item.getItemID()));
                 }
             }
-            // Sort by shopID then itemID to prevent deadlocks
-            shopItemPairs.sort(Comparator
+
+            // Sort: shop locks first (itemID == -1), then by itemID
+            locksToAcquire.sort(Comparator
                 .comparing(Pair<Integer, Integer>::getKey)
                 .thenComparing(Pair::getValue)
             );
 
-             // Lock all needed items
-            for (Pair<Integer, Integer> pair : shopItemPairs) {
-                ReentrantLock itemLock = ConcurrencyHandler.getItemLock(pair.getKey(), pair.getValue());
-                itemLock.lockInterruptibly();  // Safe lock that respects thread interruption
-                acquiredLocks.add(itemLock);
+            // Lock all
+            for (Pair<Integer, Integer> pair : locksToAcquire) {
+                Lock lock;
+                if (pair.getValue() == -1) {
+                    lock = ConcurrencyHandler.getShopReadLock(pair.getKey());
+                } else {
+                    lock = ConcurrencyHandler.getItemLock(pair.getKey(), pair.getValue());
+                }
+                lock.lockInterruptibly();
+                acquiredLocks.add(lock);
             }
-       
+
             // all needed shops and items are locked
             // Now we can proceed with the purchase
             List<Shop> shops = new ArrayList<>();
@@ -185,6 +227,7 @@ public class OrderService {
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
             return Response.ok(order); 
         } 
+        
         catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             logger.error(() -> "Thread interrupted during cart purchase");
@@ -194,14 +237,12 @@ public class OrderService {
             logger.error(() -> "Error buying cart content: " + e.getMessage());
             return Response.error("Error buying cart content: " + e.getMessage());
         } finally {
-            // Always unlock in the reverse order
             Collections.reverse(acquiredLocks);
             for (Lock lock : acquiredLocks) {
                 lock.unlock();
             }
         }
     }
-
 
     /**
      * Submits a bid offer for a specific item.
@@ -288,6 +329,7 @@ public class OrderService {
             shopRead.unlock();
         }
     }
+
      /**
      * Retrieves the personal order history for the user.
      *

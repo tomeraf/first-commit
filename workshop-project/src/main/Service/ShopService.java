@@ -190,74 +190,140 @@ public class ShopService {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, remove the item from the shop with the provided details
-        try{
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.removeItemFromShop(user, shop, itemID);
-            logger.info(()->"Item removed from shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
-        } catch (Exception e) {
-            logger.error(()->"Error removing item from shop: " + e.getMessage());
-            return Response.error("Error: " + e.getMessage());
+        Lock shopRead = concurrencyHandler.getShopReadLock(shopID);
+        ReentrantLock itemLock = concurrencyHandler.getItemLock(shopID, itemID);
+
+        shopRead.lock();
+        try {
+            itemLock.lockInterruptibly();
+            try{
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.removeItemFromShop(user, shop, itemID);
+                logger.info(()->"Item removed from shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+                return Response.ok();
+            } catch (Exception e) {
+                logger.error(()->"Error removing item from shop: " + e.getMessage());
+                return Response.error("Error: " + e.getMessage());
+            }
+            finally {
+                itemLock.unlock();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return Response.error("Operation interrupted while locking item.");
         }
-        return Response.ok();
+        finally {
+            shopRead.unlock();
+        }
     }
 
     public Response<Void> changeItemQuantityInShop(String sessionToken, int shopID, int itemID, int newQuantity) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, change the item quantity in the shop with the provided details
-        try{
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Shop shop = this.shopRepository.getShopById(shopID);
-            managementService.updateItemQuantity(user, shop, itemID, newQuantity);
-            logger.info(()->"Item quantity changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
-        } catch (Exception e) {
-            logger.error(()->"Error changing item quantity in shop: " + e.getMessage());
-            return Response.error("Error: " + e.getMessage());
+        Lock shopRead = concurrencyHandler.getShopReadLock(shopID);
+        ReentrantLock itemLock = concurrencyHandler.getItemLock(shopID, itemID);
+        
+        shopRead.lock();
+        try {
+            itemLock.lockInterruptibly();
+            try{
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Shop shop = this.shopRepository.getShopById(shopID);
+                managementService.updateItemQuantity(user, shop, itemID, newQuantity);
+                logger.info(()->"Item quantity changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+                return Response.ok();
+            } catch (Exception e) {
+                logger.error(()->"Error changing item quantity in shop: " + e.getMessage());
+                return Response.error("Error: " + e.getMessage());
+            }
+            finally {
+                itemLock.unlock();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return Response.error("Operation interrupted while locking item.");
         }
-        return Response.ok();
+        finally {
+            shopRead.unlock();
+        }
     }
 
     public Response<Void> changeItemPriceInShop(String sessionToken, int shopID, int itemID, double newPrice) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, change the item price in the shop with the provided details
-        try{
-        authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.updateItemPrice(user, shop, itemID, newPrice);
-            logger.info(()->"Item price changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
-        } catch (Exception e) {
-            logger.error(()->"Error changing item price in shop: " + e.getMessage());
-            return Response.error("Error: " + e.getMessage());
+        Lock shopRead = concurrencyHandler.getShopReadLock(shopID);
+        ReentrantLock itemLock = concurrencyHandler.getItemLock(shopID, itemID);
+        
+        shopRead.lock();
+        try {
+            itemLock.lockInterruptibly();
+
+            try{
+            authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.updateItemPrice(user, shop, itemID, newPrice);
+                logger.info(()->"Item price changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+                return Response.ok();
+            } catch (Exception e) {
+                logger.error(()->"Error changing item price in shop: " + e.getMessage());
+                return Response.error("Error: " + e.getMessage());
+            }
+            finally {
+                itemLock.unlock();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return Response.error("Operation interrupted while locking item.");
         }
-        return Response.ok();
+        finally {
+            shopRead.unlock();
+        }
         
     }
 
     public Response<Void> changeItemDescriptionInShop(String sessionToken, int shopID, int itemID,
             String newDescription) {
-        // Check if the user is logged in
-        // If not, prompt to log in or register
-        // If logged in, change the item name in the shop with the provided details
-            try{
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.updateItemDescription(user, shop, itemID, newDescription);
-            logger.info(()->"Item description changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
-            } catch (Exception e) {
-                logger.error(()->"Error changing item description in shop: " + e.getMessage());
-                return Response.error("Error: " + e.getMessage());
+            // Check if the user is logged in
+            // If not, prompt to log in or register
+            // If logged in, change the item name in the shop with the provided details
+            Lock shopRead = concurrencyHandler.getShopReadLock(shopID);
+            ReentrantLock itemLock = concurrencyHandler.getItemLock(shopID, itemID);
+            
+            shopRead.lock();
+            try {
+                itemLock.lockInterruptibly();
+
+                try{
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.updateItemDescription(user, shop, itemID, newDescription);
+                logger.info(()->"Item description changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+                return Response.ok();
+                } catch (Exception e) {
+                    logger.error(()->"Error changing item description in shop: " + e.getMessage());
+                    return Response.error("Error: " + e.getMessage());
+                }
+                finally {
+                    itemLock.unlock();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return Response.error("Operation interrupted while locking item.");
             }
-        return Response.ok();
+            finally {
+                shopRead.unlock();
+            }
     }
 
     public Response<Void> rateShop(String sessionToken, int shopID, int rating) {
@@ -359,17 +425,30 @@ public class ShopService {
 
 
     public Response<Void> removeAppointment(String sessionToken, int shopID, String appointeeName) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        
         try {
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Registered appointee = userRepository.getUserByName(appointeeName);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.removeAppointment(user, shop, appointee);
-        }
+            lock.lockInterruptibly();
+        
+            try {
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Registered appointee = userRepository.getUserByName(appointeeName);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.removeAppointment(user, shop, appointee);
+            }
         catch (Exception e) {
             logger.error(()->"Error removing appointment: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
+        }
+    } 
+    catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        // handle interruption
+        }
+        finally {
+            lock.unlock();      
         }
         return Response.ok();
     }
@@ -424,6 +503,7 @@ public class ShopService {
         }
         return Response.ok();
     }
+    
     public Response<Void> removeShopManagerPermission(String sessionToken, int shopID,String appointeeName , Permission permission) {
         ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
         try {
@@ -466,6 +546,7 @@ public class ShopService {
                 Shop shop = shopRepository.getShopById(shopID);
                 managementService.closeShop(user, shop);
                 logger.info(()->"Shop closed: " + shop.getName() + " by user: " + userID);
+                return Response.ok();
             } finally {
                 shopWrite.unlock();
             }
@@ -473,7 +554,6 @@ public class ShopService {
             logger.error(()->"Error closing shop: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
-        return Response.ok();
     }
 
     public Response<String> getMembersPermissions(String sessionToken, int shopID) {
@@ -515,16 +595,29 @@ public class ShopService {
     }
 
     public Response<Void> respondToMessage(String sessionToken, int shopId, int messageId, String title, String content) {
-        try{
-            authenticationAdapter.validateToken(sessionToken);
-            String username=authenticationAdapter.getUsername(sessionToken);
-            Registered user=userRepository.getUserByName(username);
-            Shop shop=shopRepository.getShopById(shopId);
-            int newMessageId = shop.getNextMessageId();
-            IMessage parentMessage = shop.getAllMessages().get(messageId);
-            IMessage responseMessage = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
-            interactionService.respondToMessage(user, parentMessage, responseMessage);
+        ReentrantLock messageLock = concurrencyHandler.getBidLock(shopId, messageId);
+        
+        try {
+            messageLock.lockInterruptibly();
+            try{
+                authenticationAdapter.validateToken(sessionToken);
+                String username=authenticationAdapter.getUsername(sessionToken);
+                Registered user=userRepository.getUserByName(username);
+                Shop shop=shopRepository.getShopById(shopId);
+                int newMessageId = shop.getNextMessageId();
+                IMessage parentMessage = shop.getAllMessages().get(messageId);
+                IMessage responseMessage = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
+                interactionService.respondToMessage(user, parentMessage, responseMessage);
+            }
+            finally {
+                messageLock.unlock();
+            }
         }
+            catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                return Response.error("Thread was interrupted.");
+            }
+
         catch (Exception e) {
             logger.error(()->"Error responding to message: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
@@ -534,33 +627,57 @@ public class ShopService {
     
 
     public Response<Void> answerBid(String sessionToken, int shopID, int bidID, boolean accept) {
+        ReentrantLock bidLock = concurrencyHandler.getBidLock(shopID, bidID);
+
         try {
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.answerBid(user, shop, bidID, accept);
-            logger.info(()->"Bid answered: " + bidID + " in shop: " + shop.getName() + " by user: " + userID);
-            return Response.ok();
-        } catch (Exception e) {
-            logger.error(()->"Error answering bid: " + e.getMessage());
-            return Response.error("Error: " + e.getMessage());
+            bidLock.lockInterruptibly();
+            try {
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.answerBid(user, shop, bidID, accept);
+                logger.info(()->"Bid answered: " + bidID + " in shop: " + shop.getName() + " by user: " + userID);
+                return Response.ok();
+            } 
+            finally {
+                bidLock.unlock();
+            }
         }
+            catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                return Response.error("Thread was interrupted.");
+            }
+            
+            catch (Exception e) {
+                logger.error(()->"Error answering bid: " + e.getMessage());
+                return Response.error("Error: " + e.getMessage());
+            }
     }
 
     public Response<Void> submitCounterBid(String sessionToken, int shopID, int bidID, double offerAmount) {
+        ReentrantLock bidLock = concurrencyHandler.getBidLock(shopID, bidID);
+
         try {
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.submitCounterBid(user, shop, bidID, offerAmount);
-            logger.info(()->"Counter bid submitted: " + bidID + " in shop: " + shop.getName() + " by user: " + userID);
-            return Response.ok();
+            bidLock.lockInterruptibly();
+            try {
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.submitCounterBid(user, shop, bidID, offerAmount);
+                logger.info(()->"Counter bid submitted: " + bidID + " in shop: " + shop.getName() + " by user: " + userID);
+                return Response.ok();
+            }
+            finally {
+                bidLock.unlock();
+            }
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            return Response.error("Thread was interrupted.");
         } catch (Exception e) {
-            logger.error(()->"Error submitting counter bid: " + e.getMessage());
+            logger.error(() -> "Error submitting counter bid: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
     }
-
 }
