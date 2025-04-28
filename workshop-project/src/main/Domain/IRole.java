@@ -12,26 +12,22 @@ public abstract class IRole {
     abstract boolean hasPermission(Permission permission);
     abstract void addPermission(Permission permission);
     abstract void removePermission(Permission permission);
+    abstract void addOwner(int nomineeID, IRole role);
     public void setUser(Registered user) {
         this.user = user;
     }
     //abstract void addAppointment(int nomineeID, IRole role );
-    public void addManager(int nomineeID, IRole role) {
+    public void addManager(int nomineeID, IRole role)  {
         if (hasPermission(Permission.APPOINTMENT)) {
             appointments.put(nomineeID, role);
         } else {
-            System.out.println("No permission to add appointment");
+            throw new IllegalArgumentException("No permission to add appointment");
         }
     }
-    public void addOwner(int nomineeID, IRole role) {
-        // Default implementation - only Owners should add Owners
-        System.out.println("No permission to add owner");
-    }
     
-    public void removeAppointment(int appointeeID) {
+    public void removeAppointment(int appointeeID) throws IllegalArgumentException {
         if (!appointments.containsKey(appointeeID)) {
-            System.out.println("No appointment found for user ID: " + appointeeID);
-            return;
+            throw new IllegalArgumentException("No appointment found for user ID: " + appointeeID);
         }
         appointments.get(appointeeID).removeAllAppointments();
         Registered registered = appointments.get(appointeeID).getUser();
@@ -42,7 +38,6 @@ public abstract class IRole {
     public void removeAllAppointments() {
         List<Integer> appointeeIDs = new ArrayList<>(appointments.keySet());
         if(appointeeIDs.isEmpty()) {
-            System.out.println("No appointments to remove");
             return;
         }
         for (int appointeeID : appointeeIDs) {

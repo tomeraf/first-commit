@@ -64,8 +64,6 @@ public class OrderService {
             }
             int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             
-            System.out.println("User ID: " + userID);
-            
             Guest guest = userRepository.getUserById(userID);
             List<ItemDTO> itemDTOs = purchaseService.checkCartContent(guest);
             // List<ItemDTO> itemDTOs = items.stream()

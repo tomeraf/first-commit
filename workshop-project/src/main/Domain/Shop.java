@@ -91,12 +91,12 @@ public class Shop implements IMessageListener {
         }
     }
     
-    public void removeItem(int itemId){
+    public void removeItem(int itemId) throws IllegalArgumentException {
         if (items.containsKey(itemId)) {
             items.remove(itemId);
         } 
         else{
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
     
@@ -106,28 +106,30 @@ public class Shop implements IMessageListener {
             item.setName(name);
         } 
         else{
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 
-    public boolean updateItemQuantity(int itemId, int quantity) {
+    public void updateItemQuantity(int itemId, int quantity) {
         if (items.containsKey(itemId)){
             Item item = items.get(itemId);
-            return item.updateQuantity(quantity);
+            item.updateQuantity(quantity);
         } 
         else {
-            System.out.println("Item ID does not exist in the shop.");
-            return false;
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 
     public void updateItemPrice(int itemId, double price) {
+        if(price<=0){
+            throw new IllegalArgumentException("item price cannot be negative");
+        }
         if (items.containsKey(itemId)){
             Item item = items.get(itemId);
             item.setPrice(price);
         } 
         else{
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 
@@ -137,7 +139,7 @@ public class Shop implements IMessageListener {
             item.updateRating(rating);
         } 
         else{
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 
@@ -147,7 +149,7 @@ public class Shop implements IMessageListener {
             item.setCategory(category);
         } 
         else{
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
         public void updateItemDescription(int itemId, String description) {
@@ -156,13 +158,13 @@ public class Shop implements IMessageListener {
             item.setDescription(description);
         } 
         else{
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 
     public void updateRating(double rating) {
         if (rating < 0 || rating > 5) {
-            System.out.println("Can't rate, rating must be between 0 and 5.");
+            throw new IllegalArgumentException("Rating must be between 0 and 5.");
         }
         else {
             ratingCount++;
@@ -172,16 +174,14 @@ public class Shop implements IMessageListener {
 
     public void openShop(){ //must fix later on using synchronized methods
         if (isOpen) {
-            System.out.println("Shop is already open.");
-            return;
+            throw new RuntimeException("Shop is already open.");
         }
         this.isOpen = true;
     }
 
     public void closeShop(){//must fix later on using synchronized methods
         if (!isOpen) {
-            System.out.println("Shop is already closed.");
-            return;
+            throw new RuntimeException("Shop is already closed.");
         }
         this.isOpen = false;
     }
@@ -191,30 +191,25 @@ public class Shop implements IMessageListener {
             return true;
         }
         else if (!items.containsKey(itemId)) {
-            System.out.println("Item does not exist.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         } 
         else {
-            System.out.println("Can't add "+ quantity + " of item: " + itemId +
-                                    ", only "+ items.get(itemId).getQuantity() + " left in shop.");
+            throw new IllegalArgumentException("Quantity exceeds available stock.");
         }
-        return false;
     }
 
     public boolean canPurchaseBasket(HashMap <Integer, Integer> itemsToPurchase){ //itemId -> quantity
         if (!isOpen) {
-            System.out.println("Shop is closed. Cannot purchase items.");
-            return false;
+            throw new RuntimeException("Shop is closed. Cannot purchase items.");
         }
         if (itemsToPurchase.isEmpty()) {
-            System.out.println("Shopping basket is empty. Cannot purchase items.");
-            return false;
+            throw new IllegalArgumentException("Shopping basket is empty. Cannot purchase items.");
         }
         boolean result = true;
 
         for (Integer id : itemsToPurchase.keySet()) {
             if (!items.containsKey(id)) {
-                System.out.println("Item " + id + " does not exist in the shop.");
-                return false;
+                throw new IllegalArgumentException("Item ID does not exist in the shop.");
             }
             result = result && items.get(id).quantityCheck(itemsToPurchase.get(id)); //assuming basket.get(item) returns the quantity of the item wanting to purchase
         }
@@ -241,7 +236,7 @@ public class Shop implements IMessageListener {
             bidPurchaseCounter++;
             bidPurchaseItems.put(bidPurchase.getId(), bidPurchase);
         } else {
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
     public void addAuctionPurchase(int itemId, double startingAmount, LocalDateTime startTime, LocalDateTime endTime){
@@ -251,10 +246,10 @@ public class Shop implements IMessageListener {
             auctionPurchaseCounter++;
         } 
         else if (!items.containsKey(itemId)) {
-            System.out.println("Item ID does not exist in the shop.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
         else {
-            System.out.println("Item is out of stock.");
+            throw new IllegalArgumentException("Item is out of stock.");
         }
     }
 
@@ -263,7 +258,7 @@ public class Shop implements IMessageListener {
             ownerIDs.add(ownerID);
         }
         else {
-            System.out.println("Owner ID already exists in the shop.");
+            throw new IllegalArgumentException("Owner ID already exists in the shop.");
         }
     }
 
@@ -271,7 +266,7 @@ public class Shop implements IMessageListener {
         if (ownerIDs.contains(ownerID)) {
             ownerIDs.remove(ownerID);
         } else {
-            System.out.println("Owner ID does not exist in the shop.");
+            throw new IllegalArgumentException("Owner ID does not exist in the shop.");
         }
     }
 
@@ -279,7 +274,7 @@ public class Shop implements IMessageListener {
         if (!managerIDs.contains(managerID)) {
             managerIDs.add(managerID);
         } else {
-            System.out.println("Manager ID already exists in the shop.");
+            throw new IllegalArgumentException("Manager ID already exists in the shop.");
         }
     }
 
@@ -287,13 +282,13 @@ public class Shop implements IMessageListener {
         if (managerIDs.contains(managerID)) {
             managerIDs.remove(managerID);
         } else {
-            System.out.println("Manager ID does not exist in the shop.");
+            throw new IllegalArgumentException("Manager ID does not exist in the shop.");
         }
     }
 
     public void addBidDecision(int memberId, int bidId, boolean decision) {
         if(!bidPurchaseItems.containsKey(bidId)) {
-            System.out.println("Bid ID does not exist in the shop.");
+            throw new IllegalArgumentException("Bid ID does not exist in the shop.");
         } 
         else {
             BidPurchase bidPurchase = bidPurchaseItems.get(bidId);
@@ -302,7 +297,7 @@ public class Shop implements IMessageListener {
     }
 
 
-    public List<Item> filter(String name, String category, double minPrice, double maxPrice, int itemMinRating, int shopMinRating) {
+    public List<Item> filter(String name, String category, int minPrice, int maxPrice, int itemMinRating, int shopMinRating) {
         List<Item> filteredItems = new ArrayList<>();
         for (Item item : items.values()) {
             if ((name == null || item.getName().toLowerCase().contains(name.toLowerCase())) &&
@@ -328,14 +323,13 @@ public class Shop implements IMessageListener {
             bidPurchaseCounter++;
             bidPurchaseItems.put(counter.getId(), counter);
         } else {
-            System.out.println("Bid ID does not exist in the shop.");
+            throw new IllegalArgumentException("Bid ID does not exist in the shop.");
         }
     }
  
     @Override
     public void acceptMessage(IMessage message) {
         inbox.put(message.getId(), message);
-        System.out.println("Message received from " + message.getSenderName() + ".");
         //will need to update all owners.
     }
 

@@ -13,6 +13,10 @@ public class Manager extends IRole {
         this.permission = permission;
         this.appointments = new HashMap<>();
     }
+    @Override
+    public void addOwner(int nomineeID, IRole role)  {
+        throw new IllegalArgumentException("Menager can not appoint owner");
+    }
 
     @Override
     public boolean hasPermission(Permission permission) {
@@ -51,4 +55,5 @@ public class Manager extends IRole {
         }
         return sb.toString();
     }
+    
 }

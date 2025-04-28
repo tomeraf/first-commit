@@ -47,11 +47,9 @@ public class Registered extends Guest implements IMessageListener {
     }
     public boolean logout() {
         if (!isInSession()) {
-            System.out.println("Unauthorized Action: already logged out.");
-            return false;
+            throw new IllegalArgumentException("Unauthorized Action: already logged out.");
         }
         this.sessionToken = null;
-        System.out.println("Registered logout successful.");
         return true;
     }
     public void setRoleToShop(int shopID, IRole newRole) {
@@ -60,8 +58,7 @@ public class Registered extends Guest implements IMessageListener {
     }
     public boolean removeRoleFromShop(int shopID) {
         if (!roleInShops.containsKey(shopID)) {
-            System.out.println("No role found for shop ID: " + shopID);
-            return false;
+            throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
         roleInShops.remove(shopID);
         return true;
@@ -71,36 +68,31 @@ public class Registered extends Guest implements IMessageListener {
         if(roleInShops.containsKey(shopID)) {
             return roleInShops.get(shopID).hasPermission(permission);
         }
-        System.out.println("No role found for shop ID: " + shopID);
-        return false;      
+        throw new IllegalArgumentException("No role found for shop ID: " + shopID);    
     }
     public boolean addPermission(int shopID, Permission permission) {
         if(roleInShops.containsKey(shopID)) {
             roleInShops.get(shopID).addPermission(permission);
             return true;
         } else {
-            System.out.println("No role found for shop ID: " + shopID);
+            throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
-        return false;
     }
     public boolean removePermission(int shopID, Permission permission) {
         if(roleInShops.containsKey(shopID)) {
             roleInShops.get(shopID).removePermission(permission);
             return true;
         } else {
-            System.out.println("No role found for shop ID: " + shopID);
+            throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
-        return false;
     }
 
     // As and owner or manager
-    public boolean addManager(int shopID, int nomineeID, Manager nominee) {
+    public boolean addManager(int shopID, int nomineeID, Manager nominee)  {
         if (!roleInShops.containsKey(shopID)) {
-            System.out.println("No role found for shop ID: " + shopID);
             return false;
         }
         if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
-            System.out.println("No permission to add appointment in shop ID: " + shopID);
             return false;
         }
         roleInShops.get(shopID).addManager(nomineeID, nominee);      
@@ -109,12 +101,10 @@ public class Registered extends Guest implements IMessageListener {
 
     public boolean addOwner(int shopID, int nomineeID, Owner nominee) {
         if (!roleInShops.containsKey(shopID)) {
-            System.out.println("No role found for shop ID: " + shopID);
-            return false;
+            throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
         if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
-            System.out.println("No permission to add appointment in shop ID: " + shopID);
-            return false;
+            throw new IllegalArgumentException("No permission to add appointment in shop ID: " + shopID);
         }
         roleInShops.get(shopID).addOwner(nomineeID, nominee);      
         return true;      
@@ -122,12 +112,10 @@ public class Registered extends Guest implements IMessageListener {
     
     public boolean removeAppointment(int shopID, int appointeeID) {
         if (!roleInShops.containsKey(shopID)) {
-            System.out.println("No role found for shop ID: " + shopID);
-            return false;
+            throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
         if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
-            System.out.println("No permission to remove appointment in shop ID: " + shopID);
-            return false;
+            throw new IllegalArgumentException("No permission to remove appointment in shop ID: " + shopID);
         } 
         roleInShops.get(shopID).removeAppointment(appointeeID);
         return true;
@@ -137,15 +125,13 @@ public class Registered extends Guest implements IMessageListener {
         if(roleInShops.containsKey(shopID)) {
             return roleInShops.get(shopID).getAppointments();
         } else {
-            System.out.println("No role found for shop ID: " + shopID);
-            return null;
+            throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
     }
     public int getAppointer(int shopID) {
         if(roleInShops.containsKey(shopID)) {
             return roleInShops.get(shopID).getAppointer();
         } else {
-            System.out.println("No role found for shop ID: " + shopID);
             return -1;
         }
     }
@@ -166,14 +152,12 @@ public class Registered extends Guest implements IMessageListener {
         if(roleInShops.containsKey(shopID)) {
             return roleInShops.get(shopID).getPermissionsString();
         } else {
-            System.out.println("No role found for shop ID: " + shopID);
-            return null;
+            throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
     }
     @Override  
     public void acceptMessage(IMessage message) {
         inbox.put(message.getId(), message);
-        System.out.println("Message received from " + message.getSenderName() + ".");
     }
 
     public boolean isSystemManager() {
