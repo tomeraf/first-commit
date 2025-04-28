@@ -1,6 +1,8 @@
 package Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,12 +14,14 @@ import Domain.Guest;
 import Domain.Item;
 import Domain.Response;
 import Domain.Shop;
+import Domain.ShoppingBasket;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IPayment;
 import Domain.Adapters_and_Interfaces.IShipment;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
+import Domain.DTOs.Pair;
 import Domain.DTOs.PaymentDetailsDTO;
 import Domain.DomainServices.PurchaseService;
 import Domain.Repositories.IOrderRepository;
@@ -140,12 +144,37 @@ public class OrderService {
      * @return the created Order, or null on failure
      */
     public Response<Order> buyCartContent(String sessionToken,PaymentDetailsDTO paymentDetailsDTO, String shipmentDetails) {
+        List<Lock> acquiredLocks = new ArrayList<>();
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+            
+            List<Pair<Integer, Integer>> shopItemPairs = new ArrayList<>();
+
+            for (ShoppingBasket basket : guest.getCart().getBaskets()) {
+                int shopID = basket.getShopID();
+                for (ItemDTO item : basket.getItems()) {
+                    shopItemPairs.add(new Pair<>(shopID, item.getItemID()));
+                }
+            }
+            // Sort by shopID then itemID to prevent deadlocks
+            shopItemPairs.sort(Comparator
+                .comparing(Pair<Integer, Integer>::getKey)
+                .thenComparing(Pair::getValue)
+            );
+
+             // Lock all needed items
+            for (Pair<Integer, Integer> pair : shopItemPairs) {
+                ReentrantLock itemLock = ConcurrencyHandler.getItemLock(pair.getKey(), pair.getValue());
+                itemLock.lockInterruptibly();  // Safe lock that respects thread interruption
+                acquiredLocks.add(itemLock);
+            }
+       
+            // all needed shops and items are locked
+            // Now we can proceed with the purchase
             List<Shop> shops = new ArrayList<>();
             for (int i = 0; i < guest.getCart().getBaskets().size(); i++) {
                 int shopID = guest.getCart().getBaskets().get(i).getShopID();
@@ -153,13 +182,25 @@ public class OrderService {
                 shops.add(shop); // Add the shop to the list of shops
             }
             
-            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment,paymentDetailsDTO, shipmentDetails); // Buy the cart content
+            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment); // Buy the cart content
             orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
             return Response.ok(order); 
-        } catch (Exception e) {
+        } 
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error(() -> "Thread interrupted during cart purchase");
+            return Response.error("Thread interrupted during cart purchase");
+        }
+        catch (Exception e) {
             logger.error(() -> "Error buying cart content: " + e.getMessage());
             return Response.error("Error buying cart content: " + e.getMessage());
+        } finally {
+            // Always unlock in the reverse order
+            Collections.reverse(acquiredLocks);
+            for (Lock lock : acquiredLocks) {
+                lock.unlock();
+            }
         }
     }
 
