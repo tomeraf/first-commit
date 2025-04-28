@@ -1,6 +1,8 @@
 package Tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import Domain.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +37,13 @@ public class CartTest {
         // Create ShoppingBasket objects with shopIDs
         // and initialize them with empty item lists
         basket1 = new ShoppingBasket(-1);
+        basket1.addItem(item1);
+        basket1.addItem(item2);
+        basket1.addItem(item3);
         basket2 = new ShoppingBasket(-2);
+        basket2.addItem(item4);
+        basket2.addItem(item5);
+        basket2.addItem(item6);
 
         // Create a ShoppingCart object with a cartID and a list of baskets
         cart = new ShoppingCart(Arrays.asList(basket1, basket2), -1);
@@ -44,6 +52,10 @@ public class CartTest {
 
     @Test
     public void testAddItemsSuccess() {
+        basket1 = new ShoppingBasket(-1);
+        basket2 = new ShoppingBasket(-2);
+        cart = new ShoppingCart(Arrays.asList(basket1, basket2), -1);
+
         List<ItemDTO> itemsToAdd = Arrays.asList(item1, item2, item3, item4, item5, item6);
         
         assertTrue(cart.addItems(itemsToAdd), "Should return true when adding items to the cart successfully");
@@ -60,13 +72,15 @@ public class CartTest {
     
     @Test
     public void testGetItems() {
-        Map<ItemDTO, Integer> expectedItems = new HashMap<>();
-        expectedItems.put(item1, -1);
-        expectedItems.put(item2, -1);
-        expectedItems.put(item3, -1);
-        expectedItems.put(item4, -2);
-        expectedItems.put(item5, -2);
-        expectedItems.put(item6, -2);
+        List<ItemDTO> expectedItems = new ArrayList<>();
+        expectedItems.add(item1);
+        expectedItems.add(item2);
+        expectedItems.add(item3);
+        expectedItems.add(item4);
+        expectedItems.add(item5);
+        expectedItems.add(item6);
+
+
         
         assertEquals(expectedItems, cart.getItems(), "Items in cart should match expected mapping of ItemDTO objects to shop IDs");
     }

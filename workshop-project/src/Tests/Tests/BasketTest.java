@@ -27,10 +27,16 @@ public class BasketTest {
         
         // Initialize the ShoppingBasket with a shop ID and items
          basket = new ShoppingBasket(-1);
+         basket.addItem(item1);
+         basket.addItem(item2);
+         basket.addItem(item3);
+
+
     }
     
     @Test
     public void testAddItem() {
+        basket = new ShoppingBasket(-1);
         // Test adding an item that is not already in the basket
         assertTrue(basket.addItem(item1), "Should return true when adding item1 to the basket");
         

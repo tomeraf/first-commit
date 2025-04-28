@@ -31,7 +31,12 @@ public class RegisteredTest {
 
     @Test
     void testAddPermissionNoRole() {
-        assertFalse(user.addPermission(SHOP_ID, Permission.VIEW));
+        try{
+             user.addPermission(SHOP_ID, Permission.VIEW);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
@@ -45,7 +50,12 @@ public class RegisteredTest {
 
     @Test
     void testRemovePermissionNoRole() {
-        assertFalse(user.removePermission(SHOP_ID, Permission.VIEW));
+        try{
+            user.removePermission(SHOP_ID, Permission.VIEW);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
@@ -104,12 +114,22 @@ public class RegisteredTest {
     @Test
     void testRemoveAppointmentNoRole() {
         Registered appointer = user;
-        assertFalse(appointer.removeAppointment(SHOP_ID, APPOINTEE_ID));
+        try{
+            appointer.removeAppointment(SHOP_ID, APPOINTEE_ID);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
     void testGetAppointmentsNoRole() {
-        assertNull(user.getAppointments(SHOP_ID));
+        try{
+            user.getAppointments(SHOP_ID);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
@@ -135,12 +155,11 @@ public class RegisteredTest {
     @Test
     void testRemoveShopRoleNoRole() {
         Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
-        assertFalse(user.removeRoleFromShop(SHOP_ID));
-    }
-
-    @Test
-    void shouldfail() {
-        assertTrue(false);
-
+        try{
+            user.removeRoleFromShop(SHOP_ID);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 }
