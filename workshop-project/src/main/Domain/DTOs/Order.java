@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Order {
-    private int orderID;
-    private int userID;
-    private double totalPrice;
-    private HashMap<Integer, List<ItemDTO>> items; // <Integer, List<ItemDTO> = shopId, List<ItemDTO> = items in the shop
+    private final int orderID;
+    private final String UserName;
+    private final double totalPrice;
+    private final HashMap<Integer, List<ItemDTO>> items; // <Integer, List<ItemDTO> = shopId, List<ItemDTO> = items in the shop
 
-    public Order(int orderID, double totalPrice, HashMap<Integer, List<ItemDTO>> items, int userID) {
+    public Order(int orderID, String UserName, double totalPrice, HashMap<Integer, List<ItemDTO>> items) {
         this.orderID = orderID;
         this.totalPrice = totalPrice;
         this.items = items;
-        this.userID = userID;
+        this.UserName = UserName;
     }
 
     public List<ItemDTO> getItems() {
@@ -27,12 +27,12 @@ public class Order {
     public int getId() {
         return orderID;
     }
-    public int getUserID() {
-        return userID;
+    public String getUserName() {
+        return UserName;
     }
 
     public String getOrderDetails() {
-        StringBuilder details = new StringBuilder("Order ID: " + orderID + "\nUserID: " + userID + "\nTotal Price: " + totalPrice + "\nItems:\n");
+        StringBuilder details = new StringBuilder("Order ID: " + orderID + "\nUserName: " + UserName + "\nTotal Price: " + totalPrice + "\nItems:\n");
         for (int shopId : items.keySet()) {
             details.append("Shop ID: ").append(shopId).append("\nItems:\n");
             for (ItemDTO item : items.get(shopId)) {

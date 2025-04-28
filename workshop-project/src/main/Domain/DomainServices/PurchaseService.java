@@ -109,7 +109,7 @@ public class PurchaseService {
 
         }
 
-        return new Order(cart.getCartID(),userName,totalCost,OrderHash(cart)); // orderID???
+        return new Order(cart.getCartID(),userName,totalCost,OrderHash(cart));
     }
 
 
