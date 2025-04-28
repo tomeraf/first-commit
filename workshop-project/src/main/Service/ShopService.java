@@ -30,7 +30,6 @@ import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
 import Domain.Permission;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class ShopService {
@@ -41,7 +40,6 @@ public class ShopService {
     private ManagementService managementService = ManagementService.getInstance();
     private ShoppingService shoppingService;
     private IAuthentication authenticationAdapter;
-    private ObjectMapper objectMapper;
     private InteractionService interactionService = InteractionService.getInstance();
     private final ConcurrencyHandler concurrencyHandler;
 
@@ -53,8 +51,6 @@ public class ShopService {
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
         this.authenticationAdapter = authenticationAdapter;
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         this.shoppingService = new ShoppingService();
         this.concurrencyHandler = concurrencyHandler;
     }
@@ -63,7 +59,13 @@ public class ShopService {
         ArrayList<Shop> s = new ArrayList<Shop>(shopRepository.getAllShops().values().stream().filter((shop)->shop.isOpen()).toList());
         List<ShopDTO> shopDTOs = new ArrayList<>();
         for (Shop shop : s) {
-            ShopDTO shopDTO = objectMapper.convertValue(shop, ShopDTO.class);
+            HashMap<Integer, Item> items = shop.getItems();
+            HashMap<Integer, ItemDTO> itemDTOs = new HashMap<>();
+            for (Item item : items.values()) {
+                ItemDTO itemDTO = new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(),item.getId(), item.getQuantity(), item.getRating(), item.getDescription());
+                itemDTOs.put(item.getId(), itemDTO);
+            }
+            ShopDTO shopDTO = new ShopDTO(shop.getId(), shop.getName(), shop.getDescription(),itemDTOs,shop.getRating(),shop.getRatingCount());
             shopDTOs.add(shopDTO);
         }
         return Response.ok(shopDTOs);
@@ -75,7 +77,7 @@ public class ShopService {
             List<Item> items = shop.getItems().values().stream().toList();
             List<ItemDTO> itemDTOs = new ArrayList<>();
             for (Item item : items) {
-                ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+                ItemDTO itemDTO = new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(),item.getId(), item.getQuantity(), item.getRating(), item.getDescription());
                 itemDTOs.add(itemDTO);
             }
             return Response.ok(itemDTOs);
@@ -100,7 +102,7 @@ public class ShopService {
             }
             List<ItemDTO> itemDTOs = new ArrayList<>();
             for (Item item : filteredItems) {
-                ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+                ItemDTO itemDTO = new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(),item.getId(), item.getQuantity(), item.getRating(), item.getDescription());
                 itemDTOs.add(itemDTO);
             }
             return Response.ok(itemDTOs);
@@ -122,7 +124,7 @@ public class ShopService {
             filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, 0));
             List<ItemDTO> itemDTOs = new ArrayList<>();
             for (Item item : filteredItems) {
-                ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
+                ItemDTO itemDTO = new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(),item.getId(), item.getQuantity(), item.getRating(), item.getDescription());
                 itemDTOs.add(itemDTO);
             }
             return Response.ok(itemDTOs);
@@ -142,7 +144,13 @@ public class ShopService {
         Shop shop = managementService.createShop(shopRepository.getAllShops().size(),
                 (Registered) userRepository.getUserById(userID), name, description);
         shopRepository.addShop(shop);
-        ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
+        HashMap<Integer, Item> items = shop.getItems();
+        HashMap<Integer, ItemDTO> itemDTOs = new HashMap<>();
+        for (Item item : items.values()) {
+            ItemDTO itemDTO = new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(),item.getId(), item.getQuantity(), item.getRating(), item.getDescription());
+            itemDTOs.put(item.getId(), itemDTO);
+        }
+        ShopDTO shopDto = new ShopDTO(shop.getId(), shop.getName(), shop.getDescription(),itemDTOs,shop.getRating(),shop.getRatingCount());
         logger.info(()->"Shop created: " + shopDto.getName() + " by user: " + userID);
         return Response.ok(shopDto);
         } catch (Exception e) {
@@ -156,7 +164,12 @@ public class ShopService {
     public Response<ShopDTO> getShopInfo(String sessionToken, int shopID) {
         try{
             Shop shop = this.shopRepository.getShopById(shopID);
-            ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
+            HashMap<Integer,ItemDTO> itemDTOs = new HashMap();
+            for (Item item : shop.getItems().values()) {
+                ItemDTO itemDTO = new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(),item.getId(), item.getQuantity(), item.getRating(), item.getDescription());
+                itemDTOs.put(item.getId(),itemDTO);
+            }
+            ShopDTO shopDto = new ShopDTO(shop.getId(), shop.getName(), shop.getDescription(),itemDTOs, shop.getRating(),shop.getRatingCount());
             logger.info(()->"Shop info retrieved: " + shopDto.getName() + " by user: " + sessionToken);
             return Response.ok(shopDto);
         }
@@ -177,7 +190,7 @@ public class ShopService {
             Registered user = (Registered) this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
             Item newItem=managementService.addItemToShop(user, shop, itemName, category, itemPrice, description);
-            ItemDTO itemDto = objectMapper.convertValue(newItem, ItemDTO.class);
+            ItemDTO itemDto = new ItemDTO(newItem.getName(), newItem.getCategory(), newItem.getPrice(), newItem.getShopId(),newItem.getId(), newItem.getQuantity(), newItem.getRating(), newItem.getDescription());
             logger.info(()->"Item added to shop: " + itemName + " in shop: " + shop.getName() + " by user: " + userID);
             return Response.ok(itemDto);
         } catch (Exception e) {
@@ -451,7 +464,7 @@ public class ShopService {
     }
     
 
-    public Response<Void> closeShopByFounder(String sessionToken, int shopID) {
+    public Response<Void> closeShop(String sessionToken, int shopID) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, close the shop with the provided details

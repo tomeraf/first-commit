@@ -72,6 +72,7 @@ public class Shop implements IMessageListener {
     public Set<Integer> getOwnerIDs() { return ownerIDs; }
     public Set<Integer> getManagerIDs() { return managerIDs; }
     public double getRating() { return rating; }
+    public int getRatingCount() { return ratingCount; }
 
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
