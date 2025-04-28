@@ -1,11 +1,13 @@
 package Tests;
 
 import Domain.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 public class RegisteredTest {
     private static final int APPOINTER_ID = 1;
@@ -13,7 +15,9 @@ public class RegisteredTest {
     private static final int SHOP_ID = 10;
     private Registered user;
 
-    public RegisteredTest() {
+
+    @BeforeEach
+    public void setUp() {
         Guest guest = new Guest();
         guest.enterToSystem("guestSessionToken", APPOINTER_ID); // Assuming a valid session token and cart ID
         user = guest.register("bob", "hunter2", LocalDate.of(1990, 1, 1));
@@ -31,11 +35,16 @@ public class RegisteredTest {
 
     @Test
     void testAddPermissionNoRole() {
-        assertFalse(user.addPermission(SHOP_ID, Permission.VIEW));
+        try{
+             user.addPermission(SHOP_ID, Permission.VIEW);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
-    void testRemovePermission() {
+    public void testRemovePermission() {
         Manager mgrRole = new Manager(APPOINTER_ID, SHOP_ID, new HashSet<>(Collections.singleton(Permission.VIEW)));
         user.setRoleToShop(SHOP_ID, mgrRole);
 
@@ -44,12 +53,17 @@ public class RegisteredTest {
     }
 
     @Test
-    void testRemovePermissionNoRole() {
-        assertFalse(user.removePermission(SHOP_ID, Permission.VIEW));
+    public void testRemovePermissionNoRole() {
+        try{
+            user.removePermission(SHOP_ID, Permission.VIEW);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
-    void testAddAppointmentSuccess() {
+    public void testAddAppointmentSuccess() {
         Registered appointer = user;
         // Owner always has APPOINTMENT permission
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
@@ -65,7 +79,7 @@ public class RegisteredTest {
     }
 
     @Test
-    void testAddAppointmentNoPermission() {
+    public void testAddAppointmentNoPermission() {
         Registered appointer = user;
 
         // Manager without APPOINTMENT permission
@@ -80,14 +94,14 @@ public class RegisteredTest {
         Registered appointee = alice;
         Manager appointeeRole = new Manager(APPOINTEE_ID, SHOP_ID, new HashSet<>());
         
-        assertFalse(appointer.addManager(SHOP_ID, APPOINTEE_ID, appointeeRole));
+        assertThrows(IllegalArgumentException.class, () -> appointer.addManager(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
         assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());             // no appointments recorded
         assertEquals(-1, appointee.getAppointer(SHOP_ID));         // no appointer
     }
 
     @Test
-    void testRemoveAppointmentSuccess() {
+    public void testRemoveAppointmentSuccess() {
         Registered appointer = user;
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         appointer.setRoleToShop(SHOP_ID, owner);
@@ -97,34 +111,45 @@ public class RegisteredTest {
         new Registered("alice", "eve", LocalDate.of(2000, 1, 1)).setRoleToShop(SHOP_ID, appointeeRole);
         assertTrue(appointer.addOwner(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
-        assertTrue(appointer.removeAppointment(SHOP_ID, APPOINTEE_ID));
+        List<Integer> ids = appointer.removeAppointment(SHOP_ID, APPOINTEE_ID);
+        assertTrue(ids.size() == 1);
         assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());
     }
 
     @Test
-    void testRemoveAppointmentNoRole() {
+    public void testRemoveAppointmentNoRole() {
         Registered appointer = user;
-        assertFalse(appointer.removeAppointment(SHOP_ID, APPOINTEE_ID));
+        try{
+            appointer.removeAppointment(SHOP_ID, APPOINTEE_ID);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
-    void testGetAppointmentsNoRole() {
-        assertNull(user.getAppointments(SHOP_ID));
+    public void testGetAppointmentsNoRole() {
+        try{
+            user.getAppointments(SHOP_ID);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 
     @Test
-    void testGetAppointerNoRole() {
+    public void testGetAppointerNoRole() {
         assertEquals(-1, user.getAppointer(SHOP_ID));
     }
 
     @Test
-    void testGetAgeAlwaysZero() {
+    public void testGetAgeAlwaysZero() {
         Registered user = new Registered("d", "d", LocalDate.of(LocalDate.now().getYear()-10, 5, 5));
         assertEquals(9, user.getAge());
     }
 
     @Test
-    void testRemoveShopRoleSuccess() {
+    public void testRemoveShopRoleSuccess() {
         Owner owner = new Owner(APPOINTER_ID, SHOP_ID);
         user.setRoleToShop(SHOP_ID, owner);
 
@@ -133,14 +158,13 @@ public class RegisteredTest {
     }
 
     @Test
-    void testRemoveShopRoleNoRole() {
+    public void testRemoveShopRoleNoRole() {
         Registered user = new Registered("bob", "hunter2", LocalDate.of(1990, 1, 1));
-        assertFalse(user.removeRoleFromShop(SHOP_ID));
-    }
-
-    @Test
-    void shouldfail() {
-        assertTrue(false);
-
+        try{
+            user.removeRoleFromShop(SHOP_ID);
+            fail("didnt catch");
+        }catch (IllegalArgumentException e){
+            assertFalse(false);
+        }
     }
 }

@@ -25,27 +25,34 @@ public abstract class IRole {
         }
     }
     
-    public void removeAppointment(int appointeeID) throws IllegalArgumentException {
+    public List<Integer> removeAppointment(int appointeeID) throws IllegalArgumentException {
         if (!appointments.containsKey(appointeeID)) {
             throw new IllegalArgumentException("No appointment found for user ID: " + appointeeID);
         }
-        appointments.get(appointeeID).removeAllAppointments();
+        List<Integer> idsToRemove = new ArrayList<>();
+        List<Integer> ids = appointments.get(appointeeID).removeAllAppointments();
+        idsToRemove.addAll(ids);
         Registered registered = appointments.get(appointeeID).getUser();
         registered.removeRoleFromShop(appointments.get(appointeeID).shopID);
         appointments.remove(appointeeID);
+        idsToRemove.add(appointeeID);
+        return idsToRemove;
     }
 
-    public void removeAllAppointments() {
+    public List<Integer> removeAllAppointments() {
+        List<Integer> idsToRemove = new ArrayList<>();
         List<Integer> appointeeIDs = new ArrayList<>(appointments.keySet());
         if(appointeeIDs.isEmpty()) {
-            return;
+            return new ArrayList<>();
         }
         for (int appointeeID : appointeeIDs) {
-            appointments.get(appointeeID).removeAllAppointments();
+            List<Integer> ids = appointments.get(appointeeID).removeAllAppointments();
+            idsToRemove.addAll(ids);
             appointments.get(appointeeID).user.removeRoleFromShop(appointments.get(appointeeID).shopID);
             appointments.remove(appointeeID);
+            idsToRemove.add(appointeeID);
         }
-        appointments.clear();
+        return idsToRemove;
     }
 
     

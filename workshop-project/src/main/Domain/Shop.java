@@ -51,8 +51,8 @@ public class Shop implements IMessageListener {
         this.ownerIDs = new HashSet<>();
         this.managerIDs = new HashSet<>();
         ownerIDs.add(founderID); // Add the founder as an owner
-        this.isOpen = false;
-        this.counterItemId = 1; // Initialize the item ID counter
+        this.isOpen = true;
+        this.counterItemId = 0; // Initialize the item ID counter
         this.rating = 0.0;
         this.ratingCount = 0;
         this.bidPurchaseItems = new HashMap<>();
@@ -72,6 +72,7 @@ public class Shop implements IMessageListener {
     public Set<Integer> getOwnerIDs() { return ownerIDs; }
     public Set<Integer> getManagerIDs() { return managerIDs; }
     public double getRating() { return rating; }
+    public int getRatingCount() { return ratingCount; }
 
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
@@ -297,7 +298,7 @@ public class Shop implements IMessageListener {
     }
 
 
-    public List<Item> filter(String name, String category, int minPrice, int maxPrice, int itemMinRating, int shopMinRating) {
+    public List<Item> filter(String name, String category, double minPrice, double maxPrice, int itemMinRating, double shopMinRating) {
         List<Item> filteredItems = new ArrayList<>();
         for (Item item : items.values()) {
             if ((name == null || item.getName().toLowerCase().contains(name.toLowerCase())) &&
@@ -348,6 +349,15 @@ public class Shop implements IMessageListener {
 
     public int getNextMessageId() {
         return messageIdCounter++;
+    }
+
+    public void removeAppointment(List<Integer> idsToRemove) {
+        for (Integer id : idsToRemove) {
+            if (ownerIDs.contains(id))
+                ownerIDs.remove(id);
+            if (managerIDs.contains(id))
+                managerIDs.remove(id);
+        }
     }
 }
 

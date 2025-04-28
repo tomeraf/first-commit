@@ -12,6 +12,7 @@ public interface IMessage {
     String getSenderName();
     boolean canSend();
     int getReceiverId();
-    Object getContent();
+    String getContent();
+    String getTitle();
 }
 

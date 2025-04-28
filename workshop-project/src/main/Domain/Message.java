@@ -83,6 +83,6 @@ public class Message implements IMessage {
 
     @Override
     public boolean canSend() {
-        return senderId > 0 && receiverId > 0 && content != null;
+        return senderId >= 0 && receiverId >= 0 && content != null;
     }
 }

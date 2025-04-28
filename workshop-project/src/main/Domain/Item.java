@@ -48,8 +48,12 @@ public class Item {
         }
     }
     public void buyItem(int quantity) {
-        this.quantity -= quantity;
-        this.numOfOrders += 1;
+        if(this.quantity >= quantity) {
+            this.quantity -= quantity;
+            this.numOfOrders += 1;
+        }
+        else
+            throw new IllegalArgumentException("not enough quantity.");
     }
     public String getName() {
         return name;

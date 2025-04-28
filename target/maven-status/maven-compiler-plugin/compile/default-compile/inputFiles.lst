@@ -11,14 +11,18 @@ C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Discount\conditio
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Adapters_and_Interfaces\IShipment.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Repositories\MemoryUserRepository.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Discount\OpenDiscount.java
+C:\uni\F\project\Whole-System\workshop-project\src\main\Service\UserService.java
+C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Adapters_and_Interfaces\ConcurrencyHandler.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Adapters_and_Interfaces\IPayment.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Repositories\IOrderRepository.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Shop.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Adapters_and_Interfaces\IMessage.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Guest.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Founder.java
+C:\uni\F\project\Whole-System\workshop-project\src\main\Service\OrderService.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\IRole.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\DTOs\Order.java
+C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\DTOs\Pair.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\ShoppingBasket.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Adapters_and_Interfaces\ShipmentAdapter.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\DTOs\UserShopRoleDTO.java
@@ -28,6 +32,8 @@ C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Rules\PredicateRu
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Registered.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\ShoppingCart.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Repositories\IShopRepository.java
+C:\uni\F\project\Whole-System\workshop-project\src\main\Service\ShopService.java
+C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Response.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\DTOs\ItemDTO.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\DTOs\ShopDTO.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Message.java
@@ -40,7 +46,6 @@ C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\DomainServices\Sh
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Category.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Adapters_and_Interfaces\JWTAdapter.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Purchase\PurchasePolicy.java
-C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\DomainServices\PaymentService.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Repositories\IUserRepository.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Purchase\Purchase.java
 C:\uni\F\project\Whole-System\workshop-project\src\main\Domain\Discount\DiscountType.java

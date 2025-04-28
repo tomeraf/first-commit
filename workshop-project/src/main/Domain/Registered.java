@@ -90,10 +90,10 @@ public class Registered extends Guest implements IMessageListener {
     // As and owner or manager
     public boolean addManager(int shopID, int nomineeID, Manager nominee)  {
         if (!roleInShops.containsKey(shopID)) {
-            return false;
+            throw new IllegalArgumentException("User has no role in ShopId: " + shopID);
         }
         if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
-            return false;
+            throw new IllegalArgumentException("User has no permission to add users.");
         }
         roleInShops.get(shopID).addManager(nomineeID, nominee);      
         return true;      
@@ -110,15 +110,14 @@ public class Registered extends Guest implements IMessageListener {
         return true;      
     }
     
-    public boolean removeAppointment(int shopID, int appointeeID) {
+    public List<Integer> removeAppointment(int shopID, int appointeeID) {
         if (!roleInShops.containsKey(shopID)) {
             throw new IllegalArgumentException("No role found for shop ID: " + shopID);
         }
         if (!roleInShops.get(shopID).hasPermission(Permission.APPOINTMENT)) {
             throw new IllegalArgumentException("No permission to remove appointment in shop ID: " + shopID);
         } 
-        roleInShops.get(shopID).removeAppointment(appointeeID);
-        return true;
+        return roleInShops.get(shopID).removeAppointment(appointeeID);
     }
 
     public Map<Integer, IRole> getAppointments(int shopID) {

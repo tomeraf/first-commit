@@ -61,8 +61,7 @@ public class MemoryUserRepository implements IUserRepository {
             }
             Guest user = users.get(id);
             users.remove(id); // Remove the user from the list    
-            user.logout();
-            System.out.println("User removed1: " + user.getUserID());  
+            user.logout(); 
     }
 
     @Override
