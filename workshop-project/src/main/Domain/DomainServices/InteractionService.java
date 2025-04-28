@@ -3,6 +3,8 @@ package Domain.DomainServices;
 import java.util.Date;
 
 import Domain.Message;
+import Domain.Permission;
+import Domain.Registered;
 import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.Adapters_and_Interfaces.IMessageListener;
 
@@ -35,14 +37,19 @@ public class InteractionService {
         message.send(receiver);
     }
 
-    public void respondToMessage(IMessage parentMessage, IMessage responseMessage) {
+    public void respondToMessage(Registered sender, IMessage parentMessage, IMessage responseMessage) {
         if(parentMessage == null || responseMessage == null) {
             throw new IllegalArgumentException("Parent message and response message cannot be null");
         }
         if(!responseMessage.canSend()){
             throw new IllegalStateException("Response message cannot be sent");
         }
-        responseMessage.respond(parentMessage);
+        if(sender.hasPermission(responseMessage.getReceiverId(), Permission.OWNER)){
+            responseMessage.respond(parentMessage);
+        }
+        else {
+            throw new IllegalStateException("Non owner does not have permission to respond to this message");
+        }
     }
 
 

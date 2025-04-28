@@ -4,7 +4,7 @@ import Domain.DTOs.PaymentDetailsDTO;
 
 public class PaymentAdapter implements IPayment {
 
-    private IPayment paymentMethod;
+    private final IPayment paymentMethod;
 
     // Dependency injection of the authentication implementation adapter
     // This allows for flexibility in choosing the payment method at runtime
@@ -14,21 +14,26 @@ public class PaymentAdapter implements IPayment {
 
     // checking if the payment details are valid
     @Override
-    public boolean validatePaymentDetails(PaymentDetailsDTO paymentDetails) {
-        if (paymentDetails == null || !paymentDetails.fullDetails()) {
+    public boolean validatePaymentDetails() {
+        if (paymentMethod.getPaymentDetails() == null || !paymentMethod.getPaymentDetails().fullDetails()) {
             // If payment details are null or not complete, return false
             return false;
         }
-        return paymentMethod.validatePaymentDetails(paymentDetails);
+        return paymentMethod.validatePaymentDetails();
     }
     
     // return the transactionId for good payment; return null for bad payment
     @Override
-    public String processPayment(double price, PaymentDetailsDTO paymentDetails) {
-        if (validatePaymentDetails(paymentDetails) == false) {
+    public boolean processPayment(double price) {
+        if (validatePaymentDetails()) {
             // If payment details are not valid, return null
-            return null;
+            return false;
         }
-        return paymentMethod.processPayment(price, paymentDetails);
+        return paymentMethod.processPayment(price);
+    }
+
+    @Override
+    public PaymentDetailsDTO getPaymentDetails() {
+        return paymentMethod.getPaymentDetails();
     }
 }

@@ -1,26 +1,29 @@
 package Domain.Adapters_and_Interfaces;
 
-public class ProxyShipment implements IShipment {
-    private String currentShipmentID;
+import Domain.DTOs.ShipmentDetailsDTO;
 
-    public ProxyShipment() {  
-        this.currentShipmentID = "123";
+public class ProxyShipment implements IShipment {
+    private final ShipmentDetailsDTO details;
+
+    public ProxyShipment(ShipmentDetailsDTO details) {
+        this.details = details;
       }
 
     // This method checks if the shipment details are valid
     @Override
-    public boolean validateShipmentDetails(String shipmentDetails) {
+    public boolean validateShipmentDetails() {
         return true;
     }
 
     // This method processes the shipment and returns a shipment ID if successful
     @Override
-    public String processShipment(double price, String shipmentDetails) {
-        String shipmentID = currentShipmentID;
-        int i = Integer.parseInt(this.currentShipmentID);
-        i++;
-        this.currentShipmentID = String.valueOf(i);
-        return "IHx" + shipmentID;
+    public boolean processShipment(double price) {
+        return true;
+    }
+
+    @Override
+    public ShipmentDetailsDTO getShipmentDetails() {
+        return details;
     }
 
 }

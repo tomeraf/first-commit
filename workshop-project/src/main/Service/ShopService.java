@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -42,7 +43,6 @@ public class ShopService {
     private IAuthentication authenticationAdapter;
     private ObjectMapper objectMapper;
     private InteractionService interactionService = InteractionService.getInstance();
-    private int messageIdCounter = 1;
     private final ConcurrencyHandler concurrencyHandler;
 
     private static final Logger logger = LoggerFactory.getLogger(ShopService.class);
@@ -117,8 +117,10 @@ public class ShopService {
     }
 
     public Response<ShopDTO> createShop(String sessionToken, String name, String description) {
+        Lock creationLock = concurrencyHandler.getGlobalShopCreationLock();
         try{
         authenticationAdapter.validateToken(sessionToken);
+        creationLock.lock();
         int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
         Shop shop = managementService.createShop(shopRepository.getAllShops().size(),
                 (Registered) userRepository.getUserById(userID), name, description);
@@ -129,6 +131,8 @@ public class ShopService {
         } catch (Exception e) {
             logger.error(()->"Error creating shop: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
+        } finally {
+            creationLock.unlock();
         }
     }
 
@@ -311,38 +315,31 @@ public class ShopService {
     }
 
     public Response<Void> addShopOwner(String sessionToken, int shopID, String appointeeName) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
         try{
-        authenticationAdapter.validateToken(sessionToken);
-        int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-        Registered user = (Registered)this.userRepository.getUserById(userID);
-        Registered appointee = this.userRepository.getUserByName(appointeeName);
-        Shop shop = this.shopRepository.getShopById(shopID);
-        this.managementService.addOwner(user, shop, appointee);
-        logger.info(()->"Shop owner added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
-        } catch (Exception e) {
-            logger.error(()->"Error adding shop owner: " + e.getMessage());
-            return Response.error("Error: " + e.getMessage());
-        }
-        return Response.ok();
-    }
-
-    public Response<Void> addShopManager(String sessionToken, int shopID, String appointeeName,
-            Set<Permission> permission) {
-            try {
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Registered appointee = userRepository.getUserByName(appointeeName);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.addManager(user, shop, appointee, permission);
-            logger.info(()->"Shop manager added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+            lock.lockInterruptibly();
+            try{
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered)this.userRepository.getUserById(userID);
+                Registered appointee = this.userRepository.getUserByName(appointeeName);
+                Shop shop = this.shopRepository.getShopById(shopID);
+                this.managementService.addOwner(user, shop, appointee);
+                logger.info(()->"Shop owner added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
             } catch (Exception e) {
-                logger.error(()->"Error adding shop manager: " + e.getMessage());
+                logger.error(()->"Error adding shop owner: " + e.getMessage());
                 return Response.error("Error: " + e.getMessage());
             }
-            return Response.ok();
-        
+        } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        // handle interruption
+        }
+        finally {
+            lock.unlock();      
+        }
+        return Response.ok();    
     }
+
 
     public Response<Void> removeAppointment(String sessionToken, int shopID, String appointeeName) {
         try {
@@ -352,49 +349,89 @@ public class ShopService {
             Registered appointee = userRepository.getUserByName(appointeeName);
             Shop shop = shopRepository.getShopById(shopID);
             managementService.removeAppointment(user, shop, appointee);
-            logger.info(()->"Appointment removed: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error(()->"Error removing appointment: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
         return Response.ok();
-        
     }
-
-    public Response<Void> addShopManagerPermission(String sessionToken, int shopID, String appointeeName,
-            Permission permission) {
+    
+    public Response<Void> addShopManager(String sessionToken, int shopID, String appointeeName, Set<Permission> permission) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        try {
+            lock.lockInterruptibly();
+            try {
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Registered appointee = userRepository.getUserByName(appointeeName);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.addManager(user, shop, appointee, permission);
+                logger.info(()->"Shop manager added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+                } catch (Exception e) {
+                    logger.error(()->"Error adding shop manager: " + e.getMessage());
+                    return Response.error("Error: " + e.getMessage());
+                }
+                finally {
+                lock.unlock();
+                }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // handle interruption
+        }
+        return Response.ok();
+    }
+    public Response<Void> addShopManagerPermission(String sessionToken, int shopID,String appointeeName, Permission  permission) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        try {
+            lock.lockInterruptibly();
             try{
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Registered appointee = userRepository.getUserByName(appointeeName);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.addPermission(user, shop, appointee, permission);
-            logger.info(()->"Shop manager permission added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Registered appointee = userRepository.getUserByName(appointeeName);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.addPermission(user, shop, appointee, permission);
+                logger.info(()->"Shop manager permission added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
             } catch (Exception e) {
                 logger.error(()->"Error adding shop manager permission: " + e.getMessage());
                 return Response.error("Error: " + e.getMessage());
             }
-            return Response.ok();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // handle interruption
         }
-    
-
-    public Response<Void> removeShopManagerPermission(String sessionToken, int shopID, String appointeeName,
-            Permission permission) {
+        finally {
+            lock.unlock();
+        }
+        return Response.ok();
+    }
+    public Response<Void> removeShopManagerPermission(String sessionToken, int shopID,String appointeeName , Permission permission) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        try {
+            lock.lockInterruptibly();
             try{
-            authenticationAdapter.validateToken(sessionToken);
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered) this.userRepository.getUserById(userID);
-            Registered appointee = userRepository.getUserByName(appointeeName);
-            Shop shop = shopRepository.getShopById(shopID);
-            managementService.removePermission(user, shop, appointee, permission);
-            logger.info(()->"Shop manager permission removed: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
-            } catch (Exception e) {
-                logger.error(()->"Error removing shop manager permission: " + e.getMessage());
-                return Response.error("Error: " + e.getMessage());
-            }
-            return Response.ok();
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Registered appointee = userRepository.getUserByName(appointeeName);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.removePermission(user, shop, appointee, permission);
+                logger.info(()->"Shop manager permission removed: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+                } catch (Exception e) {
+                    logger.error(()->"Error removing shop manager permission: " + e.getMessage());
+                    return Response.error("Error: " + e.getMessage());
+                }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // handle interruption
         }
+        finally {
+            lock.unlock();
+        }
+        return Response.ok();
+    }
     
 
     public Response<Void> closeShopByFounder(String sessionToken, int shopID) {
@@ -444,36 +481,23 @@ public class ShopService {
     }
 
     public Response<Void> sendMessage(String sessionToken, int shopId, String title, String content) {
-        if (authenticationAdapter.validateToken(sessionToken)) {
-            String username = authenticationAdapter.getUsername(sessionToken);
-            Registered user = userRepository.getUserByName(username);
-            Shop shop = shopRepository.getShopById(shopId);
-            if (user.getRoleInShop(shopId).equals("Owner")) {
-                IMessage message = interactionService.createMessage(messageIdCounter, shop.getId(), shop.getName(),
-                        shop.getId(), title, content);
-                interactionService.sendMessage(user, message);
-                messageIdCounter++;
-            } else {
-                System.out.println("You don't have permission to send messages in this shop.");
-            }
+        if(authenticationAdapter.validateToken(sessionToken)){
+            Shop shop=shopRepository.getShopById(shopId);
+            int newMessageId = shop.getNextMessageId();
+            IMessage message = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
+            interactionService.sendMessage(shop, message);
         }
     }
 
-    public Response<Void> respondToMessage(String sessionToken, int shopId, int messageId, String title,
-            String content) {
-        if (authenticationAdapter.validateToken(sessionToken)) {
-            String username = authenticationAdapter.getUsername(sessionToken);
-            Registered user = userRepository.getUserByName(username);
-            Shop shop = shopRepository.getShopById(shopId);
+    public Response<Void> respondToMessage(String sessionToken, int shopId, int messageId, String title, String content) {
+        if(authenticationAdapter.validateToken(sessionToken)){
+            String username=authenticationAdapter.getUsername(sessionToken);
+            Registered user=userRepository.getUserByName(username);
+            Shop shop=shopRepository.getShopById(shopId);
+            int newMessageId = shop.getNextMessageId();
             IMessage parentMessage = shop.getAllMessages().get(messageId);
-            if (user.getRoleInShop(shopId).equals("Owner")) {
-                IMessage responseMessage = interactionService.createMessage(this.messageIdCounter, shop.getId(),
-                        shop.getName(), shop.getId(), title, content);
-                interactionService.respondToMessage(parentMessage, responseMessage);
-                messageIdCounter++;
-            } else {
-                System.out.println("You don't have permission to respond to messages in this shop.");
-            }
+            IMessage responseMessage = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
+            interactionService.respondToMessage(user, parentMessage, responseMessage);
         }
     }
 

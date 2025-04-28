@@ -16,6 +16,7 @@ public class Registered extends Guest implements IMessageListener {
     private String username;
     private String password;
     private HashMap<Integer, IMessage> inbox = new HashMap<>();
+    private boolean isSystemManager = false;
 
     private LocalDate dateOfBirth;
     
@@ -173,6 +174,13 @@ public class Registered extends Guest implements IMessageListener {
     public void acceptMessage(IMessage message) {
         inbox.put(message.getId(), message);
         System.out.println("Message received from " + message.getSenderName() + ".");
+    }
+
+    public boolean isSystemManager() {
+        return isSystemManager;
+    }
+    public void setSystemManager(boolean isSystemManager) {
+        this.isSystemManager = isSystemManager;
     }
 
 }
