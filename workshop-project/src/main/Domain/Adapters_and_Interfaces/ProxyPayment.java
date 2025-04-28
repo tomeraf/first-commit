@@ -17,7 +17,7 @@ public class ProxyPayment implements IPayment {
 
     // This method processes the payment and returns a transaction ID if successful
     @Override
-    public boolean processPayment(double price, PaymentDetailsDTO paymentDetails) {
+    public boolean processPayment(double price) {
         return true;
     }
 
