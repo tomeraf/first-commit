@@ -3,6 +3,7 @@ package Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -87,7 +88,8 @@ public class OrderService {
      * @param sessionToken current session token
      * @param itemDTOs list of items to add
      */
-    public Response<Void> addItemsToCart(String sessionToken, List<ItemDTO> itemDTOs) {
+    // items = shopId, itemID
+    public Response<Void> addItemsToCart(String sessionToken, HashMap<Integer, HashMap<Integer, Integer>> userItems) {
         List<Lock> acquiredLocks = new ArrayList<>();
 
         try {
@@ -97,10 +99,9 @@ public class OrderService {
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
 
-            Set<Integer> shopIds = itemDTOs.stream()
-                .map(ItemDTO::getShopId)
-                .collect(Collectors.toSet());
-
+            
+            Set<Integer> shopIds = userItems.keySet(); // Get the set of shop IDs
+            
             List<Integer> sortedShopIds = new ArrayList<>(shopIds);
             Collections.sort(sortedShopIds);
 
@@ -111,9 +112,7 @@ public class OrderService {
                 acquiredLocks.add(shopRead);
             }
 
-            List<Item> items = itemDTOs.stream()
-                    .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
-                    .toList(); // Convert ItemDTO to Item
+            
 
             purchaseService.addItemsToCart(guest, items); // Add items to the cart
 

@@ -11,7 +11,16 @@ import Domain.DTOs.Order;
 
 public class PurchaseService {
     // Use case #2.3: Add item to cart
-    public void addItemsToCart(Guest user, List<Item> items)
+    // items = <shop, <itemId, quantity>>
+    public void addItemsToCart(Guest user, HashMap<Shop,HashMap<Integer,Integer>> items) {
+        ShoppingCart cart = user.getCart();
+        for (Shop shop : items.keySet()) {
+            HashMap<Integer, Integer> itemsMap = items.get(shop);
+            cart.addItems();
+            cart.addBasket(basket);
+        }
+        cart.addItems(items);
+    }
     {
         ShoppingCart cart = user.getCart();
         cart.addItems(convertToItemDTO(items));

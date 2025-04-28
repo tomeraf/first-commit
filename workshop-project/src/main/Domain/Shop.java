@@ -350,6 +350,7 @@ public class Shop implements IMessageListener {
     public int getNextMessageId() {
         return messageIdCounter++;
     }
+
 }
 
 
