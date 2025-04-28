@@ -10,6 +10,7 @@ import Domain.Guest;
 import Domain.Manager;
 import Domain.Owner;
 import Domain.Registered;
+import Domain.Response;
 import Domain.Shop;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.ShopDTO;
@@ -17,8 +18,10 @@ import Domain.Category;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import Domain.DTOs.Order;
@@ -52,14 +55,226 @@ public class endToEndTest_1 {
     }
 
     @Test
-    public void successfullGuestLogin() {
-        String guestToken = userService.enterToSystem();
-        assertNotNull(guestToken, "Guest login failed: token is null.");
-        List<ItemDTO> items = userService.checkCartContent(guestToken);
-        assertNotNull(items, "Guest login failed: cart content is null.");
-        assertTrue(items.isEmpty(), "Guest login failed: cart is not empty.");
+    public void successfulGuestLogin() {
+        Response<String> guestToken = userService.enterToSystem();
+        assertNotNull(guestToken.getData(), "Guest login failed: token is null.");
+        Response<List<ItemDTO>> items = userService.checkCartContent(guestToken.getData());
+        assertNotNull(items.getData(), "Guest login failed: cart content is null.");
+        assertTrue(items.getData().isEmpty(), "Guest login failed: cart is not empty.");
     }
 
+    @Test
+    public void successfulGuestExit() {
+        Response<String> guestToken = userService.enterToSystem();
+        assertNotNull(userService.checkCartContent(guestToken.getData()).getData(), "Guest login failed: cart content is null.");
+        assertTrue(userService.checkCartContent(guestToken.getData()).getData().isEmpty(), "Guest login failed: cart is not empty.");
+        Response<Void> res = userService.exitAsGuest(guestToken.getData());
+        assertTrue(res.isOk());
+        assertNull(userService.checkCartContent(guestToken.getData()).getData(), "checkCartContent should return null after exit");
+    }
+
+    @Test
+    public void successfulGuestRegister() {
+        
+        Response<String> guestToken = userService.enterToSystem();
+        Response<Void> res = userService.registerUser(guestToken.getData(), "user123", "password", LocalDate.now().minusYears(20));
+        assertTrue(res.isOk());
+        Response<String> userToken = userService.loginUser(guestToken.getData(), "user123", "password");
+
+        assertTrue(userToken.isOk());
+        assertNotNull(userToken.getData(), "loginUser should return a valid token after registration");
+
+        // 4. verify cart transferred (empty)
+        Response<List<ItemDTO>> cart = userService.checkCartContent(userToken.getData());
+        assertNotNull(cart.getData(), "Cart should not be null for registered user");
+        assertTrue(cart.getData().isEmpty(), "Cart should remain empty after registration and login");
+    }
+
+    public void failedGuestRegister() {
+        Response<String> guestToken = userService.enterToSystem();
+        Response<Void> res = userService.registerUser(guestToken.getData(), "user123", "password", LocalDate.now().minusYears(20));
+        assertTrue(res.isOk());
+
+        Response<String> guestToken_2 = userService.enterToSystem();
+        Response<Void> res_2 = userService.registerUser(guestToken_2.getData(), "user123", "password", LocalDate.now().minusYears(20));
+        assertFalse(res_2.isOk());
+    }
+
+    @Test
+    public void userRegisterUnauthorized() {
+        Response<String> guestToken = userService.enterToSystem();
+        
+        Response<Void> res = userService.registerUser(guestToken.getData(), "user123", "password", LocalDate.now().minusYears(20));
+        assertTrue(res.isOk());
+        
+        Response<String> userToken = userService.loginUser(guestToken.getData(), "user123", "password");
+        assertTrue(userToken.isOk());
+        assertNotNull(userToken.getData(), "loginUser should return a valid token after registration");
+
+        // lavi
+
+        // 2. attempt to register again using registered user's token
+        Response<Void> res2 = userService.registerUser(userToken.getData(), "anotherUser", "pwd2", LocalDate.now().minusYears(30));
+        assertFalse(res2.isOk());
+        
+        // 3a. ensure old user session still active
+        Response<List<ItemDTO>> cart = userService.checkCartContent(userToken.getData());
+        assertNotNull(cart.getData(), "Existing user session should remain active after unauthorized register attempt");
+
+        Response<String> newToken = userService.loginUser(userToken.getData(), "anotherUser", "pwd2");
+        assertFalse(newToken.isOk());
+    }
+
+    @Test
+    public void successfulUserLogin() {
+        Response<String> guestToken = userService.enterToSystem();
+        Response<Void> res = userService.registerUser(guestToken.getData(), "user123", "password", LocalDate.now().minusYears(20));
+
+        assertTrue(res.isOk());
+        Response<String> userToken = userService.loginUser(guestToken.getData(), "user123", "password");
+
+        assertTrue(userToken.isOk());
+        assertNotNull(userToken.getData(), "loginUser should return a valid token after registration");
+
+    }
+
+    @Test
+    public void nameWrongUserLogin() {
+        Response<String> guestToken = userService.enterToSystem();
+        Response<Void> res = userService.registerUser(guestToken.getData(), "user123", "password", LocalDate.now().minusYears(20));
+        
+        assertTrue(res.isOk());
+
+        // 2. attempt login with wrong username
+        Response<String> userToken = userService.loginUser(guestToken.getData(), "wrongName", "password");
+        assertNull(userToken.getData(), "Login should fail when username is incorrect");
+    }
+
+    @Test
+    public void passwordWrongUserLogin() {
+        Response<String> guestToken = userService.enterToSystem();
+        Response<Void> res = userService.registerUser(guestToken.getData(), "user123", "password", LocalDate.now().minusYears(20));
+        
+        assertTrue(res.isOk());
+
+        // 2. attempt login with wrong username
+        Response<String> userToken = userService.loginUser(guestToken.getData(), "user123", "pwd");
+        assertFalse(userToken.isOk());
+        assertNull(userToken.getData(), "Login should fail when username is incorrect");
+    }
+
+    // @Test
+    // public void getShopsAndItems() {
+    //     // user enters system, no shops exist yet
+    //     Response<String> guestToken = userService.enterToSystem();
+    //     Response<List<ShopDTO>> shops = shopService.showAllShops();
+    //     // assertNotNull(shops.getData(), "showAllShops should not return null");
+    //     // assertTrue(shops.getData().isEmpty(), "Initially there should be no shops");
+    // }
+
+    // @Test
+    // public void searchItemsWithFilters() {
+    //     // user enters system, filtering on empty repository
+    //     Response<String> guestToken = userService.enterToSystem();
+    //     HashMap<String, String> filters = new HashMap<>();
+    //     filters.put("name", "nothing");
+    //     Response<List<ItemDTO>> filtered = shopService.filterItemsAllShops(filters);
+    //     assertNotNull(filtered.getData(), "filterItemsAllShops should not return null");
+    //     assertTrue(filtered.getData().isEmpty(), "Filtering on empty repo should yield no items");
+    // }
+    
+    //@Test
+    
+    
+    // @Test
+    // public void searchItemsWithPopulatedShop() {
+    //     // Setup: create an owner and a shop with items
+    //     String guestToken = userService.enterToSystem();
+    //     userService.registerUser(guestToken, "owner", "pwd", LocalDate.now().minusYears(30));
+    //     String ownerToken = userService.loginUser(guestToken, "owner", "pwd");
+    //     assertNotNull(ownerToken, "Owner login should succeed");
+        
+    //     ShopDTO shop = shopService.createShop(ownerToken, "MyShop", "desc");
+    //     assertNotNull(shop, "Shop creation should succeed");
+        
+    //     // Add three items
+    //     shopService.addItemToShop(ownerToken, shop.getId(), "Apple", Category.FOOD, 1.00, "fresh apple");
+    //     shopService.addItemToShop(ownerToken, shop.getId(), "Banana", Category.FOOD, 0.50, "ripe banana");
+    //     shopService.addItemToShop(ownerToken, shop.getId(), "Laptop", Category.ELECTRONICS, 999.99, "new laptop");
+
+    //     // Filter by name exactly "Apple"
+    //     HashMap<String, String> nameFilter = new HashMap<>();
+    //     nameFilter.put("name", "Apple");
+    //     List<ItemDTO> byName = shopService.filterItemsAllShops(nameFilter);
+    //     assertNotNull(byName);
+    //     assertEquals(1, byName.size(), "Only one item should match name 'Apple'");
+    //     assertEquals("Apple", byName.get(0).getName());
+
+    //     // Filter by category FOOD (should yield 2 items)
+    //     HashMap<String, String> catFilter = new HashMap<>();
+    //     catFilter.put("category", "FOOD");
+    //     List<ItemDTO> byCategory = shopService.filterItemsAllShops(catFilter);
+    //     assertNotNull(byCategory);
+    //     assertEquals(2, byCategory.size(), "Two items should match category FOOD");
+    // }
+
+/*
+    @Test
+    public void userLogsInAsGuestGood() {
+        // register and login
+        String guestToken = userService.enterToSystem();
+        userService.registerUser(guestToken, "user2", "pass2", LocalDate.now().minusYears(25));
+        String userToken = userService.loginUser(guestToken, "user2", "pass2");
+        // logout to guest
+        String newGuestToken = userService.logoutRegistered(userToken);
+        assertNotNull(newGuestToken, "Logout to guest should return a new token");
+        // now guest login
+        String guestAgain = userService.enterToSystem();
+        assertNotNull(guestAgain, "Guest login after logout should succeed");
+        List<ItemDTO> cart = userService.checkCartContent(guestAgain);
+        assertTrue(cart.isEmpty(), "Guest cart should be empty after relogin");
+    }
+
+
+    @Test
+    public void successfulGuestRegister() {
+        String guestToken = userService.enterToSystem();
+        userService.registerUser(guestToken, "newUser", "newPass", LocalDate.now().minusYears(22));
+        // now login as new user
+        String newToken = userService.loginUser(guestToken, "newUser", "newPass");
+        assertNotNull(newToken, "Newly registered user should be able to login");
+        List<ItemDTO> cart = userService.checkCartContent(newToken);
+        assertTrue(cart.isEmpty(), "Transferred cart should remain empty");
+    }
+
+    @Test
+    public void userRegisterUnauthorized() {
+        // create and login registered
+        String guestToken = userService.enterToSystem();
+        userService.registerUser(guestToken, "user4", "pass4", LocalDate.now().minusYears(21));
+        String userToken = userService.loginUser(guestToken, "user4", "pass4");
+        assertThrows(RuntimeException.class,
+                () -> userService.registerUser(userToken, "hacker", "hack", LocalDate.now()),
+                "Registered user should not register again");
+    }
+
+    @Test
+    public void nameWrongUserLogin() {
+        String guestToken = userService.enterToSystem();
+        userService.registerUser(guestToken, "u6", "p6", LocalDate.now().minusYears(24));
+        assertThrows(RuntimeException.class,
+                () -> userService.loginUser(guestToken, "wrongName", "p6"),
+                "Wrong username should fail login");
+    }
+
+    @Test
+    public void passwordWrongUserLogin() {
+        String guestToken = userService.enterToSystem();
+        userService.registerUser(guestToken, "u7", "p7", LocalDate.now().minusYears(24));
+        assertThrows(RuntimeException.class,
+                () -> userService.loginUser(guestToken, "u7", "wrongPass"),
+                "Wrong password should fail login");
+    }
 
     @Test
     public void addItemToAShopTest() {
@@ -181,4 +396,6 @@ public class endToEndTest_1 {
         assertEquals(0, managers.size());
         assertEquals(1, owners.size());
     }
+}
+    */
 }
