@@ -1,8 +1,10 @@
 package Domain.Adapters_and_Interfaces;
 
+import Domain.DTOs.ShipmentDetailsDTO;
+
 public class ShipmentAdapter implements IShipment {
     
-    private IShipment shipmentMethod;
+    private final IShipment shipmentMethod;
 
     // Dependency injection of the shipment implementation adapter
     // This allows for flexibility in choosing the shipment method at runtime
@@ -12,22 +14,27 @@ public class ShipmentAdapter implements IShipment {
 
     // checking if the shipment details are valid
     @Override
-    public boolean validateShipmentDetails(String shipmentDetails) {
-        if (shipmentDetails == null || shipmentDetails.isEmpty()) {
+    public boolean validateShipmentDetails() {
+        if (shipmentMethod.getShipmentDetails() == null || !shipmentMethod.getShipmentDetails().fullShipmentDetails()) {
             // If shipment details are null or not complete, return false
             return false;
         }
-        return shipmentMethod.validateShipmentDetails(shipmentDetails);
+        return shipmentMethod.validateShipmentDetails();
     }
 
     // return shipment id for good shipment; return null for bad shipment
     @Override
-    public String processShipment(double price, String shipmentDetails) {
-        if (!validateShipmentDetails(shipmentDetails)) {
+    public boolean processShipment(double price) {
+        if (!validateShipmentDetails()) {
             // If shipment details are not valid, return null
-            return null;
+            return false;
         }
-        return shipmentMethod.processShipment(price, shipmentDetails);
+        return shipmentMethod.processShipment(price);
+    }
+
+    @Override
+    public ShipmentDetailsDTO getShipmentDetails() {
+        return shipmentMethod.getShipmentDetails();
     }
 
 }

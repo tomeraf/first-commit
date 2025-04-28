@@ -1,10 +1,14 @@
 package Domain.Adapters_and_Interfaces;
 
+import Domain.DTOs.ShipmentDetailsDTO;
+
 public interface IShipment {
 
     // checking if the shipment details are valid
-    boolean validateShipmentDetails(String shipmentDetails);
+    boolean validateShipmentDetails();
 
     // return the transactionId for good shipment; return null for bad shipment
-    String processShipment(double price, String shipmentDetails);
+    boolean processShipment(double price);
+
+    ShipmentDetailsDTO getShipmentDetails();
 }

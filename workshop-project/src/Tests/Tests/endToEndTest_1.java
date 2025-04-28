@@ -1,4 +1,5 @@
 package Tests;
+import Service.CartService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +41,7 @@ public class endToEndTest_1 {
     private IPayment payment;
     private UserService userService;
     private ShopService shopService;
+    private CartService cartService;
     
     
     public endToEndTest_1() {
@@ -50,15 +52,17 @@ public class endToEndTest_1 {
         shipment = new ProxyShipment();
         payment = new ProxyPayment();
 
+
         userService = new UserService(userRepository, shopRepository, orderRepository, jwtAdapter, payment, shipment);
         shopService = new ShopService(userRepository, shopRepository, orderRepository, jwtAdapter);
+        cartService = new CartService();
     }
 
     @Test
     public void successfulGuestLogin() {
         Response<String> guestToken = userService.enterToSystem();
         assertNotNull(guestToken.getData(), "Guest login failed: token is null.");
-        Response<List<ItemDTO>> items = userService.checkCartContent(guestToken.getData());
+        Response<List<ItemDTO>> items = cartService.checkCartContent(guestToken.getData());
         assertNotNull(items.getData(), "Guest login failed: cart content is null.");
         assertTrue(items.getData().isEmpty(), "Guest login failed: cart is not empty.");
     }
@@ -66,11 +70,11 @@ public class endToEndTest_1 {
     @Test
     public void successfulGuestExit() {
         Response<String> guestToken = userService.enterToSystem();
-        assertNotNull(userService.checkCartContent(guestToken.getData()).getData(), "Guest login failed: cart content is null.");
-        assertTrue(userService.checkCartContent(guestToken.getData()).getData().isEmpty(), "Guest login failed: cart is not empty.");
+        assertNotNull(cartService.checkCartContent(guestToken.getData()).getData(), "Guest login failed: cart content is null.");
+        assertTrue(cartService.checkCartContent(guestToken.getData()).getData().isEmpty(), "Guest login failed: cart is not empty.");
         Response<Void> res = userService.exitAsGuest(guestToken.getData());
         assertTrue(res.isOk());
-        assertNull(userService.checkCartContent(guestToken.getData()).getData(), "checkCartContent should return null after exit");
+        assertNull(cartService.checkCartContent(guestToken.getData()).getData(), "checkCartContent should return null after exit");
     }
 
     @Test
@@ -85,7 +89,7 @@ public class endToEndTest_1 {
         assertNotNull(userToken.getData(), "loginUser should return a valid token after registration");
 
         // 4. verify cart transferred (empty)
-        Response<List<ItemDTO>> cart = userService.checkCartContent(userToken.getData());
+        Response<List<ItemDTO>> cart = cartService.checkCartContent(userToken.getData());
         assertNotNull(cart.getData(), "Cart should not be null for registered user");
         assertTrue(cart.getData().isEmpty(), "Cart should remain empty after registration and login");
     }
@@ -118,7 +122,7 @@ public class endToEndTest_1 {
         assertFalse(res2.isOk());
         
         // 3a. ensure old user session still active
-        Response<List<ItemDTO>> cart = userService.checkCartContent(userToken.getData());
+        Response<List<ItemDTO>> cart = cartService.checkCartContent(userToken.getData());
         assertNotNull(cart.getData(), "Existing user session should remain active after unauthorized register attempt");
 
         Response<String> newToken = userService.loginUser(userToken.getData(), "anotherUser", "pwd2");
