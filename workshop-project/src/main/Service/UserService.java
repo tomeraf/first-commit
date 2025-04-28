@@ -121,7 +121,6 @@ public class UserService {
         }
     }
 
-
     /**
      * Registers a new user using the provided credentials and date of birth.
      * The guest keeps the same session token and is upgraded to Registered.
@@ -132,26 +131,38 @@ public class UserService {
      * @param dateOfBirth user's date of birth
      */
     public Response<Void> registerUser(String sessionToken, String username, String password, LocalDate dateOfBirth) {
+        ReentrantLock usernameLock = ConcurrencyHandler.getUsernameLock(username);
+
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
-                throw new Exception("User is not logged in");
+            usernameLock.lockInterruptibly();  // lock specifically for that username
+        
+            try {
+                if (!jwtAdapter.validateToken(sessionToken)) {
+                    throw new Exception("User is not logged in");
+                }
+    
+                int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+    
+                Guest guest = userRepository.getUserById(userID);
+                // if getUsername() is non-null, they’re already registered
+                if (guest.getUsername() != null) {
+                    throw new Exception("Unauthorized register attempt for ID=" + userID);
+                }
+                
+                Registered registered = guest.register(username, password, dateOfBirth);
+                userRepository.removeGuestById(userID); // Remove the guest from the repository
+                userRepository.saveUser(registered);
+                return Response.ok();
+            } catch (Exception e) {
+                logger.error(() -> "Error registering user: " + e.getMessage());
             }
 
-            int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-
-            Guest guest = userRepository.getUserById(userID);
-            // if getUsername() is non-null, they’re already registered
-            if (guest.getUsername() != null) {
-                throw new Exception("Unauthorized register attempt for ID=" + userID);
+            finally {
+                usernameLock.unlock();
             }
-            
-            Registered registered = guest.register(username, password, dateOfBirth);
-            userRepository.removeGuestById(userID); // Remove the guest from the repository
-            userRepository.saveUser(registered);
-            return Response.ok();
-        } catch (Exception e) {
-            logger.error(() -> "Error registering user: " + e.getMessage());
-            return Response.error("Error registering user: " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error(() -> "Registration interrupted for username: " + username);
         }
     }
 
