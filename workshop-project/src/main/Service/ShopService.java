@@ -481,16 +481,25 @@ public class ShopService {
     }
 
     public Response<Void> sendMessage(String sessionToken, int shopId, String title, String content) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             Shop shop=shopRepository.getShopById(shopId);
             int newMessageId = shop.getNextMessageId();
             IMessage message = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
             interactionService.sendMessage(shop, message);
+            logger.info(()->"Message sent: " + message.getId() + " in shop: " + shop.getName() + " by user: " + sessionToken);
+            return Response.ok();
         }
+        catch (Exception e) {
+            logger.error(()->"Error sending message: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+
     }
 
     public Response<Void> respondToMessage(String sessionToken, int shopId, int messageId, String title, String content) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             String username=authenticationAdapter.getUsername(sessionToken);
             Registered user=userRepository.getUserByName(username);
             Shop shop=shopRepository.getShopById(shopId);
@@ -499,7 +508,13 @@ public class ShopService {
             IMessage responseMessage = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
             interactionService.respondToMessage(user, parentMessage, responseMessage);
         }
+        catch (Exception e) {
+            logger.error(()->"Error responding to message: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+        return Response.ok();
     }
+    
 
     public Response<Void> answerBid(String sessionToken, int shopID, int bidID, boolean accept) {
         try {
