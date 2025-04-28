@@ -4,15 +4,9 @@ import Domain.*;
 import Domain.Adapters_and_Interfaces.IPayment;
 import Domain.Adapters_and_Interfaces.IShipment;
 import Domain.DTOs.ItemDTO;
-import Domain.DTOs.PaymentDetailsDTO;
-import Domain.DTOs.ShopDTO;
-import Domain.Purchase.BidPurchase;
-import Domain.Repositories.IShopRepository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import Domain.DTOs.Order;
 
 public class PurchaseService {
@@ -98,14 +92,8 @@ public class PurchaseService {
         {
             throw new IllegalArgumentException("Error: payment or shipment not valid.");
         }
-        String userName = "guest";
-        if(user instanceof Registered)
-        {
-            userName = ((Registered)user).getUsername();
 
-        }
-
-        return new Order(cart.getCartID(),userName,totalCost,OrderHash(cart));
+        return new Order(cart.getCartID(),user.getUserID(),totalCost,OrderHash(cart));
     }
 
 

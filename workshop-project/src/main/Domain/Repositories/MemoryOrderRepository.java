@@ -17,11 +17,17 @@ public class MemoryOrderRepository implements IOrderRepository {
 
     @Override
     public void removeOrder(int orderId) {
+        if(!orders.containsKey(orderId)) {
+            throw new IllegalArgumentException("Order with ID " + orderId + " does not exist.");
+        }
         orders.remove(orderId);
     }
 
     @Override
     public Order getOrder(int orderId) {
+        if(!orders.containsKey(orderId)) {
+            throw new IllegalArgumentException("Order with ID " + orderId + " does not exist.");
+        }
         return orders.get(orderId);
     }
 

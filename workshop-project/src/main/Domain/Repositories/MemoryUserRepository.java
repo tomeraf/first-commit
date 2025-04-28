@@ -73,12 +73,15 @@ public class MemoryUserRepository implements IUserRepository {
 
     @Override
     public Registered getUserByName(String username) {
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null for Regiestered user");
+        }
         List<Guest> allUsers = new ArrayList<>(users.values());
         for (Guest user : allUsers) {
             if (user instanceof Registered && ((Registered) user).getUsername().equals(username)) {
                 return (Registered) user;
             }
         }
-        return null; // User not found
+        throw new RuntimeException("User not found");
     }
 }

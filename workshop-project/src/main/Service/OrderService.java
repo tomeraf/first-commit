@@ -1,6 +1,8 @@
 package Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,12 +14,14 @@ import Domain.Guest;
 import Domain.Item;
 import Domain.Response;
 import Domain.Shop;
+import Domain.ShoppingBasket;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IPayment;
 import Domain.Adapters_and_Interfaces.IShipment;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
+import Domain.DTOs.Pair;
 import Domain.DTOs.PaymentDetailsDTO;
 import Domain.DomainServices.PurchaseService;
 import Domain.Repositories.IOrderRepository;
@@ -25,7 +29,7 @@ import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
 
 
-public class CartService {
+public class OrderService {
     private PurchaseService purchaseService = new PurchaseService();
     private IUserRepository userRepository;
     private IShopRepository shopRepository;
@@ -35,9 +39,9 @@ public class CartService {
     private IShipment shipment;
 
     private final ConcurrencyHandler ConcurrencyHandler;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
-    public CartService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment shipment,  ConcurrencyHandler concurrencyHandler) {
+    public OrderService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment shipment,  ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
@@ -138,12 +142,37 @@ public class CartService {
      * @return the created Order, or null on failure
      */
     public Response<Order> buyCartContent(String sessionToken,PaymentDetailsDTO paymentDetailsDTO, String shipmentDetails) {
+        List<Lock> acquiredLocks = new ArrayList<>();
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+            
+            List<Pair<Integer, Integer>> shopItemPairs = new ArrayList<>();
+
+            for (ShoppingBasket basket : guest.getCart().getBaskets()) {
+                int shopID = basket.getShopID();
+                for (ItemDTO item : basket.getItems()) {
+                    shopItemPairs.add(new Pair<>(shopID, item.getItemID()));
+                }
+            }
+            // Sort by shopID then itemID to prevent deadlocks
+            shopItemPairs.sort(Comparator
+                .comparing(Pair<Integer, Integer>::getKey)
+                .thenComparing(Pair::getValue)
+            );
+
+             // Lock all needed items
+            for (Pair<Integer, Integer> pair : shopItemPairs) {
+                ReentrantLock itemLock = ConcurrencyHandler.getItemLock(pair.getKey(), pair.getValue());
+                itemLock.lockInterruptibly();  // Safe lock that respects thread interruption
+                acquiredLocks.add(itemLock);
+            }
+       
+            // all needed shops and items are locked
+            // Now we can proceed with the purchase
             List<Shop> shops = new ArrayList<>();
             for (int i = 0; i < guest.getCart().getBaskets().size(); i++) {
                 int shopID = guest.getCart().getBaskets().get(i).getShopID();
@@ -151,13 +180,25 @@ public class CartService {
                 shops.add(shop); // Add the shop to the list of shops
             }
             
-            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment,paymentDetailsDTO, shipmentDetails); // Buy the cart content
+            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment); // Buy the cart content
             orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
             return Response.ok(order); 
-        } catch (Exception e) {
+        } 
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error(() -> "Thread interrupted during cart purchase");
+            return Response.error("Thread interrupted during cart purchase");
+        }
+        catch (Exception e) {
             logger.error(() -> "Error buying cart content: " + e.getMessage());
             return Response.error("Error buying cart content: " + e.getMessage());
+        } finally {
+            // Always unlock in the reverse order
+            Collections.reverse(acquiredLocks);
+            for (Lock lock : acquiredLocks) {
+                lock.unlock();
+            }
         }
     }
 
@@ -247,5 +288,24 @@ public class CartService {
             shopRead.unlock();
         }
     }
-
+     /**
+     * Retrieves the personal order history for the user.
+     *
+     * @param sessionToken current session token
+     * @return list of past Orders, or null on error
+     */
+    public Response<List<Order>> viewPersonalOrderHistory(String sessionToken) {
+        try {
+            if (!jwtAdapter.validateToken(sessionToken)) {
+                throw new Exception("User not logged in");
+            }
+            int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            List<Order> orders = orderRepository.getOrdersByCustomerId(userId);
+            logger.info(() -> "Personal search history viewed successfully for user ID: " + userId);
+            return Response.ok(orders);
+        } catch (Exception e) {
+            logger.error(() -> "Error viewing personal search history: " + e.getMessage());
+            return Response.error("Error viewing personal search history: " + e.getMessage());
+        }
+    }
 }

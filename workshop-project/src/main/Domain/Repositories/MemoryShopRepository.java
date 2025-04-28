@@ -14,6 +14,9 @@ public class MemoryShopRepository implements IShopRepository {
 
     @Override
     public Shop getShopById(int id) {
+        if (!shops.containsKey(id)) {
+            throw new IllegalArgumentException("Shop with ID " + id + " does not exist.");
+        }
         return shops.get(id);
     }
 
@@ -24,6 +27,9 @@ public class MemoryShopRepository implements IShopRepository {
 
     @Override
     public void deleteShop(int id) {
+        if (!shops.containsKey(id)) {
+            throw new IllegalArgumentException("Shop with ID " + id + " does not exist.");
+        }
         shops.remove(id);
     }
 
