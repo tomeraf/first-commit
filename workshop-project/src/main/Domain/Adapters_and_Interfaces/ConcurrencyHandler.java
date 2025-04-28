@@ -17,6 +17,10 @@ public class ConcurrencyHandler {
     private final ConcurrentHashMap<Integer, ReentrantReadWriteLock> shopLocks = new ConcurrentHashMap<>();
     // Fine-grained locks per item
     private final ConcurrentHashMap<String, ReentrantLock> itemLocks = new ConcurrentHashMap<>();
+    private final ReentrantLock globalShopCreationLock = new ReentrantLock();
+    private final ConcurrentHashMap<String, ReentrantLock> usernameLocks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ReentrantLock> shopUserLocks = new ConcurrentHashMap<>();
+
 
     private ReentrantReadWriteLock getShopRWLock(int shopId) {
         return shopLocks.computeIfAbsent(shopId, id -> new ReentrantReadWriteLock());
@@ -43,5 +47,30 @@ public class ConcurrencyHandler {
     public ReentrantLock getItemLock(int shopId, int itemId) {
         String key = "shop:" + shopId + ":item:" + itemId;
         return itemLocks.computeIfAbsent(key, k -> new ReentrantLock());
+    }
+
+    /**
+     * For operations that need to create a new shop.
+     * This is a global lock to prevent multiple threads from creating the same shop at the same time.
+     */
+    public Lock getGlobalShopCreationLock() {
+        return globalShopCreationLock;
+    }
+
+    /**
+     * For operations that need to lock a username.
+     * This is a global lock to prevent multiple threads from creating the same user at the same time.
+     */
+    public ReentrantLock getUsernameLock(String username) {
+        return usernameLocks.computeIfAbsent(username, k -> new ReentrantLock());
+    }
+
+    /**
+     * For operations that need to lock a user for specific shop.
+     * This is a global lock to prevent multiple threads from creating the same user at the same time.
+     */
+    public ReentrantLock getShopUserLock(int shopId, String userName) {
+        String key = "shop:" + shopId + ":user:" + userName;
+        return shopUserLocks.computeIfAbsent(key, k -> new ReentrantLock());
     }
 }
