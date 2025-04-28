@@ -50,7 +50,6 @@ public class InteractionService {
         else {
             throw new IllegalStateException("Non owner does not have permission to respond to this message");
         }
-            
     }
 
 

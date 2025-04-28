@@ -345,8 +345,7 @@ public class Shop implements IMessageListener {
             return inbox.get(messageId);
         }
         else {
-            System.out.println("Message ID does not exist in the inbox.");
-            return null;
+            throw new IllegalArgumentException("Message ID does not exist in the inbox.");
         }
     }
 
