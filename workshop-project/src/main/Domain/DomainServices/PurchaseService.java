@@ -10,16 +10,16 @@ import java.util.List;
 import Domain.DTOs.Order;
 
 public class PurchaseService {
+    // Use case #2.3: Add item to cart
     public void addItemsToCart(Guest user, List<Item> items)
     {
-        // Use case #2.3: Add item to cart
         ShoppingCart cart = user.getCart();
         cart.addItems(convertToItemDTO(items));
     }
 
+    // Use case #2.4.b: Delete items from cart
     public void removeItemsFromCart(Guest user, List<Item> items)
     {
-        // Use case #2.4.b: Delete items from cart
         ShoppingCart cart = user.getCart();
         HashMap<Integer,Integer> itemsMap = new HashMap<>();
         for (Item item : items)
@@ -27,9 +27,9 @@ public class PurchaseService {
 
         cart.deleteItems(itemsMap);
     }
-
+    
+    // Use case #2.5: Purchase cart
     public boolean canPurchaseCart(Guest user, List<Shop> shops) {
-        // Use case #2.5: Purchase cart
 
         ShoppingCart cart = user.getCart();
 
