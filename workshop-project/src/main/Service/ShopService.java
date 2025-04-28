@@ -19,7 +19,6 @@ import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
 
-import Domain.DTOs.UserDTO;
 import Domain.DomainServices.InteractionService;
 
 import Domain.DomainServices.ManagementService;
@@ -113,7 +112,6 @@ public class ShopService {
         }
         return Response.ok(itemDTOs);
     }
-
 
     public Response<ShopDTO> createShop(String sessionToken, String name, String description) {
         if(!authenticationAdapter.validateToken(sessionToken)){
@@ -222,9 +220,9 @@ public class ShopService {
         }
         else {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            //Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
+            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
             shoppingService.RateShop(shop,orders ,rating);
         }
     }
@@ -239,9 +237,9 @@ public class ShopService {
         }
         else {
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            //Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByUserName(user.getUsername());
+            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
             shoppingService.RateItem(shop,itemID,orders, rating);
             
         }
@@ -326,6 +324,7 @@ public class ShopService {
             }
         }
     }
+    
     public Response<Void> removeShopOwner(String sessionToken, int shopID, String appointeeName) {
         if(authenticationAdapter.validateToken(sessionToken)){
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
@@ -335,6 +334,7 @@ public class ShopService {
             managementService.removeAppointment(user, shop, appointee);
         }
     }
+
     public Response<Void> addShopManagerPermission(String sessionToken, int shopID,String appointeeName, Permission  permission) {
         if(authenticationAdapter.validateToken(sessionToken)){
             ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
