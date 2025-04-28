@@ -14,6 +14,7 @@ import Domain.DomainServices.ManagementService;
 import Domain.Guest;
 import Domain.Item;
 import Domain.Registered;
+import Domain.Response;
 import Domain.Shop;
 import Domain.ShoppingCart;
 import Domain.Adapters_and_Interfaces.IAuthentication;
@@ -56,7 +57,7 @@ public class UserService {
      *
      * @return the newly generated session token for the guest
      */
-    public String enterToSystem() {
+    public Response<String> enterToSystem() {
         logger.info(() -> "User entered the system");
         int guestUserID = userRepository.getIdToAssign(); // Get a unique ID for the guest user
         Guest guest = new Guest();
@@ -65,7 +66,7 @@ public class UserService {
         
         guest.enterToSystem(sessionToken, guestUserID);
         userRepository.saveUser(guest); // Save the guest user in the repository
-        return sessionToken;
+        return Response.ok(sessionToken);
     }
 
     /**
@@ -73,7 +74,7 @@ public class UserService {
      *
      * @param sessionToken the token of the guest session to terminate
      */
-    public void exitAsGuest(String sessionToken) {
+    public Response<Void> exitAsGuest(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User is not logged in");
@@ -81,8 +82,10 @@ public class UserService {
             int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             userRepository.removeGuestById(userID); // Adds to the "reuse" list
             logger.info(() -> "User exited the system");
+            return Response.ok();
         } catch (Exception e) {
             logger.error(() -> "Error exiting the system: " + e.getMessage());
+            return Response.error("Error exiting the system: " + e.getMessage());
         }
     }
 
@@ -92,7 +95,7 @@ public class UserService {
      * @param sessionToken the current token of the registered user
      * @return a new session token as a guest, or empty string on failure
      */
-    public String logoutRegistered(String sessionToken) {
+    public Response<String> logoutRegistered(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User is not logged in");
@@ -101,10 +104,11 @@ public class UserService {
             Guest user = userRepository.getUserById(Integer.parseInt(jwtAdapter.getUsername(sessionToken)));
             user.logout();
             // Nothing to do, everything is saved in DB
-            return enterToSystem();
+            Response<String> newToken = enterToSystem();
+            return Response.ok(newToken.getData());
         } catch (Exception e) {
             logger.error(() -> "Logout Error: " + e.getMessage());
-            return "";
+            return Response.error("Logout Error: " + e.getMessage());
         }
     }
 
@@ -117,7 +121,7 @@ public class UserService {
      * @param password desired password
      * @param dateOfBirth user's date of birth
      */
-    public void registerUser(String sessionToken, String username, String password, LocalDate dateOfBirth) {
+    public Response<Void> registerUser(String sessionToken, String username, String password, LocalDate dateOfBirth) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User is not logged in");
@@ -130,18 +134,14 @@ public class UserService {
             if (guest.getUsername() != null) {
                 throw new Exception("Unauthorized register attempt for ID=" + userID);
             }
-
-            //int idToAssign = userRepository.getIdToAssign();
-            //Guest guest = new Guest();
             
-            //guest.setSessionToken(sessionToken); // Set the session token for the guest
-            //guest.setCart(new ShoppingCart(idToAssign));
-            // Stays with same token
             Registered registered = guest.register(username, password, dateOfBirth);
             userRepository.removeGuestById(userID); // Remove the guest from the repository
             userRepository.saveUser(registered);
+            return Response.ok();
         } catch (Exception e) {
             logger.error(() -> "Error registering user: " + e.getMessage());
+            return Response.error("Error registering user: " + e.getMessage());
         }
     }
 
@@ -153,7 +153,7 @@ public class UserService {
      * @param password registered user's password
      * @return the new session token if login succeeds, or null on failure
      */
-    public String loginUser(String sessionToken, String username, String password) {
+    public Response<String> loginUser(String sessionToken, String username, String password) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User is not logged in");
@@ -175,10 +175,10 @@ public class UserService {
                 userRepository.removeGuestById(guestUserID);
             
             logger.info(() -> "User logged in successfully with session token: " + sessionToken);
-            return newSessionToken;
+            return Response.ok(newSessionToken);
         } catch (Exception e) {
             logger.error(() -> "Error logging in user: " + e.getMessage());
-            return null;
+            return Response.error("Error logging in user: " + e.getMessage());
         }
     }
 
@@ -188,7 +188,7 @@ public class UserService {
      * @param sessionToken current session token
      * @return list of ItemDTOs in the cart, or null on error
      */
-    public List<ItemDTO> checkCartContent(String sessionToken) {
+    public Response<List<ItemDTO>> checkCartContent(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -202,11 +202,11 @@ public class UserService {
             List<ItemDTO> itemDTOs = purchaseService.checkCartContent(guest);
 
             logger.info(() -> "All items were listed successfully");
-            return itemDTOs;
+            return Response.ok(itemDTOs);
         } 
         catch (Exception e) {
             logger.error(() -> "Error viewing cart: " + e.getMessage());
-            return null;
+            return Response.error("Error viewing cart: " + e.getMessage());
         }
     }
 
@@ -216,7 +216,7 @@ public class UserService {
      * @param sessionToken current session token
      * @param itemDTOs list of items to add
      */
-    public void addItemsToCart(String sessionToken, List<ItemDTO> itemDTOs) {
+    public Response<Void> addItemsToCart(String sessionToken, List<ItemDTO> itemDTOs) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -230,8 +230,10 @@ public class UserService {
             purchaseService.addItemsToCart(guest, items);
 
             logger.info(() -> "Items added to cart successfully");
+            return Response.ok();
         } catch (Exception e) {
             logger.error(() -> "Error adding items to cart: " + e.getMessage());
+            return Response.error("Error adding items to cart: " + e.getMessage());
         }
     }
 
@@ -241,7 +243,7 @@ public class UserService {
      * @param sessionToken current session token
      * @param itemDTOs list of items to remove
      */
-    public void removeItemsFromCart(String sessionToken, List<ItemDTO> itemDTOs) {
+    public Response<Void> removeItemsFromCart(String sessionToken, List<ItemDTO> itemDTOs) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -255,8 +257,10 @@ public class UserService {
             purchaseService.removeItemsFromCart(guest, items);
             
             logger.info(() -> "Items removed from cart successfully");
+            return Response.ok();
         } catch (Exception e) {
             logger.error(() -> "Error removing items from cart: " + e.getMessage());
+            return Response.error("Error removing items from cart: " + e.getMessage());
         }
     }
 
@@ -266,7 +270,7 @@ public class UserService {
      * @param sessionToken current session token
      * @return the created Order, or null on failure
      */
-    public Order buyCartContent(String sessionToken) {
+    public Response<Order> buyCartContent(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -283,7 +287,7 @@ public class UserService {
             Order order = purchaseService.buyCartContent(guest, shops, shipment, payment);
             orderRepository.addOrder(order); 
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
-            return order; 
+            return Response.ok(order); 
         } catch (Exception e) {
             logger.error(() -> "Error buying cart content: " + e.getMessage());
         }
@@ -297,7 +301,7 @@ public class UserService {
      * @param itemID the item to bid on
      * @param offerPrice the bid amount
      */
-    public void submitBidOffer(String sessionToken, int itemID, double offerPrice) {
+    public Response<Void> submitBidOffer(String sessionToken, int itemID, double offerPrice) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -307,8 +311,10 @@ public class UserService {
             purchaseService.submitBidOffer(guest, itemID, offerPrice);
 
             logger.info(() -> "Bid offer submitted successfully for item ID: " + itemID);
+            return Response.ok();
         } catch (Exception e) {
             logger.error(() -> "Error submitting bid offer: " + e.getMessage());
+            return Response.error("Error submitting bid offer: " + e.getMessage());
         }
     }
 
@@ -318,7 +324,7 @@ public class UserService {
      * @param sessionToken current session token
      * @param itemID the item to purchase
      */
-    public void directPurchase(String sessionToken, int itemID) {
+    public Response<Void> directPurchase(String sessionToken, int itemID) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -328,8 +334,10 @@ public class UserService {
             purchaseService.directPurchase(guest, itemID);
 
             logger.info(() -> "Direct purchase completed successfully for item ID: " + itemID);
+            return Response.ok();
         } catch (Exception e) {
             logger.error(() -> "Error completing direct purchase: " + e.getMessage());
+            return Response.error("Error completing direct purchase: " + e.getMessage());
         }
     }
 
@@ -339,7 +347,7 @@ public class UserService {
      * @param sessionToken current session token
      * @return list of past Orders, or null on error
      */
-    public List<Order> viewPersonalOrderHistory(String sessionToken) {
+    public Response<List<Order>> viewPersonalOrderHistory(String sessionToken) {
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -347,10 +355,10 @@ public class UserService {
             int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             List<Order> orders = orderRepository.getOrdersByCustomerId(userId);
             logger.info(() -> "Personal search history viewed successfully for user ID: " + userId);
-            return orders;
+            return Response.ok(orders);
         } catch (Exception e) {
             logger.error(() -> "Error viewing personal search history: " + e.getMessage());
-            return null;
+            return Response.error("Error viewing personal search history: " + e.getMessage());
         }
     }
 }
