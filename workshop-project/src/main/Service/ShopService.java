@@ -464,7 +464,7 @@ public class ShopService {
     }
     
 
-    public Response<Void> closeShopByFounder(String sessionToken, int shopID) {
+    public Response<Void> closeShop(String sessionToken, int shopID) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, close the shop with the provided details
