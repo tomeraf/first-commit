@@ -6,6 +6,7 @@ import java.util.Map;
 
 public interface IUserRepository {
     void saveUser(Guest user);
+    void saveUser(Registered user);
     void removeGuestById(int id);
     
     Guest getUserById(int id);
