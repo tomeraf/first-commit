@@ -12,25 +12,25 @@ public class ItemTest {
     private Item item;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         item = new Item("Test Item",Category.FOOD, 10.0, 5,1, "desc"); // Create a new item with name, price, and quantity
     }
 
     @Test
-    void testRatingupdate() {
+    public void testRatingupdate() {
         item.setNumOfOrders(1);
         item.updateRating(4.5); // Update the rating with a new value no orders yet
         assertEquals(4.5, item.getRating(), 0.01); // Check if the rating is updated correctly
     }
     @Test
-    void testBuyItem() {
+    public void testBuyItem() {
         item.setQuantity(10); // Set initial quantity
         item.buyItem(5); // Buy 5 items
         assertEquals(5, item.getQuantity()); // Check if the quantity is updated correctly
         assertEquals(1, item.getNumOfOrders()); // Check if the number of orders is updated correctly
     }
     @Test
-    void testBuyItemNotEnoughStock() {
+    public void testBuyItemNotEnoughStock() {
         item.setQuantity(2); // Set initial quantity
         try {
             item.buyItem(5); // Try to buy 5 items

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="Tests.GuestTest" time="0.0" tests="0" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="Tests.GuestTest" time="0.002" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="22"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-22\bin"/>
-    <property name="sun.java.command" value="C:\Users\tomer\AppData\Local\Temp\surefire5053535969285727134\surefirebooter-20250428205730912_3.jar C:\Users\tomer\AppData\Local\Temp\surefire5053535969285727134 2025-04-28T20-57-28_880-jvmRun1 surefire-20250428205730912_1tmp surefire_0-20250428205730912_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\tomer\AppData\Local\Temp\surefire10009517389854145659\surefirebooter-20250428214417263_3.jar C:\Users\tomer\AppData\Local\Temp\surefire10009517389854145659 2025-04-28T21-44-17_142-jvmRun1 surefire-20250428214417263_1tmp surefire_0-20250428214417263_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\uni\F\project\Whole-System\target\test-classes;C:\uni\F\project\Whole-System\target\classes;C:\Users\tomer\.m2\repository\io\jsonwebtoken\jjwt-orgjson\0.12.6\jjwt-orgjson-0.12.6.jar;C:\Users\tomer\.m2\repository\org\json\json\20231013\json-20231013.jar;C:\Users\tomer\.m2\repository\io\jsonwebtoken\jjwt-api\0.12.6\jjwt-api-0.12.6.jar;C:\Users\tomer\.m2\repository\io\jsonwebtoken\jjwt-impl\0.12.6\jjwt-impl-0.12.6.jar;C:\Users\tomer\.m2\repository\io\jsonwebtoken\jjwt-jackson\0.12.6\jjwt-jackson-0.12.6.jar;C:\Users\tomer\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.15.3\jackson-annotations-2.15.3.jar;C:\Users\tomer\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.15.3\jackson-core-2.15.3.jar;C:\Users\tomer\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.15.3\jackson-databind-2.15.3.jar;C:\Users\tomer\.m2\repository\org\springframework\spring-beans\7.0.0-M4\spring-beans-7.0.0-M4.jar;C:\Users\tomer\.m2\repository\org\springframework\spring-core\7.0.0-M4\spring-core-7.0.0-M4.jar;C:\Users\tomer\.m2\repository\commons-logging\commons-logging\1.3.5\commons-logging-1.3.5.jar;C:\Users\tomer\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar;C:\Users\tomer\.m2\repository\org\springframework\spring-context\5.3.10\spring-context-5.3.10.jar;C:\Users\tomer\.m2\repository\org\springframework\spring-aop\5.3.10\spring-aop-5.3.10.jar;C:\Users\tomer\.m2\repository\org\springframework\spring-expression\5.3.10\spring-expression-5.3.10.jar;C:\Users\tomer\.m2\repository\org\springframework\security\spring-security-crypto\6.2.1\spring-security-crypto-6.2.1.jar;C:\Users\tomer\.m2\repository\org\junit\platform\junit-platform-console-standalone\1.9.3\junit-platform-console-standalone-1.9.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\tomer\AppData\Local\Temp\surefire5053535969285727134\surefirebooter-20250428205730912_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\tomer\AppData\Local\Temp\surefire10009517389854145659\surefirebooter-20250428214417263_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="22.0.1+8-16"/>
@@ -59,4 +59,10 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="66.0"/>
   </properties>
+  <testcase name="Tests.GuestTest.testLoginTwiceShouldNotOverride()" classname="Tests.GuestTest" time="0.0"/>
+  <testcase name="Tests.GuestTest.testSuccessfulLogout()" classname="Tests.GuestTest" time="0.0"/>
+  <testcase name="Tests.GuestTest.testLogoutWithoutLogin()" classname="Tests.GuestTest" time="0.0"/>
+  <testcase name="Tests.GuestTest.testSuccessfulLogin()" classname="Tests.GuestTest" time="0.0"/>
+  <testcase name="Tests.GuestTest.testLoginWithNegativeID()" classname="Tests.GuestTest" time="0.0"/>
+  <testcase name="Tests.GuestTest.testDoubleLogout()" classname="Tests.GuestTest" time="0.0"/>
 </testsuite>
