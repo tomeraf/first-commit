@@ -39,6 +39,7 @@ public class Shop implements IMessageListener {
     private int bidPurchaseCounter; // Counter for bid purchases
     private int auctionPurchaseCounter; // Counter for auction purchases
     private HashMap<Integer, IMessage> inbox; // 
+    int messageIdCounter = 1; // Counter for message IDs
 
     public Shop(int id,int founderID, String name, String description) {
         this.id = id;
@@ -351,6 +352,10 @@ public class Shop implements IMessageListener {
 
     public HashMap<Integer, IMessage> getAllMessages() {
         return inbox;
+    }
+
+    public int getNextMessageId() {
+        return messageIdCounter++;
     }
 }
 

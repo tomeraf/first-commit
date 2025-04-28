@@ -38,7 +38,6 @@ public class ShopService {
     private int shopIdCounter = 1;
     private ObjectMapper objectMapper;
     private InteractionService interactionService = InteractionService.getInstance();
-    private int messageIdCounter = 1;
     private final ConcurrencyHandler concurrencyHandler;
     
 
@@ -355,17 +354,10 @@ public class ShopService {
 
     public void sendMessage(String sessionToken, int shopId, String title, String content) {
         if(authenticationAdapter.validateToken(sessionToken)){
-            String username=authenticationAdapter.getUsername(sessionToken);
-            Registered user=userRepository.getUserByName(username);
             Shop shop=shopRepository.getShopById(shopId);
-            if(user.getRoleInShop(shopId).equals("Owner")){
-                IMessage message = interactionService.createMessage(messageIdCounter, shop.getId(), shop.getName(), shop.getId(), title, content);
-                interactionService.sendMessage(user, message);
-                messageIdCounter++;
-            } 
-            else {
-                System.out.println("You don't have permission to send messages in this shop.");
-            }
+            int newMessageId = shop.getNextMessageId();
+            IMessage message = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
+            interactionService.sendMessage(shop, message);
         }
     }
 
@@ -374,15 +366,10 @@ public class ShopService {
             String username=authenticationAdapter.getUsername(sessionToken);
             Registered user=userRepository.getUserByName(username);
             Shop shop=shopRepository.getShopById(shopId);
+            int newMessageId = shop.getNextMessageId();
             IMessage parentMessage = shop.getAllMessages().get(messageId);
-            if(user.getRoleInShop(shopId).equals("Owner")){
-                IMessage responseMessage = interactionService.createMessage(this.messageIdCounter, shop.getId(), shop.getName(), shop.getId(), title, content);
-                interactionService.respondToMessage(parentMessage, responseMessage);
-                messageIdCounter++;
-            } 
-            else {
-                System.out.println("You don't have permission to respond to messages in this shop.");
-            }
+            IMessage responseMessage = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
+            interactionService.respondToMessage(user, parentMessage, responseMessage);
         }
     }
 
