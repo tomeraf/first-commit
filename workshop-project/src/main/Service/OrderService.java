@@ -112,6 +112,12 @@ public class OrderService {
                 acquiredLocks.add(shopRead);
             }
 
+            HashMap<Shop, HashMap<Integer, Integer>> items = new HashMap<>(); 
+            for (int shopId : sortedShopIds) {
+                HashMap<Integer, Integer> itemIDs = userItems.get(shopId); // Get the item IDs for the current shop
+                Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
+                items.put(shop, itemIDs); // Add the shop and its items to the map
+            }
             
 
             purchaseService.addItemsToCart(guest, items); // Add items to the cart
@@ -138,7 +144,8 @@ public class OrderService {
      * @param sessionToken current session token
      * @param itemDTOs list of items to remove
      */
-    public Response<Void> removeItemsFromCart(String sessionToken, List<ItemDTO> itemDTOs) {
+    // userItems = shopID, itemID
+    public Response<Void> removeItemsFromCart(String sessionToken, HashMap<Integer, List<Integer>> userItems) {
 
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
@@ -146,11 +153,8 @@ public class OrderService {
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-            List<Item> items = itemDTOs.stream()
-                    .map(itemDTO -> new Item(itemDTO.getName(), itemDTO.getCategory(), itemDTO.getPrice(), itemDTO.getShopId(), itemDTO.getItemID(), itemDTO.getDescription()))
-                    .toList(); // Convert ItemDTO to Item
-
-            purchaseService.removeItemsFromCart(guest, items); // Save the updated cart to the repository
+            purchaseService.removeItemsFromCart(guest, userItems); // Save the updated cart to the repository
+            
             
             logger.info(() -> "Items removed from cart successfully");
             return Response.ok();
@@ -166,7 +170,7 @@ public class OrderService {
      * @param sessionToken current session token
      * @return the created Order, or null on failure
      */
-    public Response<Order> buyCartContent(String sessionToken,PaymentDetailsDTO paymentDetailsDTO, String shipmentDetails) {
+    public Response<Order> buyCartContent(String sessionToken) {
         List<Lock> acquiredLocks = new ArrayList<>();
 
         try {
@@ -221,7 +225,7 @@ public class OrderService {
                 shops.add(shop); // Add the shop to the list of shops
             }
             
-            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment); // Buy the cart content
+            Order order = purchaseService.buyCartContent(guest, shops, shipment, payment,orderRepository.getAllOrders().size()); // Buy the cart content
             orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);
             return Response.ok(order); 
@@ -264,8 +268,9 @@ public class OrderService {
                     throw new Exception("User not logged in");
                 }
                 int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-                Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-                purchaseService.submitBidOffer(guest, itemID, offerPrice);
+                Guest guest = userRepository.getUserById(cartID); // Get the guest user by ID
+                Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
+                purchaseService.submitBidOffer(guest,shop ,itemID, offerPrice);
     
                 logger.info(() -> "Bid offer submitted successfully for item ID: " + itemID);
                 return Response.ok();
@@ -294,40 +299,40 @@ public class OrderService {
      * @param sessionToken current session token
      * @param itemID the item to purchase
      */
-    public Response<Void> directPurchase(String sessionToken, int shopId, int itemID) {
-        Lock shopRead = ConcurrencyHandler.getShopReadLock(shopId);
-        ReentrantLock itemLock = ConcurrencyHandler.getItemLock(shopId, itemID);
+    // public Response<Void> directPurchase(String sessionToken, int shopId, int itemID) {
+    //     Lock shopRead = ConcurrencyHandler.getShopReadLock(shopId);
+    //     ReentrantLock itemLock = ConcurrencyHandler.getItemLock(shopId, itemID);
 
-        shopRead.lock();     
-        try {
-            itemLock.lockInterruptibly();
-            try {
-                if (!jwtAdapter.validateToken(sessionToken)) {
-                    throw new Exception("User not logged in");
-                }
-                int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-                Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
-                purchaseService.directPurchase(guest, itemID);
+    //     shopRead.lock();     
+    //     try {
+    //         itemLock.lockInterruptibly();
+    //         try {
+    //             if (!jwtAdapter.validateToken(sessionToken)) {
+    //                 throw new Exception("User not logged in");
+    //             }
+    //             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+    //             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+    //             purchaseService.directPurchase(guest, itemID);
     
-                logger.info(() -> "Direct purchase completed successfully for item ID: " + itemID);
-                return Response.ok();
-            } catch (Exception e) {
-                logger.error(() -> "Error completing direct purchase: " + e.getMessage());
-                return Response.error("Error completing direct purchase: " + e.getMessage());
-            }
-            finally {
-                itemLock.unlock();
-            }
-        } 
-        catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            logger.error(() -> "Thread was interrupted during direct purchase");
-            return Response.error("Thread was interrupted during direct purchase");
-        }
-        finally {
-            shopRead.unlock();
-        }
-    }
+    //             logger.info(() -> "Direct purchase completed successfully for item ID: " + itemID);
+    //             return Response.ok();
+    //         } catch (Exception e) {
+    //             logger.error(() -> "Error completing direct purchase: " + e.getMessage());
+    //             return Response.error("Error completing direct purchase: " + e.getMessage());
+    //         }
+    //         finally {
+    //             itemLock.unlock();
+    //         }
+    //     } 
+    //     catch (InterruptedException ie) {
+    //         Thread.currentThread().interrupt();
+    //         logger.error(() -> "Thread was interrupted during direct purchase");
+    //         return Response.error("Thread was interrupted during direct purchase");
+    //     }
+    //     finally {
+    //         shopRead.unlock();
+    //     }
+    // }
 
      /**
      * Retrieves the personal order history for the user.
@@ -347,6 +352,22 @@ public class OrderService {
         } catch (Exception e) {
             logger.error(() -> "Error viewing personal search history: " + e.getMessage());
             return Response.error("Error viewing personal search history: " + e.getMessage());
+        }
+    }
+    public Response<Void> purchaseBidItem(String sessionToken,int shopId,int bidId) {
+        try {
+            if (!jwtAdapter.validateToken(sessionToken)) {
+                throw new Exception("User not logged in");
+            }
+            int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
+            Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
+            purchaseService.purchaseBidItem(guest,shop,bidId, orderRepository.getAllOrders().size(),payment, shipment);
+            logger.info(() -> "Bid item purchased successfully for bid ID: " + bidId);
+            return Response.ok();
+        } catch (Exception e) {
+            logger.error(() -> "Error purchasing bid item: " + e.getMessage());
+            return Response.error("Error purchasing bid item: " + e.getMessage());
         }
     }
 }

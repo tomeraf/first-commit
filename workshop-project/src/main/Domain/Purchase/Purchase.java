@@ -7,6 +7,9 @@ public abstract class Purchase {
     private int buyerId;
 
     public Purchase(int id,double amount, int itemId, int buyerId) {
+        if(amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0.");
+        }
         this.id = id;
         this.amount = amount;
         this.itemId = itemId;
