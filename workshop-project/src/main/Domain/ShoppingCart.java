@@ -1,6 +1,7 @@
 package Domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,32 +88,51 @@ public class ShoppingCart {
 
 
     // Use case #2.4.b: Change cart content
-    // map<Integer, Integer> items: itemID, shopID
-    public boolean deleteItems(Map<Integer, Integer> items) {
-        // Check if all items are in the baskets
-        boolean itemFound = false;
-        for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
-            int itemID = entry.getKey();
-            for (ShoppingBasket basket : baskets) {
-                if (basket.isItemIn(itemID) && basket.getShopID() == entry.getValue()) {
-                    itemFound = true;
+    // map<Integer, Integer> items: shopID, List<ItemID>
+    public boolean deleteItems(HashMap<Integer, List<Integer>> items) {
+        // Check if all items exist in the relevant baskets
+        for (Map.Entry<Integer, List<Integer>> entry : items.entrySet()) {
+            int shopID = entry.getKey();
+            List<Integer> itemIDs = entry.getValue();
+
+            // Find the basket for the given shopID
+            ShoppingBasket basket = null;
+            for (ShoppingBasket b : baskets) {
+                if (b.getShopID() == shopID) {
+                    basket = b;
+                    break;
                 }
             }
-            if (!itemFound) {
-                return false;
+
+            // If no basket exists for the shopID, return false
+            if (basket == null) {
+                throw new IllegalArgumentException("Error: no basket exists for the shopID:" + shopID);
             }
-            itemFound = false;
+
+            // Check if all itemIDs exist in the basket
+            for (int itemID : itemIDs) {
+                if (!basket.isItemIn(itemID)) {
+                    throw new IllegalArgumentException("Error: item " + itemID + " not found in basket for shop ID " + shopID);
+                }
+            }
         }
 
-        // Remove items from all baskets
-        for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
-            int itemID = entry.getKey();
+        // Remove items from the relevant baskets
+        for (Map.Entry<Integer, List<Integer>> entry : items.entrySet()) {
+            int shopID = entry.getKey();
+            List<Integer> itemIDs = entry.getValue();
+
+            // Find the basket for the given shopID
             for (ShoppingBasket basket : baskets) {
-                if (basket.getShopID() == entry.getValue())
-                    if(!basket.removeItem(itemID)) 
-                        return false;
+                if (basket.getShopID() == shopID) {
+                    for (int itemID : itemIDs) {
+                        basket.removeItem(itemID);
+                    }
+                    break;
+                }
             }
         }
+
         return true;
     }
 

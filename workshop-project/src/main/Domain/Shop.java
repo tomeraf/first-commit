@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.Adapters_and_Interfaces.IMessageListener;
+import Domain.DTOs.Pair;
 import Domain.DTOs.ShopDTO;
 
 import Domain.Discount.DiscountPolicy;
@@ -226,7 +227,6 @@ public class Shop implements IMessageListener {
         for(Item item: allItems){
             item.buyItem(itemsToPurchase.get(item.getId()));
             totalPrice = totalPrice + item.getPrice() * itemsToPurchase.get(item.getId()); 
-            //will need to check the discount policy
         }
         return totalPrice; 
     }
@@ -350,6 +350,41 @@ public class Shop implements IMessageListener {
     public int getNextMessageId() {
         return messageIdCounter++;
     }
+
+    public boolean canAddItemsToBasket(HashMap<Integer,Integer> itemsMap) {
+        for (Integer itemId : itemsMap.keySet()) {
+            if(canAddItemToBasket(itemId, itemsMap.get(itemId)) == false) {
+                return false; // Item cannot be added to the basket
+            }
+        }
+        return true; // All items can be added to the basket
+    }
+
+    public Item getItem(Integer itemId) {
+        if (items.containsKey(itemId)) {
+            return items.get(itemId);
+        } else {
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
+        }
+    }
+
+    public Pair<Integer,Double> purchaseBidItem(int bidId, int userID) {
+        if (bidPurchaseItems.containsKey(bidId)) {
+            BidPurchase bidPurchase = bidPurchaseItems.get(bidId);
+            try{
+                if(!getItem(bidPurchase.getItemId()).quantityCheck(1)){
+                    throw new IllegalArgumentException("Item is out of stock.");
+                }
+                return bidPurchase.purchaseBidItem(userID, ownerIDs);
+            }
+             catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Bid purchase failed: " + e.getMessage());
+            }
+        } else {
+            throw new IllegalArgumentException("Bid ID does not exist in the shop.");
+        }
+    }
+
 }
 
 
