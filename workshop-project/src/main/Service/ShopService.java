@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.junit.platform.commons.logging.Logger;
+import org.junit.platform.commons.logging.LoggerFactory;
+
 import Domain.Category;
 import Domain.Item;
 import Domain.DTOs.ItemDTO;
@@ -31,20 +34,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class ShopService {
-    
+
     private IUserRepository userRepository;
     private IShopRepository shopRepository;
-    private IOrderRepository orderRepository; 
+    private IOrderRepository orderRepository;
     private ManagementService managementService = ManagementService.getInstance();
     private ShoppingService shoppingService;
     private IAuthentication authenticationAdapter;
-    private int shopIdCounter = 1;
     private ObjectMapper objectMapper;
     private InteractionService interactionService = InteractionService.getInstance();
     private final ConcurrencyHandler concurrencyHandler;
-    
 
-    public ShopService(IUserRepository userRepository, IShopRepository shopRepository,IOrderRepository orderRepository, IAuthentication authenticationAdapter, ConcurrencyHandler concurrencyHandler) {
+    private static final Logger logger = LoggerFactory.getLogger(ShopService.class);
+
+    public ShopService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository,
+            IAuthentication authenticationAdapter, ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
@@ -54,11 +58,11 @@ public class ShopService {
         this.shoppingService = new ShoppingService();
         this.concurrencyHandler = concurrencyHandler;
     }
-    
+
     public Response<List<ShopDTO>> showAllShops() {
         ArrayList<Shop> s = new ArrayList<Shop>(shopRepository.getAllShops().values());
         List<ShopDTO> shopDTOs = new ArrayList<>();
-        
+
         for (Shop shop : s) {
             ShopDTO shopDTO = objectMapper.convertValue(shop, ShopDTO.class);
             shopDTOs.add(shopDTO);
@@ -67,7 +71,7 @@ public class ShopService {
     }
 
     public Response<List<ItemDTO>> showShopItems(int shopId) {
-        ArrayList<Item> items=new ArrayList<Item>(shopRepository.getShopById(shopId).getItems().values());
+        ArrayList<Item> items = new ArrayList<Item>(shopRepository.getShopById(shopId).getItems().values());
         List<ItemDTO> itemDTOs = new ArrayList<>();
         for (Item item : items) {
             ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
@@ -76,7 +80,7 @@ public class ShopService {
         return Response.ok(itemDTOs);
     }
 
-    public Response<List<ItemDTO>> filterItemsAllShops(HashMap<String, String> filters){
+    public Response<List<ItemDTO>> filterItemsAllShops(HashMap<String, String> filters) {
         String category = filters.get("category");
         String name = filters.get("name");
         double minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
@@ -95,7 +99,7 @@ public class ShopService {
         return Response.ok(itemDTOs);
     }
 
-    public Response<List<ItemDTO>> filterItemsInShop(int shopId, HashMap<String, String> filters){
+    public Response<List<ItemDTO>> filterItemsInShop(int shopId, HashMap<String, String> filters) {
         String category = filters.get("category");
         String name = filters.get("name");
         double minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
@@ -103,7 +107,7 @@ public class ShopService {
         int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
         List<Item> filteredItems = new ArrayList<>();
         Shop shop = shopRepository.getShopById(shopId);
-        filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating,0));
+        filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, 0));
         List<ItemDTO> itemDTOs = new ArrayList<>();
         for (Item item : filteredItems) {
             ItemDTO itemDTO = objectMapper.convertValue(item, ItemDTO.class);
@@ -113,323 +117,389 @@ public class ShopService {
     }
 
     public Response<ShopDTO> createShop(String sessionToken, String name, String description) {
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            throw new RuntimeException("Please login.");
-        }
-
         Lock creationLock = concurrencyHandler.getGlobalShopCreationLock();
+        try{
+        authenticationAdapter.validateToken(sessionToken);
         creationLock.lock();
-
-        try {
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Shop shop = managementService.createShop(shopRepository.getAllShops().size(),(Registered)userRepository.getUserById(userID), name, description);
-            shopRepository.addShop(shop);
-            ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
-        
-            return Response.ok(shopDto);
+        int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+        Shop shop = managementService.createShop(shopRepository.getAllShops().size(),
+                (Registered) userRepository.getUserById(userID), name, description);
+        shopRepository.addShop(shop);
+        ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
+        logger.info(()->"Shop created: " + shopDto.getName() + " by user: " + userID);
+        return Response.ok(shopDto);
+        } catch (Exception e) {
+            logger.error(()->"Error creating shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         } finally {
             creationLock.unlock();
         }
     }
 
     public Response<ShopDTO> getShopInfo(String sessionToken, int shopID) {
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            throw new RuntimeException("Please login.");
-        }
-        else {
+        try{
             Shop shop = this.shopRepository.getShopById(shopID);
             ShopDTO shopDto = objectMapper.convertValue(shop, ShopDTO.class);
+            logger.info(()->"Shop info retrieved: " + shopDto.getName() + " by user: " + sessionToken);
             return Response.ok(shopDto);
+        }
+        catch (Exception e) {
+            logger.error(()->"Error retrieving shop info: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
     }
 
-    public Response<Void> addItemToShop(String sessionToken, int shopID, String itemName, Category category, double itemPrice, String description) {
-        //need to add the Check if the user is logged in
+    public Response<ItemDTO> addItemToShop(String sessionToken, int shopID, String itemName, Category category,
+            double itemPrice, String description) {
+        // need to add the Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, add the item to the shop with the provided details
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            return Response.error("Please log in or register to add items to the shop.");
-        }
-        else {
+        try{
+        authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-            this.managementService.addItemToShop(user, shop, itemName, category, itemPrice, description);
-            return Response.ok();
+            Item newItem=managementService.addItemToShop(user, shop, itemName, category, itemPrice, description);
+            ItemDTO itemDto = objectMapper.convertValue(newItem, ItemDTO.class);
+            logger.info(()->"Item added to shop: " + itemName + " in shop: " + shop.getName() + " by user: " + userID);
+            return Response.ok(itemDto);
+        } catch (Exception e) {
+            logger.error(()->"Error adding item to shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
     }
+
     public Response<Void> removeItemFromShop(String sessionToken, int shopID, int itemID) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, remove the item from the shop with the provided details
-        if(authenticationAdapter.validateToken(sessionToken)){
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop=shopRepository.getShopById(shopID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Shop shop = shopRepository.getShopById(shopID);
             managementService.removeItemFromShop(user, shop, itemID);
+            logger.info(()->"Item removed from shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error removing item from shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
         return Response.ok();
     }
+
     public Response<Void> changeItemQuantityInShop(String sessionToken, int shopID, int itemID, int newQuantity) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, change the item quantity in the shop with the provided details
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            return;
-        }
-        else {
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
-
             managementService.updateItemQuantity(user, shop, itemID, newQuantity);
+            logger.info(()->"Item quantity changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error changing item quantity in shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
+        return Response.ok();
     }
-    public void changeItemPriceInShop(String sessionToken, int shopID, int itemID, double newPrice) {
+
+    public Response<Void> changeItemPriceInShop(String sessionToken, int shopID, int itemID, double newPrice) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, change the item price in the shop with the provided details
-        if(authenticationAdapter.validateToken(sessionToken)){
+        try{
+        authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop=shopRepository.getShopById(shopID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Shop shop = shopRepository.getShopById(shopID);
             managementService.updateItemPrice(user, shop, itemID, newPrice);
+            logger.info(()->"Item price changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error changing item price in shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
+        return Response.ok();
+        
     }
-    public Response<Void> changeItemDescriptionInShop(String sessionToken, int shopID, int itemID, String newDescription) {
+
+    public Response<Void> changeItemDescriptionInShop(String sessionToken, int shopID, int itemID,
+            String newDescription) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, change the item name in the shop with the provided details
-        if(authenticationAdapter.validateToken(sessionToken)){
+            try{
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop=shopRepository.getShopById(shopID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Shop shop = shopRepository.getShopById(shopID);
             managementService.updateItemDescription(user, shop, itemID, newDescription);
-        }
-    }
-    public Response<Void> rateShop(String sessionToken, int shopID, int rating) {
-        // If logged in, rate the shop with the provided rating
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            return;
-        }
-        else {
-            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            //Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop = this.shopRepository.getShopById(shopID);
-            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
-            shoppingService.RateShop(shop,orders ,rating);
-        }
+            logger.info(()->"Item description changed in shop: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+            } catch (Exception e) {
+                logger.error(()->"Error changing item description in shop: " + e.getMessage());
+                return Response.error("Error: " + e.getMessage());
+            }
+        return Response.ok();
     }
 
-    public Response<Void> rateItem(String sessionToken,int shopID, int itemID, int rating) {
+    public Response<Void> rateShop(String sessionToken, int shopID, int rating) {
+        // If logged in, rate the shop with the provided rating
+        try{
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            // Registered user = (Registered)this.userRepository.getUserById(userID);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
+            shoppingService.RateShop(shop, orders, rating);
+            logger.info(()->"Shop rated: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error rating shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+        return Response.ok();
+    }
+
+    public Response<Void> rateItem(String sessionToken, int shopID, int itemID, int rating) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, rate the item with the provided rating
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            return;
-        }
-        else {
+        try{
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            //Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
             List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
-            shoppingService.RateItem(shop,itemID,orders, rating);
-            
+            shoppingService.RateItem(shop, itemID, orders, rating);
+            logger.info(()->"Item rated: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error rating item: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
+        return Response.ok();
     }
-    
+
     public Response<Void> updateDiscountType(String sessionToken, int shopID, String discountType) {
         // Check if the user is logged in
         // If not, prompt to log in or register
-        // If logged in, update the discount type for the item in the shop with the provided details
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            return;
-        }
-        else {
+        // If logged in, update the discount type for the item in the shop with the
+        // provided details
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
             this.managementService.updateDiscountType(user, shop, discountType);
+            logger.info(()->"Discount type updated in shop: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error updating discount type: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
+        return Response.ok();
     }
-    
+
     public Response<Void> updatePurchaseType(String sessionToken, int shopID, String purchaseType) {
         // Check if the user is logged in
         // If not, prompt to log in or register
-        // If logged in, update the purchase type for the item in the shop with the provided details
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            return;
-        }
-        else {
+        // If logged in, update the purchase type for the item in the shop with the
+        // provided details
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
             this.managementService.updatePurchaseType(user, shop, purchaseType);
+            logger.info(()->"Purchase type updated in shop: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error updating purchase type: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
+        return Response.ok();
     }
 
     public Response<Void> addShopOwner(String sessionToken, int shopID, String appointeeName) {
-        if(!authenticationAdapter.validateToken(sessionToken)){
-            System.out.println("Please log in or register to add items to the shop.");
-            return;
-        }
-        else {
-            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
-
-            try {
-                lock.lockInterruptibly();
-                try {
-                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-                    Registered user = (Registered)this.userRepository.getUserById(userID);
-                    Registered appointee = this.userRepository.getUserByName(appointeeName);
-                    Shop shop = this.shopRepository.getShopById(shopID);
-                    this.managementService.addOwner(user, shop, appointee);
-                } finally {
-                    lock.unlock();
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // handle interruption
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        try{
+            lock.lockInterruptibly();
+            try{
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered)this.userRepository.getUserById(userID);
+                Registered appointee = this.userRepository.getUserByName(appointeeName);
+                Shop shop = this.shopRepository.getShopById(shopID);
+                this.managementService.addOwner(user, shop, appointee);
+                logger.info(()->"Shop owner added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+            } catch (Exception e) {
+                logger.error(()->"Error adding shop owner: " + e.getMessage());
+                return Response.error("Error: " + e.getMessage());
             }
+        } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        // handle interruption
         }
+        finally {
+            lock.unlock();      
+        }
+        return Response.ok();    
     }
 
-    public Response<Void> addShopManager(String sessionToken, int shopID, String appointeeName, Set<Permission> permission) {
-       if(authenticationAdapter.validateToken(sessionToken)){
-            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
 
-            try {
-                lock.lockInterruptibly();
-                try {
-                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-                    Registered user = (Registered)this.userRepository.getUserById(userID);
-                    Registered appointee=userRepository.getUserByName(appointeeName);
-                    Shop shop=shopRepository.getShopById(shopID);
-                    managementService.addManager(user, shop, appointee, permission);
-                } finally {
-                    lock.unlock();
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // handle interruption
-            }
-        }
-    }
-    
-    public Response<Void> removeShopOwner(String sessionToken, int shopID, String appointeeName) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+    public Response<Void> removeAppointment(String sessionToken, int shopID, String appointeeName) {
+        try {
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Registered appointee=userRepository.getUserByName(appointeeName);
-            Shop shop=shopRepository.getShopById(shopID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Registered appointee = userRepository.getUserByName(appointeeName);
+            Shop shop = shopRepository.getShopById(shopID);
             managementService.removeAppointment(user, shop, appointee);
         }
-    }
-
-    public Response<Void> addShopManagerPermission(String sessionToken, int shopID,String appointeeName, Permission  permission) {
-        if(authenticationAdapter.validateToken(sessionToken)){
-            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
-
-            try {
-                lock.lockInterruptibly();
-                try {
-                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-                    Registered user = (Registered)this.userRepository.getUserById(userID);
-                    Registered appointee=userRepository.getUserByName(appointeeName);
-                    Shop shop=shopRepository.getShopById(shopID);
-                    managementService.addPermission(user, shop, appointee, permission); 
-                }
-                finally {
-                    lock.unlock();
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // handle interruption
-            }
+        catch (Exception e) {
+            logger.error(()->"Error removing appointment: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
+        return Response.ok();
     }
     
-    public Response<Void> removeShopManagerPermission(String sessionToken, int shopID,String appointeeName , Permission permission) {
-        if(authenticationAdapter.validateToken(sessionToken)){
-            ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
-
+    public Response<Void> addShopManager(String sessionToken, int shopID, String appointeeName, Set<Permission> permission) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        try {
+            lock.lockInterruptibly();
             try {
-                lock.lockInterruptibly();
-                try {
-                    int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-                    Registered user = (Registered)this.userRepository.getUserById(userID);
-                    Registered appointee=userRepository.getUserByName(appointeeName);
-                    Shop shop=shopRepository.getShopById(shopID);
-                    managementService.removePermission(user, shop, appointee, permission);
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Registered appointee = userRepository.getUserByName(appointeeName);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.addManager(user, shop, appointee, permission);
+                logger.info(()->"Shop manager added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+                } catch (Exception e) {
+                    logger.error(()->"Error adding shop manager: " + e.getMessage());
+                    return Response.error("Error: " + e.getMessage());
                 }
                 finally {
-                    lock.unlock();
+                lock.unlock();
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                // handle interruption
-            }
-            
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // handle interruption
         }
+        return Response.ok();
     }
+    public Response<Void> addShopManagerPermission(String sessionToken, int shopID,String appointeeName, Permission  permission) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        try {
+            lock.lockInterruptibly();
+            try{
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Registered appointee = userRepository.getUserByName(appointeeName);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.addPermission(user, shop, appointee, permission);
+                logger.info(()->"Shop manager permission added: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+            } catch (Exception e) {
+                logger.error(()->"Error adding shop manager permission: " + e.getMessage());
+                return Response.error("Error: " + e.getMessage());
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // handle interruption
+        }
+        finally {
+            lock.unlock();
+        }
+        return Response.ok();
+    }
+    public Response<Void> removeShopManagerPermission(String sessionToken, int shopID,String appointeeName , Permission permission) {
+        ReentrantLock lock = concurrencyHandler.getShopUserLock(shopID, appointeeName);
+        try {
+            lock.lockInterruptibly();
+            try{
+                authenticationAdapter.validateToken(sessionToken);
+                int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Registered appointee = userRepository.getUserByName(appointeeName);
+                Shop shop = shopRepository.getShopById(shopID);
+                managementService.removePermission(user, shop, appointee, permission);
+                logger.info(()->"Shop manager permission removed: " + appointeeName + " in shop: " + shop.getName() + " by user: " + userID);
+                } catch (Exception e) {
+                    logger.error(()->"Error removing shop manager permission: " + e.getMessage());
+                    return Response.error("Error: " + e.getMessage());
+                }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            // handle interruption
+        }
+        finally {
+            lock.unlock();
+        }
+        return Response.ok();
+    }
+    
 
     public Response<Void> closeShopByFounder(String sessionToken, int shopID) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, close the shop with the provided details
-        Lock shopWrite = concurrencyHandler.getShopWriteLock(shopID);
-        shopWrite.lock();
         try {
-            // now exclusive: no reads or other writes
-            if(authenticationAdapter.validateToken(sessionToken)){
+            Lock shopWrite = concurrencyHandler.getShopWriteLock(shopID);
+            shopWrite.lock();
+            try {
+                // now exclusive: no reads or other writes
+                authenticationAdapter.validateToken(sessionToken);
                 int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-                Registered user = (Registered)this.userRepository.getUserById(userID);
-                Shop shop=shopRepository.getShopById(shopID);
+                Registered user = (Registered) this.userRepository.getUserById(userID);
+                Shop shop = shopRepository.getShopById(shopID);
                 managementService.closeShop(user, shop);
+                logger.info(()->"Shop closed: " + shop.getName() + " by user: " + userID);
+            } finally {
+                shopWrite.unlock();
             }
+        } catch (Exception e) {
+            logger.error(()->"Error closing shop: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
-        finally {
-            shopWrite.unlock();
-        }
+        return Response.ok();
     }
 
     public Response<String> getMembersPermissions(String sessionToken, int shopID) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+        try {
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop=shopRepository.getShopById(shopID);
-            List<Integer> membersUserIds=managementService.getMembersPermissions(user, shop);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Shop shop = shopRepository.getShopById(shopID);
+            List<Integer> membersUserIds = managementService.getMembersPermissions(user, shop);
             StringBuilder permissions = new StringBuilder();
-            for(int memberId : membersUserIds){
-                Registered member = (Registered)userRepository.getUserById(memberId);
+            for (int memberId : membersUserIds) {
+                Registered member = (Registered) userRepository.getUserById(memberId);
                 permissions.append(member.getUsername()).append(": ");
                 permissions.append(member.getPermissions(shopID)).append("\n");
             }
-
-            return permissions.toString();
+            logger.info(()->"Members permissions retrieved in shop: " + shop.getName() + " by user: " + userID);
+            return Response.ok(permissions.toString());
+        } catch (Exception e) {
+            logger.error(()->"Error retrieving members permissions: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
-        return null;
     }
 
     public Response<Void> sendMessage(String sessionToken, int shopId, String title, String content) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             Shop shop=shopRepository.getShopById(shopId);
             int newMessageId = shop.getNextMessageId();
             IMessage message = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
             interactionService.sendMessage(shop, message);
+            logger.info(()->"Message sent: " + message.getId() + " in shop: " + shop.getName() + " by user: " + sessionToken);
+            return Response.ok();
         }
+        catch (Exception e) {
+            logger.error(()->"Error sending message: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+
     }
 
     public Response<Void> respondToMessage(String sessionToken, int shopId, int messageId, String title, String content) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+        try{
+            authenticationAdapter.validateToken(sessionToken);
             String username=authenticationAdapter.getUsername(sessionToken);
             Registered user=userRepository.getUserByName(username);
             Shop shop=shopRepository.getShopById(shopId);
@@ -438,22 +508,41 @@ public class ShopService {
             IMessage responseMessage = interactionService.createMessage(newMessageId, shop.getId(), shop.getName(), shop.getId(), title, content);
             interactionService.respondToMessage(user, parentMessage, responseMessage);
         }
+        catch (Exception e) {
+            logger.error(()->"Error responding to message: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+        return Response.ok();
     }
+    
 
-    public Response<Void> answerBid(String sessionToken,int shopID, int bidID,boolean accept) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+    public Response<Void> answerBid(String sessionToken, int shopID, int bidID, boolean accept) {
+        try {
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop=shopRepository.getShopById(shopID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Shop shop = shopRepository.getShopById(shopID);
             managementService.answerBid(user, shop, bidID, accept);
+            logger.info(()->"Bid answered: " + bidID + " in shop: " + shop.getName() + " by user: " + userID);
+            return Response.ok();
+        } catch (Exception e) {
+            logger.error(()->"Error answering bid: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
     }
-    public Response<Void> submitCounterBid(String sessionToken,int shopID, int bidID,double offerAmount) {
-        if(authenticationAdapter.validateToken(sessionToken)){
+
+    public Response<Void> submitCounterBid(String sessionToken, int shopID, int bidID, double offerAmount) {
+        try {
+            authenticationAdapter.validateToken(sessionToken);
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Registered user = (Registered)this.userRepository.getUserById(userID);
-            Shop shop=shopRepository.getShopById(shopID);
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Shop shop = shopRepository.getShopById(shopID);
             managementService.submitCounterBid(user, shop, bidID, offerAmount);
+            logger.info(()->"Counter bid submitted: " + bidID + " in shop: " + shop.getName() + " by user: " + userID);
+            return Response.ok();
+        } catch (Exception e) {
+            logger.error(()->"Error submitting counter bid: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
         }
     }
 

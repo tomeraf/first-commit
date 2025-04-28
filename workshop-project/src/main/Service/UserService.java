@@ -21,7 +21,6 @@ public class UserService {
 
     //private JWTAdapter jwtAdapter = new JWTAdapter();
     private IUserRepository userRepository;
-    private IOrderRepository orderRepository;
     private IAuthentication jwtAdapter;
     
 
@@ -30,9 +29,8 @@ public class UserService {
     
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(IUserRepository userRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter) {
+    public UserService(IUserRepository userRepository, IAuthentication jwtAdapter) {
         this.userRepository = userRepository;
-        this.orderRepository = orderRepository;
         this.jwtAdapter = jwtAdapter;
     }
     /**
@@ -179,24 +177,4 @@ public class UserService {
         }
     }
 
-    /**
-     * Retrieves the personal order history for the user.
-     *
-     * @param sessionToken current session token
-     * @return list of past Orders, or null on error
-     */
-    public Response<List<Order>> viewPersonalOrderHistory(String sessionToken) {
-        try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
-                throw new Exception("User not logged in");
-            }
-            int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-            List<Order> orders = orderRepository.getOrdersByCustomerId(userId);
-            logger.info(() -> "Personal search history viewed successfully for user ID: " + userId);
-            return Response.ok(orders);
-        } catch (Exception e) {
-            logger.error(() -> "Error viewing personal search history: " + e.getMessage());
-            return Response.error("Error viewing personal search history: " + e.getMessage());
-        }
-    }
 }

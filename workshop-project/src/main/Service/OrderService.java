@@ -29,7 +29,7 @@ import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
 
 
-public class CartService {
+public class OrderService {
     private PurchaseService purchaseService = new PurchaseService();
     private IUserRepository userRepository;
     private IShopRepository shopRepository;
@@ -39,9 +39,9 @@ public class CartService {
     private IShipment shipment;
 
     private final ConcurrencyHandler ConcurrencyHandler;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
-    public CartService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment shipment,  ConcurrencyHandler concurrencyHandler) {
+    public OrderService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment shipment,  ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
@@ -290,5 +290,24 @@ public class CartService {
             shopRead.unlock();
         }
     }
-
+     /**
+     * Retrieves the personal order history for the user.
+     *
+     * @param sessionToken current session token
+     * @return list of past Orders, or null on error
+     */
+    public Response<List<Order>> viewPersonalOrderHistory(String sessionToken) {
+        try {
+            if (!jwtAdapter.validateToken(sessionToken)) {
+                throw new Exception("User not logged in");
+            }
+            int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            List<Order> orders = orderRepository.getOrdersByCustomerId(userId);
+            logger.info(() -> "Personal search history viewed successfully for user ID: " + userId);
+            return Response.ok(orders);
+        } catch (Exception e) {
+            logger.error(() -> "Error viewing personal search history: " + e.getMessage());
+            return Response.error("Error viewing personal search history: " + e.getMessage());
+        }
+    }
 }

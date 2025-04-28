@@ -1,5 +1,5 @@
 package Tests;
-import Service.CartService;
+import Service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ public class endToEndTest_1 {
     private IPayment payment;
     private UserService userService;
     private ShopService shopService;
-    private CartService cartService;
+    private OrderService cartService;
     
     
     public endToEndTest_1() {
@@ -55,7 +55,7 @@ public class endToEndTest_1 {
 
         userService = new UserService(userRepository, shopRepository, orderRepository, jwtAdapter, payment, shipment);
         shopService = new ShopService(userRepository, shopRepository, orderRepository, jwtAdapter);
-        cartService = new CartService();
+        cartService = new OrderService();
     }
 
     @Test
