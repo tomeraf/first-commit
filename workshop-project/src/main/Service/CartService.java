@@ -242,8 +242,10 @@ public class CartService {
         } 
         catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            // handle interruption…
-        } finally {
+            logger.error(() -> "Thread was interrupted during direct purchase");
+            return Response.error("Thread was interrupted during direct purchase");
+        }
+        finally {
             shopRead.unlock();
         }
     }
