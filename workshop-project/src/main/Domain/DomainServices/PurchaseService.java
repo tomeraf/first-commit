@@ -42,6 +42,9 @@ public class PurchaseService {
     
     // use case 2.5
     public Order buyCartContent(Guest user, List<Shop> shops, IShipment ship, IPayment pay,int orderID ) {
+        if (shops.isEmpty()) {
+            throw new IllegalArgumentException("Error: no shops to purchase from.");    
+        }
         ShoppingCart cart = user.getCart();
         List<ItemDTO> items = cart.getItems();
         HashMap<Shop, HashMap<Integer, Integer>> itemsToBuy = new HashMap<>();

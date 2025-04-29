@@ -26,6 +26,7 @@ public class MemoryUserRepository implements IUserRepository {
         if (users.containsKey(user.getUserID())) {
             throw new RuntimeException("User already exists");
         }
+        
         if (getUserByName(user.getUsername()) != null) {
             throw new RuntimeException("Username already exists");
         }
@@ -55,15 +56,12 @@ public class MemoryUserRepository implements IUserRepository {
 
     @Override
     public void removeGuestById(int id) throws RuntimeException {
-        try{
             if (!users.containsKey(id)) {
                 throw new RuntimeException("User is not logged in");
             }
             Guest user = users.get(id);
-            user.logout();
-            users.remove(id); // Remove the user from the list  
-        } catch (Exception e) {
-        }
+            users.remove(id); // Remove the user from the list    
+            user.logout(); 
     }
 
     @Override
@@ -82,6 +80,6 @@ public class MemoryUserRepository implements IUserRepository {
                 return (Registered) user;
             }
         }
-        throw new RuntimeException("User not found");
+        return null;
     }
 }

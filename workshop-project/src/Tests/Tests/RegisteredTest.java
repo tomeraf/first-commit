@@ -94,7 +94,7 @@ public class RegisteredTest {
         Registered appointee = alice;
         Manager appointeeRole = new Manager(APPOINTEE_ID, SHOP_ID, new HashSet<>());
         
-        assertFalse(appointer.addManager(SHOP_ID, APPOINTEE_ID, appointeeRole));
+        assertThrows(IllegalArgumentException.class, () -> appointer.addManager(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
         assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());             // no appointments recorded
         assertEquals(-1, appointee.getAppointer(SHOP_ID));         // no appointer
@@ -111,7 +111,8 @@ public class RegisteredTest {
         new Registered("alice", "eve", LocalDate.of(2000, 1, 1)).setRoleToShop(SHOP_ID, appointeeRole);
         assertTrue(appointer.addOwner(SHOP_ID, APPOINTEE_ID, appointeeRole));
 
-        assertTrue(appointer.removeAppointment(SHOP_ID, APPOINTEE_ID));
+        List<Integer> ids = appointer.removeAppointment(SHOP_ID, APPOINTEE_ID);
+        assertTrue(ids.size() == 1);
         assertTrue(appointer.getAppointments(SHOP_ID).isEmpty());
     }
 

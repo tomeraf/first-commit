@@ -224,7 +224,6 @@ public class OrderService {
                 Shop shop = shopRepository.getShopById(shopID); // Get the shop by ID
                 shops.add(shop); // Add the shop to the list of shops
             }
-            
             Order order = purchaseService.buyCartContent(guest, shops, shipment, payment,orderRepository.getAllOrders().size()); // Buy the cart content
             orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Purchase completed successfully for cart ID: " + cartID);

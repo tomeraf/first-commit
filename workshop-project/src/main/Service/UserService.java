@@ -113,7 +113,6 @@ public class UserService {
                 }
     
                 int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
-    
                 Guest guest = userRepository.getUserById(userID);
                 // if getUsername() is non-null, they’re already registered
                 if (guest.getUsername() != null) {

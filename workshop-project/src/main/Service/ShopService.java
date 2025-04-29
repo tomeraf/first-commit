@@ -92,10 +92,10 @@ public class ShopService {
         try{
             String category = filters.get("category");
             String name = filters.get("name");
-            int minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
-            int maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
+            double minPrice = filters.get("minPrice") != null ? Double.parseDouble(filters.get("minPrice")) : 0;
+            double maxPrice = filters.get("maxPrice") != null ? Double.parseDouble(filters.get("maxPrice")) : 0;
             int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
-            int shopRating = filters.get("shopRating") != null ? Integer.parseInt(filters.get("shopRating")) : 0;
+            double shopRating = filters.get("shopRating") != null ? Double.parseDouble(filters.get("shopRating")) : 0;
             List<Item> filteredItems = new ArrayList<>();
             for (Shop shop : shopRepository.getAllShops().values()) {
                 filteredItems.addAll(shop.filter(name, category, minPrice, maxPrice, minRating, shopRating));
@@ -116,8 +116,8 @@ public class ShopService {
         try{
             String category = filters.get("category");
             String name = filters.get("name");
-            int minPrice = filters.get("minPrice") != null ? Integer.parseInt(filters.get("minPrice")) : 0;
-            int maxPrice = filters.get("maxPrice") != null ? Integer.parseInt(filters.get("maxPrice")) : 0;
+            double minPrice = filters.get("minPrice") != null ? Double.parseDouble(filters.get("minPrice")) : 0;
+            double maxPrice = filters.get("maxPrice") != null ? Double.parseDouble(filters.get("maxPrice")) : 0;
             int minRating = filters.get("minRating") != null ? Integer.parseInt(filters.get("minRating")) : 0;
             List<Item> filteredItems = new ArrayList<>();
             Shop shop = shopRepository.getShopById(shopId);
@@ -163,6 +163,9 @@ public class ShopService {
 
     public Response<ShopDTO> getShopInfo(String sessionToken, int shopID) {
         try{
+            if (!authenticationAdapter.validateToken(sessionToken)) {
+                throw new Exception("User is not logged in");
+            }
             Shop shop = this.shopRepository.getShopById(shopID);
             HashMap<Integer,ItemDTO> itemDTOs = new HashMap();
             for (Item item : shop.getItems().values()) {
@@ -342,8 +345,10 @@ public class ShopService {
     public Response<Void> rateShop(String sessionToken, int shopID, int rating) {
         // If logged in, rate the shop with the provided rating
         try{
+            authenticationAdapter.validateToken(sessionToken);
+            
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            // Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
             List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
             shoppingService.RateShop(shop, orders, rating);
@@ -604,7 +609,6 @@ public class ShopService {
             logger.error(()->"Error sending message: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
-
     }
 
     public Response<Void> respondToMessage(String sessionToken, int shopId, int messageId, String title, String content) {
@@ -690,6 +694,15 @@ public class ShopService {
             return Response.error("Thread was interrupted.");
         } catch (Exception e) {
             logger.error(() -> "Error submitting counter bid: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+    }
+
+    public Response<HashMap<Integer, IMessage>> getInbox(int shopID) {
+        try {
+            return Response.ok(shopRepository.getShopById(shopID).getAllMessages());
+        } catch (Exception e) {
+            logger.error(()->"Error getting all messages: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
     }

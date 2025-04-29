@@ -52,8 +52,8 @@ public class Shop implements IMessageListener {
         this.ownerIDs = new HashSet<>();
         this.managerIDs = new HashSet<>();
         ownerIDs.add(founderID); // Add the founder as an owner
-        this.isOpen = false;
-        this.counterItemId = 1; // Initialize the item ID counter
+        this.isOpen = true;
+        this.counterItemId = 0; // Initialize the item ID counter
         this.rating = 0.0;
         this.ratingCount = 0;
         this.bidPurchaseItems = new HashMap<>();
@@ -82,8 +82,8 @@ public class Shop implements IMessageListener {
     public void setOpen(boolean isOpen) { this.isOpen = isOpen; }
 
     public Item addItem(String name, Category category, double price, String description){
-        if (price < 0) {
-            throw new IllegalArgumentException("Price cannot be negative.");
+        if (price < 0 || !validName(name)) {
+            throw new IllegalArgumentException("Item name already exists or price cannot be negative.");
         } 
         else{
             Item item = new Item(name, category, price, this.id, counterItemId, description);
@@ -92,7 +92,14 @@ public class Shop implements IMessageListener {
             return item;
         }
     }
-    
+    public boolean validName(String name) {
+        for (Item item : items.values()) {
+            if (item.getName().equals(name)) {
+                return false; // Name already exists
+            }
+        }
+        return true; // Name is valid
+    }
     public void removeItem(int itemId) throws IllegalArgumentException {
         if (items.containsKey(itemId)) {
             items.remove(itemId);
@@ -298,7 +305,7 @@ public class Shop implements IMessageListener {
     }
 
 
-    public List<Item> filter(String name, String category, int minPrice, int maxPrice, int itemMinRating, int shopMinRating) {
+    public List<Item> filter(String name, String category, double minPrice, double maxPrice, int itemMinRating, double shopMinRating) {
         List<Item> filteredItems = new ArrayList<>();
         for (Item item : items.values()) {
             if ((name == null || item.getName().toLowerCase().contains(name.toLowerCase())) &&
@@ -351,6 +358,15 @@ public class Shop implements IMessageListener {
         return messageIdCounter++;
     }
 
+    public void removeAppointment(List<Integer> idsToRemove) {
+        for (Integer id : idsToRemove) {
+            if (ownerIDs.contains(id))
+                ownerIDs.remove(id);
+            if (managerIDs.contains(id))
+                managerIDs.remove(id);
+        }
+    }
+
     public boolean canAddItemsToBasket(HashMap<Integer,Integer> itemsMap) {
         for (Integer itemId : itemsMap.keySet()) {
             if(canAddItemToBasket(itemId, itemsMap.get(itemId)) == false) {
@@ -384,7 +400,6 @@ public class Shop implements IMessageListener {
             throw new IllegalArgumentException("Bid ID does not exist in the shop.");
         }
     }
-
 }
 
 
