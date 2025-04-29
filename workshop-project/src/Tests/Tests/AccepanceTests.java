@@ -3,44 +3,36 @@ import Service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 import Service.ShopService;
 import Service.UserService;
-import io.jsonwebtoken.lang.Assert;
 import Domain.DTOs.ShipmentDetailsDTO;
 import Domain.DTOs.PaymentDetailsDTO;
-import Domain.Guest;
-import Domain.Manager;
-import Domain.Owner;
-import Domain.Registered;
 import Domain.Response;
-import Domain.Shop;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.ShopDTO;
-import Domain.Purchase.PurchaseType;
 import Domain.Category;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import Domain.DTOs.Order;
 import Domain.Permission;
 import Domain.Adapters_and_Interfaces.*;
 import Domain.Repositories.*;
+import Infrastructure.MemoryOrderRepository;
+import Infrastructure.MemoryShopRepository;
+import Infrastructure.MemoryUserRepository;
 
 
 public class AccepanceTests {
