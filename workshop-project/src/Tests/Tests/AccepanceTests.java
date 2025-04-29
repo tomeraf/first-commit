@@ -43,7 +43,7 @@ import Domain.Adapters_and_Interfaces.*;
 import Domain.Repositories.*;
 
 
-public class endToEndTest_1 {
+public class AccepanceTests {
 
     private IShopRepository shopRepository;
     private IUserRepository userRepository;
@@ -824,7 +824,6 @@ public class endToEndTest_1 {
         HashMap<Integer, Integer> itemMap = new HashMap<>();
         itemMap.put(items.get(0).getItemID(), 1);
         itemMap.put(items.get(1).getItemID(), 1);
-        itemMap.put(items.get(2).getItemID(), 1);
         itemsMap.put(shopDto.getId(), itemMap);
 
         orderService.addItemsToCart(guestToken, itemsMap);
@@ -1556,48 +1555,6 @@ public class endToEndTest_1 {
     }
 
     @Test
-    public void concurrentRegisterSameUsername() throws InterruptedException {
-        String guest1 = userService.enterToSystem().getData();
-        String guest2 = userService.enterToSystem().getData();
-        String wanted = "dupUser";
-        
-        ExecutorService ex = Executors.newFixedThreadPool(2);
-        CountDownLatch start = new CountDownLatch(1);
-        List<Future<Response<Void>>> futures = new ArrayList<>();
-        
-        Runnable task1 = () -> {
-            try {
-                start.await();
-                futures.add(ex.submit(() ->
-                    userService.registerUser(guest1, wanted, "pw", LocalDate.now().minusYears(20))
-                ));
-            } catch (InterruptedException ignored) {}
-        };
-        Runnable task2 = () -> {
-            try {
-                start.await();
-                futures.add(ex.submit(() ->
-                    userService.registerUser(guest2, wanted, "pw", LocalDate.now().minusYears(20))
-                ));
-            } catch (InterruptedException ignored) {}
-        };
-        
-        ex.submit(task1);
-        ex.submit(task2);
-        // fire them simultaneously
-        start.countDown();
-        ex.shutdown();
-        ex.awaitTermination(5, TimeUnit.SECONDS);
-        
-        // exactly one should succeed
-        long successCount = futures.stream().map(f -> {
-            try { return f.get().isOk(); }
-            catch (Exception e) { return false; }
-        }).filter(ok -> ok).count();
-        
-        assertEquals(1, successCount, "Only one registration may succeed");
-    }
-    @Test
     public void concurrentRegisterSameUsername2() throws InterruptedException {
         String guest1 = userService.enterToSystem().getData();
         String guest2 = userService.enterToSystem().getData();
@@ -1625,51 +1582,138 @@ public class endToEndTest_1 {
         // Now exactly one registration should succeed
         assertEquals(1, successCount, "Only one registration may succeed");
     }
-    // @Test
-    // public void concurrentPurchaseRace() throws InterruptedException {
-    //     String owner = generateloginAsRegistered("Owner", "PWD");
-    //     ShopDTO shop = generateShopAndItems(owner);
-    //     // make quantity = 1
-    //     int itemId = shop.getItems().keySet().iterator().next();
-    //     shopService.changeItemQuantityInShop(owner, shop.getId(), itemId, 1);
 
-    //     // two buyers each add the only item
-    //     String buyer1 = userService.enterToSystem().getData();
-    //     String buyer2 = userService.enterToSystem().getData();
-    //     ItemDTO only = shopService.showShopItems(shop.getId()).getData().get(0);
-    //     orderService.addItemsToCart(buyer1, List.of(only));
-    //     orderService.addItemsToCart(buyer2, List.of(only));
+    @Test
+    public void concurrentPurchaseSameItem() throws InterruptedException {
+        // 1) Owner creates shop with exactly 1 unit of “Apple”
+        String ownerToken = generateloginAsRegistered("owner", "pwdO");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        // find the apple’s ID and set its stock to 1
+        int shopId = shop.getId();
+        int appleId = shop.getItems().values().stream()
+                            .filter(i -> i.getName().equals("Apple"))
+                            .findFirst().get().getItemID();
+        Response<Void> setOne = shopService.changeItemQuantityInShop(
+            ownerToken, shopId, appleId, 1
+        );
+        assertTrue(setOne.isOk(), "Should be able to set stock to 1");
 
-    //     ExecutorService ex = Executors.newFixedThreadPool(2);
-    //     CountDownLatch start = new CountDownLatch(1);
-    //     List<Future<Response<Order>>> fut = new ArrayList<>();
+        // 2) Two separate buyers each enter & add that one apple to their cart
+        String buyer1 = userService.enterToSystem().getData();
+        String buyer2 = userService.enterToSystem().getData();
+        assertNotNull(buyer1);
+        assertNotNull(buyer2);
 
-    //     Runnable buy = () -> {
-    //     try {
-    //         start.await();
-    //         fut.add(ex.submit(() ->
-    //         orderService.buyCartContent(
-    //             Thread.currentThread().getName().contains("1") ? buyer1 : buyer2,
-    //             new PaymentDetailsDTO("0000","x","x","x","x"),
-    //             ""
-    //         )
-    //         ));
-    //     } catch (InterruptedException ignored){}
-    //     };
+        // build the same itemsMap for both
+        var itemsMap = new HashMap<Integer, HashMap<Integer,Integer>>();
+        var m = new HashMap<Integer,Integer>();
+        m.put(appleId, 1);
+        itemsMap.put(shopId, m);
 
-    //     ex.submit(buy);
-    //     ex.submit(buy);
-    //     start.countDown();
-    //     ex.shutdown();
-    //     ex.awaitTermination(5, TimeUnit.SECONDS);
+        Response<Void> add1 = orderService.addItemsToCart(buyer1, itemsMap);
+        Response<Void> add2 = orderService.addItemsToCart(buyer2, itemsMap);
+        assertTrue(add1.isOk(), "Buyer1 should add Apple");
+        assertTrue(add2.isOk(), "Buyer2 should add Apple");
 
-    //     // exactly one purchase succeeds
-    //     long okCount = fut.stream().map(f -> {
-    //     try { return f.get().isOk(); }
-    //     catch (Exception _) { return false; }
-    //     }).filter(v -> v).count();
+        // 3) Concurrently attempt to buy
+        List<Callable<Response<Order>>> tasks = List.of(
+            () -> orderService.buyCartContent(buyer1),
+            () -> orderService.buyCartContent(buyer2)
+        );
 
-    //     assertEquals(1, okCount, "Only one of the concurrent purchases should succeed");
-    // }
+        ExecutorService ex = Executors.newFixedThreadPool(2);
+        List<Future<Response<Order>>> futures = ex.invokeAll(tasks);
+        ex.shutdown();
 
+        long successCount = futures.stream()
+        .map(f -> {
+            try { return f.get().isOk(); }
+            catch(Exception e) { return false; }
+        })
+        .filter(ok -> ok)
+        .count();
+
+        long failureCount = futures.size() - successCount;
+
+        assertEquals(1, successCount, "Exactly one purchase may succeed");
+        assertEquals(1, failureCount, "Exactly one purchase must fail due to out-of-stock");
+    }
+
+    @Test
+    public void concurrentRemoveAndPurchase() throws InterruptedException {
+        // 1) Owner creates shop with exactly 1 unit of “Apple”
+        String ownerToken = generateloginAsRegistered("owner", "pwdO");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().values().stream()
+                            .filter(i -> i.getName().equals("Apple"))
+                            .findFirst().get().getItemID();
+        // set stock = 1
+        assertTrue(shopService.changeItemQuantityInShop(ownerToken, shopId, appleId, 1)
+                .isOk(), "Should be able to set stock to 1");
+
+        // 2) Buyer enters & adds that one apple to cart
+        String buyer = userService.enterToSystem().getData();
+        var itemsMap = new HashMap<Integer, HashMap<Integer,Integer>>();
+        itemsMap.put(shopId, new HashMap<>(Map.of(appleId, 1)));
+        assertTrue(orderService.addItemsToCart(buyer, itemsMap)
+                .isOk(), "Buyer should add the only Apple");
+
+        // 3) Concurrently: owner removes item, buyer attempts checkout
+        List<Callable<Boolean>> tasks = List.of(
+            () -> shopService.removeItemFromShop(ownerToken, shopId, appleId).isOk(),
+            () -> orderService.buyCartContent(buyer).isOk()
+        );
+
+        ExecutorService ex = Executors.newFixedThreadPool(2);
+        List<Future<Boolean>> results = ex.invokeAll(tasks);
+        ex.shutdown();
+
+        long succeeded = results.stream()
+            .map(f -> {
+                try { return f.get(); }
+                catch (Exception e) { return false; }
+            })
+            .filter(ok -> ok)
+            .count();
+
+        // exactly one action may succeed
+        assertEquals(1, succeeded,
+            "Exactly one of removeItem or buyCartContent must succeed; succeeded=" + succeeded);
+    }
+
+    @Test
+    public void concurrentManagerAppointment() throws InterruptedException {
+        // 1) Owner creates shop
+        String ownerToken = generateloginAsRegistered("owner", "pwdO");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+
+        // 2) Prepare candidate user
+        String candGuest = userService.enterToSystem().getData();
+        assertTrue(userService.registerUser(candGuest, "candidate", "pwdC", LocalDate.now().minusYears(25))
+                .isOk(), "Candidate registration should succeed");
+
+        // 3) Two concurrent attempts to appoint the same candidate
+        Set<Permission> perms = Set.of(Permission.VIEW);
+        List<Callable<Boolean>> tasks = List.of(
+            () -> shopService.addShopManager(ownerToken, shopId, "candidate", perms).isOk(),
+            () -> shopService.addShopManager(ownerToken, shopId, "candidate", perms).isOk()
+        );
+
+        ExecutorService ex = Executors.newFixedThreadPool(2);
+        List<Future<Boolean>> results = ex.invokeAll(tasks);
+        ex.shutdown();
+
+        long successCount = results.stream()
+            .map(f -> {
+                try { return f.get(); }
+                catch (Exception e) { return false; }
+            })
+            .filter(ok -> ok)
+            .count();
+
+        assertEquals(1, successCount,
+            "Exactly one of the two concurrent addShopManager calls should succeed, but got " + successCount);
+    }
 }

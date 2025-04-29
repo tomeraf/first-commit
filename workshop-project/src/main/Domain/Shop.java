@@ -82,8 +82,8 @@ public class Shop implements IMessageListener {
     public void setOpen(boolean isOpen) { this.isOpen = isOpen; }
 
     public Item addItem(String name, Category category, double price, String description){
-        if (price < 0) {
-            throw new IllegalArgumentException("Price cannot be negative.");
+        if (price < 0 || !validName(name)) {
+            throw new IllegalArgumentException("Item name already exists or price cannot be negative.");
         } 
         else{
             Item item = new Item(name, category, price, this.id, counterItemId, description);
@@ -92,7 +92,14 @@ public class Shop implements IMessageListener {
             return item;
         }
     }
-    
+    public boolean validName(String name) {
+        for (Item item : items.values()) {
+            if (item.getName().equals(name)) {
+                return false; // Name already exists
+            }
+        }
+        return true; // Name is valid
+    }
     public void removeItem(int itemId) throws IllegalArgumentException {
         if (items.containsKey(itemId)) {
             items.remove(itemId);

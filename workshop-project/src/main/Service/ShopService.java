@@ -345,8 +345,10 @@ public class ShopService {
     public Response<Void> rateShop(String sessionToken, int shopID, int rating) {
         // If logged in, rate the shop with the provided rating
         try{
+            authenticationAdapter.validateToken(sessionToken);
+            
             int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            // Registered user = (Registered)this.userRepository.getUserById(userID);
+            Registered user = (Registered)this.userRepository.getUserById(userID);
             Shop shop = this.shopRepository.getShopById(shopID);
             List<Order> orders = orderRepository.getOrdersByCustomerId(userID);
             shoppingService.RateShop(shop, orders, rating);
