@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import Service.ShopService;
 import Service.UserService;
+import io.jsonwebtoken.lang.Assert;
+import Domain.DTOs.ShipmentDetailsDTO;
 import Domain.DTOs.PaymentDetailsDTO;
 import Domain.Guest;
 import Domain.Manager;
@@ -61,8 +63,12 @@ public class endToEndTest_1 {
         orderRepository = new MemoryOrderRepository();
         jwtAdapter = new JWTAdapter();
         concurrencyHandler = new ConcurrencyHandler();
-        //shipment = new ProxyShipment();
-        //payment = new ProxyPayment(null)
+        PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
+            "1234567890123456", "John Doe", "123456789", "12/25", "123"
+        );
+        ShipmentDetailsDTO shipmentDetails = new ShipmentDetailsDTO("123456789", "John Doe", "halilovi", "05", "israel", "beersheva", "bla", "12345");
+        shipment = new ProxyShipment(shipmentDetails);
+        payment = new ProxyPayment(paymentDetails);
 
 
 
@@ -135,10 +141,28 @@ public class endToEndTest_1 {
                         .findFirst()
                         .get()
                         .getItemID();
-        Response<Void> chgQty = shopService.changeItemQuantityInShop(
+        int bananaId = map.values().stream()
+                        .filter(i -> i.getName().equals("Banana"))
+                        .findFirst()
+                        .get()
+                        .getItemID();
+        int laptopId = map.values().stream()
+                        .filter(i -> i.getName().equals("Laptop"))
+                        .findFirst()
+                        .get()
+                        .getItemID();
+        Response<Void> chgQty1 = shopService.changeItemQuantityInShop(
             ownerToken, shopId, appleId, 10
         );
-        assertTrue(chgQty.isOk(), "changeItemQuantityInShop should succeed");
+        Response<Void> chgQty2 = shopService.changeItemQuantityInShop(
+            ownerToken, shopId, bananaId, 1
+        );
+        Response<Void> chgQty3 = shopService.changeItemQuantityInShop(
+            ownerToken, shopId, laptopId, 0
+        );
+        assertTrue(chgQty1.isOk(), "changeItemQuantityInShop should succeed");
+        assertTrue(chgQty2.isOk(), "changeItemQuantityInShop should succeed");
+        assertTrue(chgQty3.isOk(), "changeItemQuantityInShop should succeed");
 
         // 4) Retrieve final list and return it
         Response<List<ItemDTO>> finalResp = shopService.showShopItems(shopId);
@@ -149,15 +173,14 @@ public class endToEndTest_1 {
 
         return shopService.getShopInfo(ownerToken, shopId).getData();
     }
+
     public Order buyCartContent(String sessionToken) {
-        PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
-            "1234567890123456", "John Doe", "123456789", "12/25", "123"
-        );
-        String shipmentInfo = "";
+        // PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
+        //     "1234567890123456", "John Doe", "123456789", "12/25", "123"
+        // );
+        // String shipmentInfo = "";
         Response<Order> purchaseResp = orderService.buyCartContent(
-            sessionToken,
-            paymentDetails,
-            shipmentInfo
+            sessionToken
         );
         assertTrue(purchaseResp.isOk(), "buyCartContent should succeed");
         Order created = purchaseResp.getData();
@@ -474,15 +497,19 @@ public class endToEndTest_1 {
         assertNotNull(shopItems, "shopItems list must not be null");
         assertEquals(3, shopItems.size(), "Shop should contain exactly one item");
 
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(shopItems.get(0).getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
         // Buyer adds that item to cart
         Response<Void> addToCart = orderService.addItemsToCart(
             buyerGuestToken,
-            shopItems
+            itemsMap
         );
         assertTrue(addToCart.isOk(), "addItemsToCart should succeed");
 
         List<ItemDTO> cartItems = orderService.checkCartContent(buyerGuestToken).getData();
-        assertEquals(3, cartItems.size(), "Cart should contain exactly one item");
+        assertEquals(1, cartItems.size(), "Cart should contain exactly one item");
     }
 
     @Test
@@ -503,9 +530,14 @@ public class endToEndTest_1 {
         // Buyer adds one item to cart
         List<ItemDTO> itemsToAdd = new ArrayList<>();
         itemsToAdd.add(items.get(0));
+        
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(itemsToAdd.get(0).getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
         Response<Void> addToCart = orderService.addItemsToCart(
             buyerGuestToken,
-            itemsToAdd
+            itemsMap
         );
         assertTrue(addToCart.isOk(), "addItemsToCart should succeed");
 
@@ -525,10 +557,15 @@ public class endToEndTest_1 {
         // 2) Buyer setup
         String buyerToken = generateloginAsRegistered("buyer", "Pwd0");
 
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(List.of(toBuy).get(0).getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
+
         // 3) Add to cart
         Response<Void> addResp = orderService.addItemsToCart(
             buyerToken,
-            List.of(toBuy)
+            itemsMap
         );
         assertTrue(addResp.isOk(), "addItemsToCart should succeed");
 
@@ -572,20 +609,28 @@ public class endToEndTest_1 {
         assertTrue(guestResp.isOk(), "Buyer enterToSystem should succeed");
         String guestToken = guestResp.getData();
 
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(shopItems.get(0).getItemID(), 1);
+        itemMap.put(shopItems.get(1).getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
         // 3) Add two different items to cart
         Response<Void> addResp = orderService.addItemsToCart(
             guestToken,
-            List.of(shopItems.get(0), shopItems.get(1))
+            itemsMap
         );
         assertTrue(addResp.isOk(), "addItemsToCart should succeed");
 
         List<ItemDTO> cartAfterAdd = orderService.checkCartContent(guestToken).getData();
         assertEquals(2, cartAfterAdd.size(), "Cart should contain exactly two items");
 
+        HashMap<Integer, List<Integer>> itemMap1 = new HashMap<>();
+        itemMap1.put(shop.getId(), List.of(shopItems.get(0).getItemID()));
+
         // 4) Remove the first item
         Response<Void> removeResp = orderService.removeItemsFromCart(
             guestToken,
-            List.of(shopItems.get(0))
+            itemMap1
         );
         assertTrue(removeResp.isOk(), "removeItemsFromCart should succeed");
 
@@ -645,9 +690,13 @@ public class endToEndTest_1 {
         assertFalse(shopItems.isEmpty(), "Shop must have at least one item");
         ItemDTO toBuy = shopItems.get(0);
 
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(toBuy.getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
         Response<Void> addToCart = orderService.addItemsToCart(
             buyerToken,
-            List.of(toBuy)
+            itemsMap
         );
         assertTrue(addToCart.isOk(), "addItemsToCart should succeed");
 
@@ -709,20 +758,28 @@ public class endToEndTest_1 {
         assertTrue(viewResp.isOk(), "showShopItems should succeed");
         List<ItemDTO> shopItems = viewResp.getData();
         assertNotNull(shopItems, "shopItems list must not be null");
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(shopItems.get(0).getItemID(), 1);
+        itemMap.put(shopItems.get(1).getItemID(), 1);
+        itemMap.put(shopItems.get(2).getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
 
-        orderService.addItemsToCart(
+        Response<Void> res3 = orderService.addItemsToCart(
             buyerToken,
-            shopItems
+            itemsMap
         );
 
-        PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
-            "1234567890123456", "John Doe", "123456789", "12/25", "123"
-        );
-        String shipmentInfo = "";
+        assertFalse(res3.isOk(), "changeItemQuantityInShop should succeed");
+
+        ShopDTO updatedShop = shopService.getShopInfo(ownerToken, shop.getId()).getData();
+        System.out.println("Updated shop: " + updatedShop.getItems().get(2).getQuantity());
+        // PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
+        //     "1234567890123456", "John Doe", "123456789", "12/25", "123"
+        // );
+        // String shipmentInfo = "";
         Response<Order> purchaseResp = orderService.buyCartContent(
-            buyerToken,
-            paymentDetails,
-            shipmentInfo
+            buyerToken
         );
         assertFalse(purchaseResp.isOk(), "buyCartContent should fail as one of the items is unavailable");
     }
@@ -755,7 +812,7 @@ public class endToEndTest_1 {
     }
 
     @Test
-    public void RateShopNotLoggedInTest()
+    public void rateShopNotLoggedInTest()
     {
         // 1) Owner creates a shop with items
         String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
@@ -763,7 +820,14 @@ public class endToEndTest_1 {
         
         String guestToken = userService.enterToSystem().getData();
         List<ItemDTO> items = shopService.showShopItems(shopDto.getId()).getData();
-        orderService.addItemsToCart(guestToken, items);
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(items.get(0).getItemID(), 1);
+        itemMap.put(items.get(1).getItemID(), 1);
+        itemMap.put(items.get(2).getItemID(), 1);
+        itemsMap.put(shopDto.getId(), itemMap);
+
+        orderService.addItemsToCart(guestToken, itemsMap);
 
         buyCartContent(guestToken);
         

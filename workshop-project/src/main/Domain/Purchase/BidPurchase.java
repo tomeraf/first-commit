@@ -2,6 +2,9 @@ package Domain.Purchase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import Domain.DTOs.Pair;
 
 public class BidPurchase extends Purchase {
     private int submitterId;
@@ -9,6 +12,7 @@ public class BidPurchase extends Purchase {
     private int rejecterId=-1;
     private int isAccepted = 0; // 0 = not accepted, 1 = accepted, -1 = rejected
     private int CounterBidID=-1;
+    boolean done=false;
 
     public BidPurchase(int id,double bidAmount, int itemId, int buyerID,int submitterID) {
         super(id, bidAmount, itemId, buyerID);
@@ -86,6 +90,17 @@ public class BidPurchase extends Purchase {
     */
     private void setCounterBidID(int counterID) {
         this.CounterBidID = counterID;
+    }
+    public Pair<Integer,Double> purchaseBidItem(int userID, Set<Integer> memberIds) {
+        if(memberIds!=AcceptingMembers){
+            throw new IllegalArgumentException("Error: not all members accepted the bid.");
+        }
+        if(getBuyerId()!=userID){
+            throw new IllegalArgumentException("Error: user is not the buyer of the bid.");
+        }
+        isAccepted = 1;
+        done = true; // Mark the bid as done
+        return new Pair<>(getItemId(), getAmount()); // Return the item ID and bid amount as a pair
     }
 
 

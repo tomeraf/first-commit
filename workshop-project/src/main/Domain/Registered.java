@@ -134,12 +134,6 @@ public class Registered extends Guest implements IMessageListener {
             return -1;
         }
     }
-    public void addItemToBasket(List<ItemDTO> items) {
-        cart.addItems(items);
-    }
-    public void removeItemFromBasket(Map<Integer, Integer> items) {
-        cart.deleteItems(items);
-    }
     public int getAge() {
         return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }

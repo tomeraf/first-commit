@@ -17,7 +17,6 @@ import Domain.Repositories.IUserRepository;
 
 public class UserService {
 
-    //private JWTAdapter jwtAdapter = new JWTAdapter();
     private IUserRepository userRepository;
     private IAuthentication jwtAdapter;
     private final ConcurrencyHandler concurrencyHandler;
@@ -31,6 +30,7 @@ public class UserService {
         this.jwtAdapter = jwtAdapter;
         this.concurrencyHandler = concurrencyHandler;
     }
+
     /**
      * Enters the system as a guest, generates a session token, and persists the user.
      *
@@ -47,7 +47,6 @@ public class UserService {
         userRepository.saveUser(guest); // Save the guest user in the repository
         return Response.ok(sessionToken);
     }
-
 
     /**
      * Exits a guest session by validating and removing the guest from the repository.
