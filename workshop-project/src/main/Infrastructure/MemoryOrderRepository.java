@@ -1,4 +1,4 @@
-package Domain.Repositories;
+package Infrastructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.Order;
+import Domain.Repositories.IOrderRepository;
 
 public class MemoryOrderRepository implements IOrderRepository {
     private HashMap<Integer, Order> orders = new HashMap<>();

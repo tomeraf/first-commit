@@ -1,4 +1,4 @@
-package Domain.Repositories;
+package Infrastructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 
 import Domain.Guest;
 import Domain.Registered;
+import Domain.Repositories.IUserRepository;
 
 public class MemoryUserRepository implements IUserRepository {
 
