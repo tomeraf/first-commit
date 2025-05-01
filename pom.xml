@@ -112,6 +112,20 @@
             <artifactId>junit-platform-console-standalone</artifactId>
             <version>1.9.3</version>
         </dependency>
+
+        <!-- align to the same version that mockito-core uses transitively -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.14.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>1.14.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

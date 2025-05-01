@@ -1,0 +1,1442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="Tests.AccepanceTests" time="0.311" tests="56" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="23"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/afekcohen/Documents/GitHub/Whole-System/target/test-classes:/Users/afekcohen/Documents/GitHub/Whole-System/target/classes:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-orgjson/0.12.6/jjwt-orgjson-0.12.6.jar:/Users/afekcohen/.m2/repository/org/json/json/20231013/json-20231013.jar:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-api/0.12.6/jjwt-api-0.12.6.jar:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-impl/0.12.6/jjwt-impl-0.12.6.jar:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-jackson/0.12.6/jjwt-jackson-0.12.6.jar:/Users/afekcohen/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.3/jackson-annotations-2.15.3.jar:/Users/afekcohen/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.3/jackson-core-2.15.3.jar:/Users/afekcohen/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.3/jackson-databind-2.15.3.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-beans/7.0.0-M4/spring-beans-7.0.0-M4.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-core/7.0.0-M4/spring-core-7.0.0-M4.jar:/Users/afekcohen/.m2/repository/commons-logging/commons-logging/1.3.5/commons-logging-1.3.5.jar:/Users/afekcohen/.m2/repository/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-context/5.3.10/spring-context-5.3.10.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-aop/5.3.10/spring-aop-5.3.10.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-expression/5.3.10/spring-expression-5.3.10.jar:/Users/afekcohen/.m2/repository/org/springframework/security/spring-security-crypto/6.2.1/spring-security-crypto-6.2.1.jar:/Users/afekcohen/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.9.3/junit-platform-console-standalone-1.9.3.jar:/Users/afekcohen/.m2/repository/org/mockito/mockito-core/5.17.0/mockito-core-5.17.0.jar:/Users/afekcohen/.m2/repository/net/bytebuddy/byte-buddy/1.15.11/byte-buddy-1.15.11.jar:/Users/afekcohen/.m2/repository/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar:/Users/afekcohen/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/afekcohen/.m2/repository/org/mockito/mockito-junit-jupiter/5.17.0/mockito-junit-jupiter-5.17.0.jar:/Users/afekcohen/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.4/junit-jupiter-api-5.11.4.jar:/Users/afekcohen/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/afekcohen/.m2/repository/org/junit/platform/junit-platform-commons/1.11.4/junit-platform-commons-1.11.4.jar:/Users/afekcohen/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
+    <property name="java.vm.vendor" value="Homebrew"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="user.timezone" value="Asia/Jerusalem"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="23"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="IL"/>
+    <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/afekcohen/Documents/GitHub/Whole-System/target/surefire/surefirebooter-20250501221643334_3.jar /Users/afekcohen/Documents/GitHub/Whole-System/target/surefire 2025-05-01T22-16-40_254-jvmRun1 surefire-20250501221643334_1tmp surefire_0-20250501221643334_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/Users/afekcohen/Documents/GitHub/Whole-System/target/test-classes:/Users/afekcohen/Documents/GitHub/Whole-System/target/classes:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-orgjson/0.12.6/jjwt-orgjson-0.12.6.jar:/Users/afekcohen/.m2/repository/org/json/json/20231013/json-20231013.jar:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-api/0.12.6/jjwt-api-0.12.6.jar:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-impl/0.12.6/jjwt-impl-0.12.6.jar:/Users/afekcohen/.m2/repository/io/jsonwebtoken/jjwt-jackson/0.12.6/jjwt-jackson-0.12.6.jar:/Users/afekcohen/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.3/jackson-annotations-2.15.3.jar:/Users/afekcohen/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.3/jackson-core-2.15.3.jar:/Users/afekcohen/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.3/jackson-databind-2.15.3.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-beans/7.0.0-M4/spring-beans-7.0.0-M4.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-core/7.0.0-M4/spring-core-7.0.0-M4.jar:/Users/afekcohen/.m2/repository/commons-logging/commons-logging/1.3.5/commons-logging-1.3.5.jar:/Users/afekcohen/.m2/repository/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-context/5.3.10/spring-context-5.3.10.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-aop/5.3.10/spring-aop-5.3.10.jar:/Users/afekcohen/.m2/repository/org/springframework/spring-expression/5.3.10/spring-expression-5.3.10.jar:/Users/afekcohen/.m2/repository/org/springframework/security/spring-security-crypto/6.2.1/spring-security-crypto-6.2.1.jar:/Users/afekcohen/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.9.3/junit-platform-console-standalone-1.9.3.jar:/Users/afekcohen/.m2/repository/org/mockito/mockito-core/5.17.0/mockito-core-5.17.0.jar:/Users/afekcohen/.m2/repository/net/bytebuddy/byte-buddy/1.15.11/byte-buddy-1.15.11.jar:/Users/afekcohen/.m2/repository/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar:/Users/afekcohen/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/afekcohen/.m2/repository/org/mockito/mockito-junit-jupiter/5.17.0/mockito-junit-jupiter-5.17.0.jar:/Users/afekcohen/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.4/junit-jupiter-api-5.11.4.jar:/Users/afekcohen/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/afekcohen/.m2/repository/org/junit/platform/junit-platform-commons/1.11.4/junit-platform-commons-1.11.4.jar:/Users/afekcohen/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/afekcohen"/>
+    <property name="user.language" value="iw"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-01-21"/>
+    <property name="java.home" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/afekcohen/Documents/GitHub/Whole-System"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/afekcohen/Documents/GitHub/Whole-System/target/surefire/surefirebooter-20250501221643334_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="23.0.2"/>
+    <property name="user.name" value="afekcohen"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="14.5"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Homebrew"/>
+    <property name="localRepository" value="/Users/afekcohen/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="java.io.tmpdir" value="/var/folders/jm/r796ysns5nv40h0lhqqrp85w0000gn/T/"/>
+    <property name="java.version" value="23.0.2"/>
+    <property name="user.dir" value="/Users/afekcohen/Documents/GitHub/Whole-System"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/afekcohen/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Homebrew"/>
+    <property name="java.vm.version" value="23.0.2"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="67.0"/>
+  </properties>
+  <testcase name="userLacksPermission" classname="Tests.AccepanceTests" time="0.142">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.Srj8gCbsQUHseYauLtgR6MVmSW_bMpcUXv71F_hUOtM
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.Srj8gCbsQUHseYauLtgR6MVmSW_bMpcUXv71F_hUOtM
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.Srj8gCbsQUHseYauLtgR6MVmSW_bMpcUXv71F_hUOtM
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.FqvWNwc3dGtDOnF77vsm1ZZnbZf6vxHIfMh18fN9rPU
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: mgr2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getMembersPermissions
+SEVERE: Error retrieving members permissions: You don't have permission to view members permissions
+]]></system-err>
+  </testcase>
+  <testcase name="failedGuestRegister" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService registerUser
+SEVERE: Error registering user: Username already exists
+]]></system-err>
+  </testcase>
+  <testcase name="concurrentRemoveAndPurchase" classname="Tests.AccepanceTests" time="0.011">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4r_KM8Q3vP2K0I-LpPqZVtS8T2M8Zr9wF7VGu86XIIU
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4r_KM8Q3vP2K0I-LpPqZVtS8T2M8Zr9wF7VGu86XIIU
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4r_KM8Q3vP2K0I-LpPqZVtS8T2M8Zr9wF7VGu86XIIU
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService removeItemFromShop
+INFO: Item removed from shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService buyCartContent
+SEVERE: Error buying cart content: Item ID does not exist in the shop.
+]]></system-err>
+  </testcase>
+  <testcase name="successfulEditProduct" classname="Tests.AccepanceTests" time="0.008">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.J6sAqunRJOlEz4D3kdgLBuuBh766Qiqp-JPeH0hHJl8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.J6sAqunRJOlEz4D3kdgLBuuBh766Qiqp-JPeH0hHJl8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.J6sAqunRJOlEz4D3kdgLBuuBh766Qiqp-JPeH0hHJl8
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4AmcQrJnzIDIoXt32cCTtSkQRIX2SbuTgTPKm23CoZQ
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: mgr in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManagerPermission
+INFO: Shop manager permission added: mgr in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 1
+]]></system-err>
+  </testcase>
+  <testcase name="removeAllApointeesTest" classname="Tests.AccepanceTests" time="0.012">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.eiWOcqpwFInLChiEo4REgpWGs0TEYgtWq4igvx8V-Kw
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.eiWOcqpwFInLChiEo4REgpWGs0TEYgtWq4igvx8V-Kw
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.eiWOcqpwFInLChiEo4REgpWGs0TEYgtWq4igvx8V-Kw
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.C6lYpyeTSxnANJY99gezfOjitGMM19NhGK7FpkeI4do
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: manager in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nxXWRFKmhAAD5dd4f6xZBAZWQ2w803eaZuQOAJJrJok
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: User in shop: MyShop by user: 1
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.aUMwozOfwzg0Ncmnl3vxfiu3EUhzvCumCBbiAY_2s3w
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: User2 in shop: MyShop by user: 2
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0IiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.-jjy8OxtAe9RR3-UHU2xfSkvcB4sgDgyvUnCI1BoSxI
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+SEVERE: Error adding shop manager: User has no role in ShopId: 0
+]]></system-err>
+  </testcase>
+  <testcase name="userLacksPermissionOnPurchasePolicy" classname="Tests.AccepanceTests" time="0.006">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nC1lrrkUQ9uqOr_f9XpBsLuCDMUTSBp_D-_SwLm_zck
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nC1lrrkUQ9uqOr_f9XpBsLuCDMUTSBp_D-_SwLm_zck
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nC1lrrkUQ9uqOr_f9XpBsLuCDMUTSBp_D-_SwLm_zck
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.LJ2bYY9mLcN9ddXE9zXg7rK7znxPlsV-mguABygGJ2Y
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: mgrNoP in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService updatePurchaseType
+SEVERE: Error updating purchase type: You don't have permission to update purchase type
+]]></system-err>
+  </testcase>
+  <testcase name="rateShopNotLoggedInTest" classname="Tests.AccepanceTests" time="0.009">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hMzjhnX6YoPwHia-W_dYqCGZwQ8HqaG_C6vPaC3ia5g
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hMzjhnX6YoPwHia-W_dYqCGZwQ8HqaG_C6vPaC3ia5g
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hMzjhnX6YoPwHia-W_dYqCGZwQ8HqaG_C6vPaC3ia5g
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService buyCartContent
+INFO: Purchase completed successfully for cart ID: 1
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService rateShop
+SEVERE: Error rating shop: class Domain.Guest cannot be cast to class Domain.Registered (Domain.Guest and Domain.Registered are in unnamed module of loader 'app')
+]]></system-err>
+  </testcase>
+  <testcase name="nameWrongUserLogin" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+SEVERE: Error logging in user: Cannot invoke "Domain.Registered.getPassword()" because "registered" is null
+]]></system-err>
+  </testcase>
+  <testcase name="addItemToBasketTest" classname="Tests.AccepanceTests" time="0.005">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nnY0nT7boUM9_4fgoztYJ3V7R-uuNHst72KYJYcILuY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nnY0nT7boUM9_4fgoztYJ3V7R-uuNHst72KYJYcILuY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nnY0nT7boUM9_4fgoztYJ3V7R-uuNHst72KYJYcILuY
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+]]></system-err>
+  </testcase>
+  <testcase name="successfulShopClosing" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nPbcznHsiNrC3A9akLAZdNENyLMAUHef6ZWtUJxyk8Y
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nPbcznHsiNrC3A9akLAZdNENyLMAUHef6ZWtUJxyk8Y
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.nPbcznHsiNrC3A9akLAZdNENyLMAUHef6ZWtUJxyk8Y
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService closeShop
+INFO: Shop closed: MyShop by user: 0
+]]></system-err>
+  </testcase>
+  <testcase name="removeNonExistentItemFromShop" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.3vA2fy6K7O1xTQxoA-YTvmmQap8GnrdAr_VPghjeey4
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.3vA2fy6K7O1xTQxoA-YTvmmQap8GnrdAr_VPghjeey4
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.3vA2fy6K7O1xTQxoA-YTvmmQap8GnrdAr_VPghjeey4
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService removeItemFromShop
+SEVERE: Error removing item from shop: Item ID does not exist in the shop.
+]]></system-err>
+  </testcase>
+  <testcase name="removeItemFromShopAsNonOwner" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4ko4PfxqO0yZw1YOKjMSGszVnz1FifT83AhxQs1NFSc
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4ko4PfxqO0yZw1YOKjMSGszVnz1FifT83AhxQs1NFSc
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4ko4PfxqO0yZw1YOKjMSGszVnz1FifT83AhxQs1NFSc
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.XQdJf31e1pbmrEiHjwJpCbfOLfpAgw0mgYNACiZ41V0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService removeItemFromShop
+SEVERE: Error removing item from shop: No role found for shop ID: 0
+]]></system-err>
+  </testcase>
+  <testcase name="viewShopNotLoggedIn" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.BpJRwFCSmtD_0v1PMhNXKsOhsmM8w4MyCRBwaMJp5PY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.BpJRwFCSmtD_0v1PMhNXKsOhsmM8w4MyCRBwaMJp5PY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.BpJRwFCSmtD_0v1PMhNXKsOhsmM8w4MyCRBwaMJp5PY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+SEVERE: Error retrieving shop info: User is not logged in
+]]></system-err>
+  </testcase>
+  <testcase name="editItemInShop" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.RcK5E2UKy0HaNcluTdw6il25ZI1Viog1wZMyluFvD6o
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.RcK5E2UKy0HaNcluTdw6il25ZI1Viog1wZMyluFvD6o
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.RcK5E2UKy0HaNcluTdw6il25ZI1Viog1wZMyluFvD6o
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemDescriptionInShop
+INFO: Item description changed in shop: 0 in shop: MyShop by user: 0
+]]></system-err>
+  </testcase>
+  <testcase name="closingClosedShop" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.fi3XrREXgGweJbQOvv4Vv2Qulq_9vL2S8-Si6YF4FnA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.fi3XrREXgGweJbQOvv4Vv2Qulq_9vL2S8-Si6YF4FnA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.fi3XrREXgGweJbQOvv4Vv2Qulq_9vL2S8-Si6YF4FnA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService closeShop
+INFO: Shop closed: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService closeShop
+SEVERE: Error closing shop: Shop is already closed.
+]]></system-err>
+  </testcase>
+  <testcase name="emptySearchResults" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.W0zCWelRh18xficHyzNU6T6rnIaxFVm38JRBnK_U2AE
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.W0zCWelRh18xficHyzNU6T6rnIaxFVm38JRBnK_U2AE
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.W0zCWelRh18xficHyzNU6T6rnIaxFVm38JRBnK_U2AE
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+]]></system-err>
+  </testcase>
+  <testcase name="concurrentManagerAppointment" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.oIu5da80s1AqNQdd5daQp9upufxMsCZyk4OalUToPak
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.oIu5da80s1AqNQdd5daQp9upufxMsCZyk4OalUToPak
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.oIu5da80s1AqNQdd5daQp9upufxMsCZyk4OalUToPak
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: candidate in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+SEVERE: Error adding shop manager: User is already a manager of the shop
+]]></system-err>
+  </testcase>
+  <testcase name="buyCartContentTest" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.CiMA_VmKVL3ZLps3HPZfinrKGzERPFKmrKt5c11bXss
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.CiMA_VmKVL3ZLps3HPZfinrKGzERPFKmrKt5c11bXss
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.CiMA_VmKVL3ZLps3HPZfinrKGzERPFKmrKt5c11bXss
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.gk5AfL0Gva_N5lIfgay1LQeefxffzQQb288o3ImvPKU
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService buyCartContent
+INFO: Purchase completed successfully for cart ID: 1
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.CiMA_VmKVL3ZLps3HPZfinrKGzERPFKmrKt5c11bXss
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService viewPersonalOrderHistory
+INFO: Personal search history viewed successfully for user ID: 1
+]]></system-err>
+  </testcase>
+  <testcase name="getShopsAndItems" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.6xa71PJK56syUOqHTheIO9xOev7xf1m2L7bmK8nf0nQ
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.6xa71PJK56syUOqHTheIO9xOev7xf1m2L7bmK8nf0nQ
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.6xa71PJK56syUOqHTheIO9xOev7xf1m2L7bmK8nf0nQ
+]]></system-err>
+  </testcase>
+  <testcase name="setManagerPermissionsTest" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.MO2ExknmyYQpAqTgKGHYqYTdDmIMPp23gi3dTBeSyfk
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.MO2ExknmyYQpAqTgKGHYqYTdDmIMPp23gi3dTBeSyfk
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.MO2ExknmyYQpAqTgKGHYqYTdDmIMPp23gi3dTBeSyfk
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.LN7ma0UrbdH0QSnbI2u6Qm1kiFCVUGYpexI1VEVCG2E
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: manager in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getMembersPermissions
+INFO: Members permissions retrieved in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManagerPermission
+INFO: Shop manager permission added: manager in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getMembersPermissions
+INFO: Members permissions retrieved in shop: MyShop by user: 0
+]]></system-err>
+  </testcase>
+  <testcase name="sendMessageToShopTest" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.DPE_dNFrdzS0W21VTvdayQT2cLAw_9OqPpiIfufbFQY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.DPE_dNFrdzS0W21VTvdayQT2cLAw_9OqPpiIfufbFQY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.DPE_dNFrdzS0W21VTvdayQT2cLAw_9OqPpiIfufbFQY
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hQMEXoXXapUXyEeRlEdZlMPIEY_x_pRnKzPyJUcuUOA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService sendMessage
+INFO: Message sent: 1 in shop: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hQMEXoXXapUXyEeRlEdZlMPIEY_x_pRnKzPyJUcuUOA
+]]></system-err>
+  </testcase>
+  <testcase name="changeCartContentTest" classname="Tests.AccepanceTests" time="0.004">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.V-DePxMrUUUFkSf70WZGZzchCbTdeuMEJ-UVdG4vyX8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.V-DePxMrUUUFkSf70WZGZzchCbTdeuMEJ-UVdG4vyX8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.V-DePxMrUUUFkSf70WZGZzchCbTdeuMEJ-UVdG4vyX8
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService removeItemsFromCart
+INFO: Items removed from cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+]]></system-err>
+  </testcase>
+  <testcase name="editItemInShopAsNonOwner" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.j_GIRiTx3445rMbdD-Pg71NESNDblcgpJxyS0aaxwzI
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.j_GIRiTx3445rMbdD-Pg71NESNDblcgpJxyS0aaxwzI
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.j_GIRiTx3445rMbdD-Pg71NESNDblcgpJxyS0aaxwzI
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.yyovWo0JDDV2celxooiEhctv0nslfaHcrOjJb6ByEfk
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemDescriptionInShop
+SEVERE: Error changing item description in shop: No role found for shop ID: 0
+]]></system-err>
+  </testcase>
+  <testcase name="editProductUserLacksPermission" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.MUrzoO14dsX9FDI50-d7JM7_WCXe2XKVSsmpUQ3oJbQ
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.MUrzoO14dsX9FDI50-d7JM7_WCXe2XKVSsmpUQ3oJbQ
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.MUrzoO14dsX9FDI50-d7JM7_WCXe2XKVSsmpUQ3oJbQ
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.cDHLSwMnJM2ChKzoa7XtnHClN4FhMkTuGIFSnJNJ87w
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: mgrNoInv in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+SEVERE: Error changing item quantity in shop: You don't have permission to update item quantity
+]]></system-err>
+  </testcase>
+  <testcase name="rateShopTest" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hTsGyQmGiAL8Km4ZzuQTkui5yBTNFXtZ_twfYWwMv9Q
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hTsGyQmGiAL8Km4ZzuQTkui5yBTNFXtZ_twfYWwMv9Q
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hTsGyQmGiAL8Km4ZzuQTkui5yBTNFXtZ_twfYWwMv9Q
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.OIyqfJJ1q4aK-euT12fBrKHFijozLLwdYHjmur0FzLo
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService buyCartContent
+INFO: Purchase completed successfully for cart ID: 1
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService rateShop
+INFO: Shop rated: MyShop by user: 1
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.OIyqfJJ1q4aK-euT12fBrKHFijozLLwdYHjmur0FzLo
+]]></system-err>
+  </testcase>
+  <testcase name="invalidPurchasePolicyFormat" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.laWjWouaOvETyiW1u8k9BMnZgfwzLb2vG3SEPNlTKRY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.laWjWouaOvETyiW1u8k9BMnZgfwzLb2vG3SEPNlTKRY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.laWjWouaOvETyiW1u8k9BMnZgfwzLb2vG3SEPNlTKRY
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.2tH8x13QbDomywY6JEIqmlbOLL3NZ2I9VXW-bhrWD7A
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: mgrBadP in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService updatePurchaseType
+SEVERE: Error updating purchase type: not valid purchase Type
+]]></system-err>
+  </testcase>
+  <testcase name="concurrentPurchaseSameItem" classname="Tests.AccepanceTests" time="0.003">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.UUEnSauJtkKs0mKsokivuT8RsI4b0VouOraRd0Pkwc8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.UUEnSauJtkKs0mKsokivuT8RsI4b0VouOraRd0Pkwc8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.UUEnSauJtkKs0mKsokivuT8RsI4b0VouOraRd0Pkwc8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService buyCartContent
+INFO: Purchase completed successfully for cart ID: 2
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService buyCartContent
+SEVERE: Error buying cart content: Error: cant purchase items.
+]]></system-err>
+  </testcase>
+  <testcase name="invalidShopCreationTest" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+SEVERE: Error creating shop: class Domain.Guest cannot be cast to class Domain.Registered (Domain.Guest and Domain.Registered are in unnamed module of loader 'app')
+]]></system-err>
+  </testcase>
+  <testcase name="addDuplicateItemToShop" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.iSMr4LMU9pazK8wWID10Da758wq5ZKgFFu0WVRwJG2I
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.iSMr4LMU9pazK8wWID10Da758wq5ZKgFFu0WVRwJG2I
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.iSMr4LMU9pazK8wWID10Da758wq5ZKgFFu0WVRwJG2I
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+SEVERE: Error adding item to shop: Item name already exists or price cannot be negative.
+]]></system-err>
+  </testcase>
+  <testcase name="ItemUnavailableForPurchase" classname="Tests.AccepanceTests" time="0.005">
+    <system-out><![CDATA[Updated shop: 0
+]]></system-out>
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.53A9CGJV3O2cwDP9MWxVyU5O0UoXwGOq-t0RPm4O7lY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.53A9CGJV3O2cwDP9MWxVyU5O0UoXwGOq-t0RPm4O7lY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.53A9CGJV3O2cwDP9MWxVyU5O0UoXwGOq-t0RPm4O7lY
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.HXgqL6ftE9zVXcNX8EnyisEd1jZ-vY1_I-6V_vdBzTw
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+SEVERE: Error adding items to cart: Quantity exceeds available stock.
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.53A9CGJV3O2cwDP9MWxVyU5O0UoXwGOq-t0RPm4O7lY
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService buyCartContent
+SEVERE: Error buying cart content: Error: no shops to purchase from.
+]]></system-err>
+  </testcase>
+  <testcase name="searchItemsWithFilters" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.moKW46JqU7089YUOxs0gawc69uHc-1I28sKR0FBUTwQ
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+]]></system-err>
+  </testcase>
+  <testcase name="passwordWrongUserLogin" classname="Tests.AccepanceTests" time="0.0">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+SEVERE: Error logging in user: Username and password do not match
+]]></system-err>
+  </testcase>
+  <testcase name="shopNotFound" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService filterItemsInShop
+SEVERE: Error filtering items in shop: Shop with ID 9999 does not exist.
+]]></system-err>
+  </testcase>
+  <testcase name="successfulGuestExit" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService exitAsGuest
+INFO: User exited the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+SEVERE: Error viewing cart: User not found
+]]></system-err>
+  </testcase>
+  <testcase name="invalidEditItemInShop" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.009ilA9_zlpqUF5k3iTWfAnURABYtRvR8h11os8jSC8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.009ilA9_zlpqUF5k3iTWfAnURABYtRvR8h11os8jSC8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.009ilA9_zlpqUF5k3iTWfAnURABYtRvR8h11os8jSC8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemPriceInShop
+SEVERE: Error changing item price in shop: item price cannot be negative
+]]></system-err>
+  </testcase>
+  <testcase name="appointTwiceFail" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.rfnwMjxcrfBWbxiSF_is1CHkdQZYp_3YdVyoG4vdxr4
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.rfnwMjxcrfBWbxiSF_is1CHkdQZYp_3YdVyoG4vdxr4
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.rfnwMjxcrfBWbxiSF_is1CHkdQZYp_3YdVyoG4vdxr4
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.XR5XGyprC3RC4VkauihhvV3t8SGebSd6U4IKZbF1A-Q
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: Manager in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.r9MHcLGNnO2tnBxSz0G-Q-RExU828nyt9xhFkK40teI
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: Manager2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+SEVERE: Error adding shop manager: User is already a manager of the shop
+]]></system-err>
+  </testcase>
+  <testcase name="addShopManagerTest" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.Uo_Z6wLjKDnD-BjjtyOkk2dy29Kb9VX4OwLMqUU5qRA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.Uo_Z6wLjKDnD-BjjtyOkk2dy29Kb9VX4OwLMqUU5qRA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.Uo_Z6wLjKDnD-BjjtyOkk2dy29Kb9VX4OwLMqUU5qRA
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.17RRXxBD04084mUs_8r1rBGQh6nh5-ILQ_l_c8WaD_8
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: manager in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getMembersPermissions
+INFO: Members permissions retrieved in shop: MyShop by user: 0
+]]></system-err>
+  </testcase>
+  <testcase name="concurrentRegisterSameUsername2" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService registerUser
+SEVERE: Error registering user: Username already exists
+]]></system-err>
+  </testcase>
+  <testcase name="searchItemsWithoutFilters" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.InqWHaqsfYzCvAqTOmipifSj6EKPQz_qSiQOmeZMHNk
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.InqWHaqsfYzCvAqTOmipifSj6EKPQz_qSiQOmeZMHNk
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.InqWHaqsfYzCvAqTOmipifSj6EKPQz_qSiQOmeZMHNk
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+]]></system-err>
+  </testcase>
+  <testcase name="userRegisterUnauthorized" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.OoTnReg84e-cXrievBuczayqsHCRhvFPEEO4Pm06WeE
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService registerUser
+SEVERE: Error registering user: Unauthorized register attempt for ID=0
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+SEVERE: Error logging in user: Cannot invoke "Domain.Registered.getPassword()" because "registered" is null
+]]></system-err>
+  </testcase>
+  <testcase name="checkCartContentTest" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hSJjzFJqWgNc9CLd-CBdnt3tJETsAwgjzT8GSL_kP5I
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hSJjzFJqWgNc9CLd-CBdnt3tJETsAwgjzT8GSL_kP5I
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.hSJjzFJqWgNc9CLd-CBdnt3tJETsAwgjzT8GSL_kP5I
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService addItemsToCart
+INFO: Items added to cart successfully
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+]]></system-err>
+  </testcase>
+  <testcase name="addItemToShopAsNonOwner" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.i3t6o6swbkgG5W5E-eIEwhBte1-yhdhmMMkAY5vPl3I
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.i3t6o6swbkgG5W5E-eIEwhBte1-yhdhmMMkAY5vPl3I
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.i3t6o6swbkgG5W5E-eIEwhBte1-yhdhmMMkAY5vPl3I
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.4SrzmQbJjYokCb5EqUdQwxjtKuqY9gKU9M8SIULXGPQ
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+SEVERE: Error adding item to shop: No role found for shop ID: 0
+]]></system-err>
+  </testcase>
+  <testcase name="LogoutTest" classname="Tests.AccepanceTests" time="0.0">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.E2fImoeiEj4hIm-9xIHlofwnnj4mFQ8D-iq8wYH9Dfk
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService exitAsGuest
+INFO: User exited the system
+]]></system-err>
+  </testcase>
+  <testcase name="successfulGuestRegister" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.X6LDU900u9iRwjOP6yL4As-cCqSn1tnqMR3Tbvrk_9k
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+]]></system-err>
+  </testcase>
+  <testcase name="editProductNotLoggedIn" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+SEVERE: Error changing item quantity in shop: Invalid compact JWT string: Compact JWSs must contain exactly 2 period characters, and compact JWEs must contain exactly 4.  Found: 0
+]]></system-err>
+  </testcase>
+  <testcase name="successfulViewShopContent" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.K5eesgSsPbc0NEFgE6MwKHV7-oCQMNDzTY4I4HnWcEw
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.K5eesgSsPbc0NEFgE6MwKHV7-oCQMNDzTY4I4HnWcEw
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.K5eesgSsPbc0NEFgE6MwKHV7-oCQMNDzTY4I4HnWcEw
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.7cgUjmRCxBMb5yWvG8eAj9DlYfCiK4dAeC_QXpRiB08
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: mgr in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.7cgUjmRCxBMb5yWvG8eAj9DlYfCiK4dAeC_QXpRiB08
+]]></system-err>
+  </testcase>
+  <testcase name="productNotFound" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.2YVS-gFR79rCmbimXiJzovLoFKrQoKdhQdcOrZ3RRQA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.2YVS-gFR79rCmbimXiJzovLoFKrQoKdhQdcOrZ3RRQA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.2YVS-gFR79rCmbimXiJzovLoFKrQoKdhQdcOrZ3RRQA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+SEVERE: Error changing item quantity in shop: Item ID does not exist in the shop.
+]]></system-err>
+  </testcase>
+  <testcase name="searchItemsInSpecificShop" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.etBLrfhyYiVeD1ZW9bn_yggY5Fo0tBGnJ94HWXcXvZE
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.etBLrfhyYiVeD1ZW9bn_yggY5Fo0tBGnJ94HWXcXvZE
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.etBLrfhyYiVeD1ZW9bn_yggY5Fo0tBGnJ94HWXcXvZE
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+]]></system-err>
+  </testcase>
+  <testcase name="removeItemsFromShop" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.7XzBWgX41nAO14SgAfbvgjbZ6TaovSnPQuv99MEUYBE
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.7XzBWgX41nAO14SgAfbvgjbZ6TaovSnPQuv99MEUYBE
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.7XzBWgX41nAO14SgAfbvgjbZ6TaovSnPQuv99MEUYBE
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService removeItemFromShop
+INFO: Item removed from shop: 0 in shop: MyShop by user: 0
+]]></system-err>
+  </testcase>
+  <testcase name="successfulUserLogin" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.MpMJ8j9RdAsyXTXz0kZyXF_xoJt_XT5Av7vXKcjm4n0
+]]></system-err>
+  </testcase>
+  <testcase name="addItemToANonExistentShop" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.KAsX8h7F_jXKQ9Zrd-6L4GRboG32CotaB-Jm0V2Qr60
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+SEVERE: Error adding item to shop: Shop with ID 0 does not exist.
+]]></system-err>
+  </testcase>
+  <testcase name="addItemToShop" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.tc2LnVKubQrizYH6baLS0B2i_z7sfPSAjtY3MTApBy0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.tc2LnVKubQrizYH6baLS0B2i_z7sfPSAjtY3MTApBy0
+]]></system-err>
+  </testcase>
+  <testcase name="editPurchasePolicyNotLoggedIn" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.ShopService updatePurchaseType
+SEVERE: Error updating purchase type: Invalid compact JWT string: Compact JWSs must contain exactly 2 period characters, and compact JWEs must contain exactly 4.  Found: 0
+]]></system-err>
+  </testcase>
+  <testcase name="removeManagerTest" classname="Tests.AccepanceTests" time="0.002">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.usQzwpVcdKPdJvRP7tmt6OmEEC4HdWhfapBhLxgGpeA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Apple in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Banana in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addItemToShop
+INFO: Item added to shop: Laptop in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.usQzwpVcdKPdJvRP7tmt6OmEEC4HdWhfapBhLxgGpeA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 0 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 1 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService changeItemQuantityInShop
+INFO: Item quantity changed in shop: 2 in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService getShopInfo
+INFO: Shop info retrieved: MyShop by user: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.usQzwpVcdKPdJvRP7tmt6OmEEC4HdWhfapBhLxgGpeA
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.Kb45VZEf8aT18fnuU4b7M1BTtcC0BcbWAINSSudhicU
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+INFO: Shop manager added: manager in shop: MyShop by user: 0
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.wUC1hSVq4-Nl3Pdng0kNinTSFTIzOXgB3F8sycCJxwI
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService addShopManager
+SEVERE: Error adding shop manager: User has no role in ShopId: 0
+]]></system-err>
+  </testcase>
+  <testcase name="successfulGuestLogin" classname="Tests.AccepanceTests" time="0.001">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.OrderService checkCartContent
+INFO: All items were listed successfully
+]]></system-err>
+  </testcase>
+  <testcase name="openShopTest" classname="Tests.AccepanceTests" time="0.0">
+    <system-err><![CDATA[מאי 01, 2025 10:16:43 אחה״צ Service.UserService enterToSystem
+INFO: User entered the system
+מאי 01, 2025 10:16:43 אחה״צ Service.UserService loginUser
+INFO: User logged in successfully with session token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwIiwiZXhwIjoxNzQ2MjEzNDAzLCJpYXQiOjE3NDYxMjcwMDN9.SILdXuq5bSJVnrI3MrmwkivMIs1fzw3D3foWiklg5xA
+מאי 01, 2025 10:16:43 אחה״צ Service.ShopService createShop
+INFO: Shop created: MyShop by user: 0
+]]></system-err>
+  </testcase>
+</testsuite>

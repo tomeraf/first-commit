@@ -92,6 +92,7 @@ public class OrderService {
     public Response<Void> addItemsToCart(String sessionToken, HashMap<Integer, HashMap<Integer, Integer>> userItems) {
         List<Lock> acquiredLocks = new ArrayList<>();
 
+
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
@@ -172,10 +173,16 @@ public class OrderService {
      */
     public Response<Order> buyCartContent(String sessionToken) {
         List<Lock> acquiredLocks = new ArrayList<>();
-
+        
         try {
             if (!jwtAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
+            }
+            if (!payment.validatePaymentDetails()) {
+                throw new Exception("Payment details invalid");
+            }
+            if (!shipment.validateShipmentDetails()) {
+                throw new Exception("Shipment details invalid");
             }
             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
