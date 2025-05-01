@@ -1,8 +1,8 @@
-Tests\BasketTest.class
-Tests\endToEndTest_1.class
-Tests\ManagerTest.class
-Tests\ItemTest.class
-Tests\RegisteredTest.class
-Tests\CartTest.class
-Tests\OwnerTest.class
-Tests\GuestTest.class
+Tests/CartTest.class
+Tests/ItemTest.class
+Tests/RegisteredTest.class
+Tests/AccepanceTests.class
+Tests/OwnerTest.class
+Tests/GuestTest.class
+Tests/ManagerTest.class
+Tests/BasketTest.class
