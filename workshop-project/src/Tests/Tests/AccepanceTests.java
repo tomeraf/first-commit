@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import Service.ShopService;
 import Service.UserService;
-import Domain.DTOs.ShipmentDetailsDTO;
-import Domain.DTOs.PaymentDetailsDTO;
 import Domain.Response;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.ShopDTO;
@@ -25,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import static org.mockito.Mockito.*;
 
 import Domain.DTOs.Order;
 import Domain.Permission;
@@ -55,14 +54,8 @@ public class AccepanceTests {
         orderRepository = new MemoryOrderRepository();
         jwtAdapter = new JWTAdapter();
         concurrencyHandler = new ConcurrencyHandler();
-        PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
-            "1234567890123456", "John Doe", "123456789", "12/25", "123"
-        );
-        ShipmentDetailsDTO shipmentDetails = new ShipmentDetailsDTO("123456789", "John Doe", "halilovi", "05", "israel", "beersheva", "bla", "12345");
-        shipment = new ProxyShipment(shipmentDetails);
-        payment = new ProxyPayment(paymentDetails);
-
-
+        shipment = mock(IShipment.class);
+        payment = mock(IPayment.class);
 
         userService = new UserService(userRepository, jwtAdapter, concurrencyHandler);
         shopService = new ShopService(userRepository, shopRepository, orderRepository, jwtAdapter, concurrencyHandler);
@@ -167,10 +160,7 @@ public class AccepanceTests {
     }
 
     public Order buyCartContent(String sessionToken) {
-        // PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
-        //     "1234567890123456", "John Doe", "123456789", "12/25", "123"
-        // );
-        // String shipmentInfo = "";
+        
         Response<Order> purchaseResp = orderService.buyCartContent(
             sessionToken
         );
@@ -539,7 +529,12 @@ public class AccepanceTests {
     }
 
     @Test
-    public void buyCartContentTest() {
+    public void successfulBuyCartContentTest() {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(1.0)).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(0.1)).thenReturn(true);
+
         // 1) Owner setup
         String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
         ShopDTO shop = generateShopAndItems(ownerToken);
@@ -587,6 +582,79 @@ public class AccepanceTests {
             recorded.getItems().get(0).getName(),
             "Purchased item's name must match what was added"
         );
+
+        verify(payment, atLeastOnce()).validatePaymentDetails(); // validatePaymentDetails should be called at least once
+        verify(payment).processPayment(1.0);
+        verify(shipment, atLeastOnce()).validateShipmentDetails(); // validateShipmentDetails should be called at least once
+        verify(shipment).processShipment(0.1);
+    }
+
+    @Test
+    public void BuyCartContentTest_paymentFails() {
+        when(payment.validatePaymentDetails()).thenReturn(false);
+        when(payment.processPayment(1.0)).thenReturn(false);
+
+        // 1) Owner setup
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        List<ItemDTO> shopItems = shopService.showShopItems(shop.getId()).getData();
+        ItemDTO toBuy = shopItems.get(0);
+
+        // 2) Buyer setup
+        String buyerToken = generateloginAsRegistered("buyer", "Pwd0");
+
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(List.of(toBuy).get(0).getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
+
+        // 3) Add to cart
+        Response<Void> addResp = orderService.addItemsToCart(
+            buyerToken,
+            itemsMap
+        );
+        assertTrue(addResp.isOk(), "addItemsToCart should succeed");
+
+        // 4) Purchase (pass dummy payment/shipment; replace with valid data if needed)
+        Response<Order> orderResp = orderService.buyCartContent(buyerToken);
+        assertFalse(orderResp.isOk(), "buyCartContent should fail due to payment validation failure");
+
+        verify(payment).validatePaymentDetails();
+    }
+
+    @Test
+    public void BuyCartContentTest_shipmentFails() {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(1.0)).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(false);
+        when(shipment.processShipment(0.1)).thenReturn(false);
+
+        // 1) Owner setup
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        List<ItemDTO> shopItems = shopService.showShopItems(shop.getId()).getData();
+        ItemDTO toBuy = shopItems.get(0);
+
+        // 2) Buyer setup
+        String buyerToken = generateloginAsRegistered("buyer", "Pwd0");
+
+        HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
+        HashMap<Integer, Integer> itemMap = new HashMap<>();
+        itemMap.put(List.of(toBuy).get(0).getItemID(), 1);
+        itemsMap.put(shop.getId(), itemMap);
+
+        // 3) Add to cart
+        Response<Void> addResp = orderService.addItemsToCart(
+            buyerToken,
+            itemsMap
+        );
+        assertTrue(addResp.isOk(), "addItemsToCart should succeed");
+
+        // 4) Purchase (pass dummy payment/shipment; replace with valid data if needed)
+        Response<Order> orderResp = orderService.buyCartContent(buyerToken);
+        assertFalse(orderResp.isOk(), "buyCartContent should fail due to shipment validation failure");
+
+        verify(shipment).validateShipmentDetails();
     }
 
     @Test
@@ -670,6 +738,10 @@ public class AccepanceTests {
 
     @Test
     public void rateShopTest() {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(1.0)).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(0.1)).thenReturn(true);
         // 1) Owner setup
         String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
         ShopDTO shop = generateShopAndItems(ownerToken);
@@ -806,6 +878,10 @@ public class AccepanceTests {
     @Test
     public void rateShopNotLoggedInTest()
     {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(1.0)).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(0.1)).thenReturn(true);
         // 1) Owner creates a shop with items
         String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
         ShopDTO shopDto = generateShopAndItems(ownerToken);
@@ -1548,6 +1624,9 @@ public class AccepanceTests {
 
     @Test
     public void concurrentRegisterSameUsername2() throws InterruptedException {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+
         String guest1 = userService.enterToSystem().getData();
         String guest2 = userService.enterToSystem().getData();
         String wanted = "dupUser";
@@ -1577,6 +1656,9 @@ public class AccepanceTests {
 
     @Test
     public void concurrentPurchaseSameItem() throws InterruptedException {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        
         // 1) Owner creates shop with exactly 1 unit of “Apple”
         String ownerToken = generateloginAsRegistered("owner", "pwdO");
         ShopDTO shop = generateShopAndItems(ownerToken);
