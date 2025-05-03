@@ -73,7 +73,7 @@ public class OrderService {
             //         .map(item -> new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(), item.getId(), item.getQuantity(), item.getRating()))
             //         .toList(); // Convert Item to ItemDTO
 
-            logger.info(() -> "All items were listed successfully");
+            logger.info(() -> "Cart contents: All items were listed successfully");
             return Response.ok(itemDTOs);
         } 
         catch (Exception e) {

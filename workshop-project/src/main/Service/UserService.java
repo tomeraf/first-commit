@@ -14,6 +14,8 @@ import Domain.Response;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Repositories.IUserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserService {
 
@@ -24,11 +26,18 @@ public class UserService {
     ObjectMapper objectMapper = new ObjectMapper();
     
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     public UserService(IUserRepository userRepository, IAuthentication jwtAdapter, ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.jwtAdapter = jwtAdapter;
         this.concurrencyHandler = concurrencyHandler;
+    }
+
+    public String encodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+    public boolean verifyPassword(String password, String hashedPassword) {
+        return passwordEncoder.matches(password, hashedPassword);
     }
 
     /**
@@ -119,7 +128,7 @@ public class UserService {
                     throw new Exception("Unauthorized register attempt for ID=" + userID);
                 }
                 
-                Registered registered = guest.register(username, password, dateOfBirth);
+                Registered registered = guest.register(username, encodePassword(password), dateOfBirth);
                 userRepository.removeGuestById(userID); // Remove the guest from the repository
                 userRepository.saveUser(registered);
                 return Response.ok();
@@ -155,7 +164,7 @@ public class UserService {
             Registered registered = userRepository.getUserByName(username);
             
             //should throw exception if user not found in the repository
-            if (!registered.getPassword().equals(password)) {
+            if (!verifyPassword(password, registered.getPassword())) {
                 throw new Exception("Username and password do not match");
             }
             
@@ -167,7 +176,7 @@ public class UserService {
             if (registered.getUserID() != maybeOld.getUserID())    // only true Guests return null
                 userRepository.removeGuestById(guestUserID);
             
-            logger.info(() -> "User logged in successfully with session token: " + sessionToken);
+            logger.info(() -> "User logged in successfully");
             return Response.ok(newSessionToken);
         } catch (Exception e) {
             logger.error(() -> "Error logging in user: " + e.getMessage());

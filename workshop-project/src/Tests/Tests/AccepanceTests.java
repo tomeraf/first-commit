@@ -12,6 +12,9 @@ import Domain.DTOs.ItemDTO;
 import Domain.DTOs.ShopDTO;
 import Domain.Category;
 
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +26,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
+import java.util.logging.SimpleFormatter;
 
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
@@ -34,7 +41,6 @@ import Domain.Repositories.*;
 import Infrastructure.MemoryOrderRepository;
 import Infrastructure.MemoryShopRepository;
 import Infrastructure.MemoryUserRepository;
-
 
 public class AccepanceTests {
 
@@ -48,7 +54,39 @@ public class AccepanceTests {
     private ShopService shopService;
     private OrderService orderService;
     private ConcurrencyHandler concurrencyHandler;
-    
+    static {
+        // 1) Reconfigure JUL so INFO logs don’t print timestamps
+        java.util.logging.Logger root = java.util.logging.Logger.getLogger("");
+        LogManager.getLogManager().reset();
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new SimpleFormatter() {
+            @Override
+            public synchronized String format(LogRecord record) {
+                return record.getMessage() + System.lineSeparator();
+            }
+        });
+        root.addHandler(handler);
+
+        // 2) Wrap System.err in a PrintStream that drops Byte-Buddy warnings
+        PrintStream originalErr = System.err;
+        System.setErr(new PrintStream(new FilterOutputStream(originalErr) {
+            private final String[] blacklist = new String[] {
+              "WARNING: A Java agent has been loaded dynamically",
+              "WARNING: Dynamic loading of agents will be disallowed"
+            };
+
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException, IndexOutOfBoundsException   {
+                String s = new String(b, off, len);
+                for (String block : blacklist) {
+                    if (s.startsWith(block) || s.contains(block)) {
+                        return; // swallow
+                    }
+                }
+                super.write(b, off, len);
+            }
+        }));
+    }
     @BeforeEach
     public void setUp() {
         shopRepository = new MemoryShopRepository();
