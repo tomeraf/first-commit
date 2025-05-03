@@ -23,6 +23,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
 
 import Domain.DTOs.Order;
@@ -159,14 +161,20 @@ public class AccepanceTests {
         return shopService.getShopInfo(ownerToken, shopId).getData();
     }
 
-    public Order buyCartContent(String sessionToken) {
+    public Order successfulBuyCartContent(String sessionToken) {
         
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(1.0)).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(0.1)).thenReturn(true);
         Response<Order> purchaseResp = orderService.buyCartContent(
             sessionToken
         );
         assertTrue(purchaseResp.isOk(), "buyCartContent should succeed");
         Order created = purchaseResp.getData();
         assertNotNull(created, "Returned Order must not be null");
+        List<ItemDTO> cartItems = orderService.checkCartContent(sessionToken).getData();
+        assertEquals(0, cartItems.size(), "Cart should be empty after purchase");
         return created;
     }
     
@@ -557,8 +565,7 @@ public class AccepanceTests {
         assertTrue(addResp.isOk(), "addItemsToCart should succeed");
 
         // 4) Purchase (pass dummy payment/shipment; replace with valid data if needed)
-        Order created = buyCartContent(buyerToken);
-
+        Order created = successfulBuyCartContent(buyerToken);
 
         // verify stock was decremented by 1
         Response<ShopDTO> updatedShopResp = shopService.getShopInfo(ownerToken, shop.getId());
@@ -765,7 +772,7 @@ public class AccepanceTests {
         assertTrue(addToCart.isOk(), "addItemsToCart should succeed");
 
         // dummy payment & shipment (fill in real fields if needed)
-        Order created = buyCartContent(buyerToken);
+        Order created = successfulBuyCartContent(buyerToken);
 
         // 4) Rate the shop
         int ratingScore = 5;
@@ -807,46 +814,141 @@ public class AccepanceTests {
         assertTrue(contains);
     }
 
-
     @Test
-    public void ItemUnavailableForPurchase()
-    {
+    public void itemUnavailableForPurchaseTest() {
+        // --- Setup -------------------------------------------------------------
+        // 1) Prepare payment/shipment mocks
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(anyDouble())).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(anyDouble())).thenReturn(true);
+
+        // 2) Owner creates shop with 3 items
         String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
         ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
 
-        ItemDTO item = shop.getItems().get(0);
-        Response<Void> res = shopService.changeItemQuantityInShop(ownerToken, shop.getId(), item.getItemID(), 0);
+        // 3) Set the quantity of the first item to 0 (unavailable)
+        ItemDTO firstItem = shop.getItems().get(0);
+        Response<Void> setQtyResp = shopService.changeItemQuantityInShop(
+            ownerToken, shopId, firstItem.getItemID(), 0
+        );
+        assertTrue(setQtyResp.isOk(), "Setting quantity to 0 should succeed");
 
-        String buyerToken = generateloginAsRegistered("Buyer", "Pwd0");
-        Response<List<ItemDTO>> viewResp = shopService.showShopItems(shop.getId());
-        assertTrue(viewResp.isOk(), "showShopItems should succeed");
-        List<ItemDTO> shopItems = viewResp.getData();
-        assertNotNull(shopItems, "shopItems list must not be null");
+        // Capture the stock before any buyer interactions
+        int stockBefore = shopService
+            .getShopInfo(ownerToken, shopId)
+            .getData()
+            .getItems()
+            .get(firstItem.getItemID())
+            .getQuantity();
+        assertEquals(0, stockBefore, "Stock should now be zero");
+
+        // Buyer enters the system
+        String buyerToken = generateloginAsRegistered("Buyer", "Pwd1");
+
+        // --- Action ------------------------------------------------------------
+        // Buyer attempts to add all three items (including the unavailable one) to cart
+        List<ItemDTO> availableItems = shopService.showShopItems(shopId).getData();
         HashMap<Integer, HashMap<Integer, Integer>> itemsMap = new HashMap<>();
         HashMap<Integer, Integer> itemMap = new HashMap<>();
-        itemMap.put(shopItems.get(0).getItemID(), 1);
-        itemMap.put(shopItems.get(1).getItemID(), 1);
-        itemMap.put(shopItems.get(2).getItemID(), 1);
-        itemsMap.put(shop.getId(), itemMap);
+        for (ItemDTO it : availableItems) {
+            itemMap.put(it.getItemID(), 1);
+        }
+        itemsMap.put(shopId, itemMap);
 
-        Response<Void> res3 = orderService.addItemsToCart(
-            buyerToken,
-            itemsMap
-        );
+        Response<Void> addToCartResp = orderService.addItemsToCart(buyerToken, itemsMap);
 
-        assertFalse(res3.isOk(), "changeItemQuantityInShop should succeed");
+        // Buyer then attempts to checkout
+        Response<Order> checkoutResp = orderService.buyCartContent(buyerToken);
 
-        ShopDTO updatedShop = shopService.getShopInfo(ownerToken, shop.getId()).getData();
-        System.out.println("Updated shop: " + updatedShop.getItems().get(2).getQuantity());
-        // PaymentDetailsDTO paymentDetails = new PaymentDetailsDTO(
-        //     "1234567890123456", "John Doe", "123456789", "12/25", "123"
-        // );
-        // String shipmentInfo = "";
-        Response<Order> purchaseResp = orderService.buyCartContent(
-            buyerToken
-        );
-        assertFalse(purchaseResp.isOk(), "buyCartContent should fail as one of the items is unavailable");
+        // --- Verification -------------------------------------------------------
+        // 1) Adding to cart should fail because one item has zero stock
+        assertFalse(addToCartResp.isOk(),
+            "addItemsToCart must fail when any requested item is out of stock");
+
+        // 2) Checkout should also fail
+        assertFalse(checkoutResp.isOk(),
+            "buyCartContent must fail when cart contains unavailable items");
+
+        // 3) Cart should remain empty after the failed attempts
+        List<ItemDTO> cartAfter = orderService.checkCartContent(buyerToken).getData();
+        assertNotNull(cartAfter, "checkCartContent must return a (possibly empty) list");
+        assertTrue(cartAfter.isEmpty(), "Cart must be empty after a failed addition/checkout");
+
+        // 4) Stock must be unchanged (still zero for the first item)
+        int stockAfter = shopService
+            .getShopInfo(ownerToken, shopId)
+            .getData()
+            .getItems()
+            .get(firstItem.getItemID())
+            .getQuantity();
+        assertEquals(stockBefore, stockAfter,
+            "Stock of the unavailable item must remain unchanged");
     }
+
+    @Test
+    public void concurrentSingleStockCartPurchaseTest() {
+        // --- Arrange mocks for payments and shipments ---
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(anyDouble())).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(anyDouble())).thenReturn(true);
+
+        // --- 1) Owner creates shop with a single‐unit item ---
+        String ownerToken = generateloginAsRegistered("owner", "pwdO");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+
+        // Pick the first item and force its stock to exactly 1
+        ItemDTO item = shop.getItems().get(0);
+        assertTrue(
+            shopService.changeItemQuantityInShop(ownerToken, shopId, item.getItemID(), 1).isOk(),
+            "Setting item stock to 1 should succeed"
+        );
+
+        // --- 2) Two buyers each add that same single unit to their carts ---
+        String buyer1 = generateloginAsRegistered("buyer1", "pwd1");
+        String buyer2 = generateloginAsRegistered("buyer2", "pwd2");
+
+        HashMap<Integer,HashMap<Integer,Integer>> itemsMap = new HashMap<>();
+        itemsMap.put(shopId, new HashMap<>(Map.of(item.getItemID(), 1)));
+
+        // Buyer1 adds to cart
+        Response<Void> add1 = orderService.addItemsToCart(buyer1, itemsMap);
+        assertTrue(add1.isOk(), "Buyer1 should add the item to cart");
+
+        // Buyer2 also adds to cart
+        Response<Void> add2 = orderService.addItemsToCart(buyer2, itemsMap);
+        assertTrue(add2.isOk(), "Buyer2 should add the item to cart");
+
+        // --- 3) Buyer1 completes purchase successfully ---
+        Response<Order> buy1 = orderService.buyCartContent(buyer1);
+        assertTrue(buy1.isOk(), "Buyer1 purchase should succeed");
+
+        // --- 4) Buyer2 attempt to purchase must fail (out of stock) ---
+        Response<Order> buy2 = orderService.buyCartContent(buyer2);
+        assertFalse(buy2.isOk(), "Buyer2 purchase should fail due to no stock");
+
+        // --- 5) Verify final stock is zero and buyer2’s cart is empty ---
+        int finalStock = shopService
+            .getShopInfo(ownerToken, shopId)
+            .getData()
+            .getItems()
+            .get(item.getItemID())
+            .getQuantity();
+        assertEquals(0, finalStock, "Final stock should be zero after Buyer1 purchase");
+
+        List<ItemDTO> cart1 = orderService.checkCartContent(buyer1).getData();
+        assertNotNull(cart1, "Buyer2 cart query should return a list");
+        assertTrue(cart1.isEmpty(), "Buyer2 cart should be empty after failed purchase");
+
+        List<ItemDTO> cart2 = orderService.checkCartContent(buyer2).getData();
+        assertNotNull(cart2, "Buyer2 cart query should return a list");
+        // Here buyer2's cart should not be empty even if the purchase failed becasue we don't want to remove all the cart (and therefore not the only item there even though the quantity is 0)
+        assertFalse(cart2.isEmpty(), "Buyer2 cart should be empty after failed purchase");
+    }
+
 
     // @Test
     // public void duplicateShopNameTest()
@@ -896,7 +998,7 @@ public class AccepanceTests {
 
         orderService.addItemsToCart(guestToken, itemsMap);
 
-        buyCartContent(guestToken);
+        successfulBuyCartContent(guestToken);
         
         Response<Void> res =shopService.rateShop(guestToken, shopDto.getId(), 5);
         assertFalse(res.isOk(), "Rate shop should fail when not logged in");
@@ -1412,6 +1514,91 @@ public class AccepanceTests {
     //     Response<ShopDTO> resp = shopService.getShopInfo(otherToken, shop.getId());
     //     assertFalse(resp.isOk(), "Should fail when not a manager");
     // }
+    @Test
+    public void submitBidOfferTest() {
+        // 1) Owner + shop setup
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().get(0).getItemID();
+
+        // 2) Buyer setup
+        String buyerToken = generateloginAsRegistered("Buyer", "Pwd1");
+
+        // 3) Buyer submits a bid
+        Response<Void> bidResp = orderService.submitBidOffer(
+            buyerToken,
+            shopId,
+            appleId,
+            10.0  // offer price
+        );
+        assertTrue(bidResp.isOk(), "submitBidOffer should succeed");
+    }
+
+    @Test
+    public void answerBidAndPurchaseBidItemTest() {
+        
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(1.0)).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(0.1)).thenReturn(true);
+        // 1) Owner + shop + buyer setup as before
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().get(0).getItemID();
+
+        String buyerToken = generateloginAsRegistered("Buyer", "Pwd1");
+
+        // 2) Buyer submits the bid (first-ever bid, ID == 0)
+        assertTrue(orderService.submitBidOffer(buyerToken, shopId, appleId, 15.0).isOk());
+
+        // 3) Owner accepts the bid
+        int bidId = 1;
+        Response<Void> answerResp = shopService.answerBid(
+            ownerToken,
+            shopId,
+            bidId,
+            true   // accept
+        );
+        assertTrue(answerResp.isOk(), "answerBid should succeed");
+
+        // 4) Buyer purchases the accepted bid item
+        Response<Void> purchaseResp = orderService.purchaseBidItem(
+            buyerToken,
+            shopId,
+            bidId
+        );
+        assertTrue(purchaseResp.isOk(), "purchaseBidItem should succeed");
+
+        // 5) Verify it ended up in their order history
+        List<Order> history = orderService.viewPersonalOrderHistory(buyerToken).getData();
+        assertEquals(1, history.size(), "There should be exactly one bid-based order");
+    }
+
+    @Test
+    public void submitCounterBidTest() {
+        // 1) Owner + shop + buyer setup
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().get(0).getItemID();
+
+        String buyerToken = generateloginAsRegistered("Buyer", "Pwd1");
+
+        // 2) Buyer places the original bid
+        assertTrue(orderService.submitBidOffer(buyerToken, shopId, appleId, 20.0).isOk());
+
+        // 3) Owner counters that bid
+        int bidId = 1;
+        Response<Void> counterResp = shopService.submitCounterBid(
+            ownerToken,
+            shopId,
+            bidId,
+            25.0   // new counter-offer price
+        );
+        assertTrue(counterResp.isOk(), "submitCounterBid should succeed");
+    }
 
     @Test
     public void userLacksPermission() {
@@ -1627,167 +1814,177 @@ public class AccepanceTests {
         when(payment.validatePaymentDetails()).thenReturn(true);
         when(shipment.validateShipmentDetails()).thenReturn(true);
 
-        String guest1 = userService.enterToSystem().getData();
-        String guest2 = userService.enterToSystem().getData();
-        String wanted = "dupUser";
+        for (int i = 0; i < 10; i++) {
+            // 1) Owner creates shop with exactly 1 unit of “Apple”
+            generateloginAsRegistered("owner"+i, "pwdO"+i);
+            String guest1 = userService.enterToSystem().getData();
+            String guest2 = userService.enterToSystem().getData();
+            String wanted = "dupUser"+i;
 
-        // Build two callables
-        List<Callable<Response<Void>>> tasks = List.of(
-        () -> userService.registerUser(guest1, wanted, "pw", LocalDate.now().minusYears(20)),
-        () -> userService.registerUser(guest2, wanted, "pw", LocalDate.now().minusYears(20))
-        );
+            // Build two callables
+            List<Callable<Response<Void>>> tasks = List.of(
+            () -> userService.registerUser(guest1, wanted, "pw", LocalDate.now().minusYears(20)),
+            () -> userService.registerUser(guest2, wanted, "pw", LocalDate.now().minusYears(20))
+            );
 
-        ExecutorService ex = Executors.newFixedThreadPool(2);
-        // This will block until *both* tasks have completed
-        List<Future<Response<Void>>> futures = ex.invokeAll(tasks);
-        ex.shutdown();
+            ExecutorService ex = Executors.newFixedThreadPool(2);
+            // This will block until *both* tasks have completed
+            List<Future<Response<Void>>> futures = ex.invokeAll(tasks);
+            ex.shutdown();
 
-        long successCount = futures.stream()
-        .map(f -> {
-            try { return f.get().isOk(); }
-            catch (Exception e) { return false; }
-        })
-        .filter(ok -> ok)
-        .count();
+            long successCount = futures.stream()
+            .map(f -> {
+                try { return f.get().isOk(); }
+                catch (Exception e) { return false; }
+            })
+            .filter(ok -> ok)
+            .count();
 
-        // Now exactly one registration should succeed
-        assertEquals(1, successCount, "Only one registration may succeed");
+            // Now exactly one registration should succeed
+            assertEquals(1, successCount, "Only one registration may succeed");
+        }
     }
 
     @Test
     public void concurrentPurchaseSameItem() throws InterruptedException {
         when(payment.validatePaymentDetails()).thenReturn(true);
         when(shipment.validateShipmentDetails()).thenReturn(true);
-        
-        // 1) Owner creates shop with exactly 1 unit of “Apple”
-        String ownerToken = generateloginAsRegistered("owner", "pwdO");
-        ShopDTO shop = generateShopAndItems(ownerToken);
-        // find the apple’s ID and set its stock to 1
-        int shopId = shop.getId();
-        int appleId = shop.getItems().values().stream()
-                            .filter(i -> i.getName().equals("Apple"))
-                            .findFirst().get().getItemID();
-        Response<Void> setOne = shopService.changeItemQuantityInShop(
-            ownerToken, shopId, appleId, 1
-        );
-        assertTrue(setOne.isOk(), "Should be able to set stock to 1");
+        for (int i = 0; i < 10; i++) {
+            // 1) Owner creates shop with exactly 1 unit of “Apple”
+            String ownerToken = generateloginAsRegistered("owner"+i, "pwdO");
+            ShopDTO shop = generateShopAndItems(ownerToken);
+            // find the apple’s ID and set its stock to 1
+            int shopId = shop.getId();
+            int appleId = shop.getItems().values().stream()
+                                .filter(j -> j.getName().equals("Apple"))
+                                .findFirst().get().getItemID();
+            Response<Void> setOne = shopService.changeItemQuantityInShop(
+                ownerToken, shopId, appleId, 1
+            );
+            assertTrue(setOne.isOk(), "Should be able to set stock to 1");
 
-        // 2) Two separate buyers each enter & add that one apple to their cart
-        String buyer1 = userService.enterToSystem().getData();
-        String buyer2 = userService.enterToSystem().getData();
-        assertNotNull(buyer1);
-        assertNotNull(buyer2);
+            // 2) Two separate buyers each enter & add that one apple to their cart
+            String buyer1 = userService.enterToSystem().getData();
+            String buyer2 = userService.enterToSystem().getData();
+            assertNotNull(buyer1);
+            assertNotNull(buyer2);
 
-        // build the same itemsMap for both
-        var itemsMap = new HashMap<Integer, HashMap<Integer,Integer>>();
-        var m = new HashMap<Integer,Integer>();
-        m.put(appleId, 1);
-        itemsMap.put(shopId, m);
+            // build the same itemsMap for both
+            var itemsMap = new HashMap<Integer, HashMap<Integer,Integer>>();
+            var m = new HashMap<Integer,Integer>();
+            m.put(appleId, 1);
+            itemsMap.put(shopId, m);
 
-        Response<Void> add1 = orderService.addItemsToCart(buyer1, itemsMap);
-        Response<Void> add2 = orderService.addItemsToCart(buyer2, itemsMap);
-        assertTrue(add1.isOk(), "Buyer1 should add Apple");
-        assertTrue(add2.isOk(), "Buyer2 should add Apple");
+            Response<Void> add1 = orderService.addItemsToCart(buyer1, itemsMap);
+            Response<Void> add2 = orderService.addItemsToCart(buyer2, itemsMap);
+            assertTrue(add1.isOk(), "Buyer1 should add Apple");
+            assertTrue(add2.isOk(), "Buyer2 should add Apple");
 
-        // 3) Concurrently attempt to buy
-        List<Callable<Response<Order>>> tasks = List.of(
-            () -> orderService.buyCartContent(buyer1),
-            () -> orderService.buyCartContent(buyer2)
-        );
+            // 3) Concurrently attempt to buy
+            List<Callable<Response<Order>>> tasks = List.of(
+                () -> orderService.buyCartContent(buyer1),
+                () -> orderService.buyCartContent(buyer2)
+            );
 
-        ExecutorService ex = Executors.newFixedThreadPool(2);
-        List<Future<Response<Order>>> futures = ex.invokeAll(tasks);
-        ex.shutdown();
+            ExecutorService ex = Executors.newFixedThreadPool(2);
+            List<Future<Response<Order>>> futures = ex.invokeAll(tasks);
+            ex.shutdown();
 
-        long successCount = futures.stream()
-        .map(f -> {
-            try { return f.get().isOk(); }
-            catch(Exception e) { return false; }
-        })
-        .filter(ok -> ok)
-        .count();
+            long successCount = futures.stream()
+            .map(f -> {
+                try { return f.get().isOk(); }
+                catch(Exception e) { return false; }
+            })
+            .filter(ok -> ok)
+            .count();
 
-        long failureCount = futures.size() - successCount;
+            long failureCount = futures.size() - successCount;
 
-        assertEquals(1, successCount, "Exactly one purchase may succeed");
-        assertEquals(1, failureCount, "Exactly one purchase must fail due to out-of-stock");
+            assertEquals(1, successCount, "Exactly one purchase may succeed");
+            assertEquals(1, failureCount, "Exactly one purchase must fail due to out-of-stock");
+        }
     }
 
     @Test
     public void concurrentRemoveAndPurchase() throws InterruptedException {
-        // 1) Owner creates shop with exactly 1 unit of “Apple”
-        String ownerToken = generateloginAsRegistered("owner", "pwdO");
-        ShopDTO shop = generateShopAndItems(ownerToken);
-        int shopId = shop.getId();
-        int appleId = shop.getItems().values().stream()
-                            .filter(i -> i.getName().equals("Apple"))
-                            .findFirst().get().getItemID();
-        // set stock = 1
-        assertTrue(shopService.changeItemQuantityInShop(ownerToken, shopId, appleId, 1)
-                .isOk(), "Should be able to set stock to 1");
+        for (int i = 0; i < 10; i++) {
+            // 1) Owner creates shop with exactly 1 unit of “Apple”
+            String ownerToken = generateloginAsRegistered("owner"+i, "pwdO");
+            ShopDTO shop = generateShopAndItems(ownerToken);
+            int shopId = shop.getId();
+            int appleId = shop.getItems().values().stream()
+                                .filter(j -> j.getName().equals("Apple"))
+                                .findFirst().get().getItemID();
+            // set stock = 1
+            assertTrue(shopService.changeItemQuantityInShop(ownerToken, shopId, appleId, 1)
+                    .isOk(), "Should be able to set stock to 1");
 
-        // 2) Buyer enters & adds that one apple to cart
-        String buyer = userService.enterToSystem().getData();
-        var itemsMap = new HashMap<Integer, HashMap<Integer,Integer>>();
-        itemsMap.put(shopId, new HashMap<>(Map.of(appleId, 1)));
-        assertTrue(orderService.addItemsToCart(buyer, itemsMap)
-                .isOk(), "Buyer should add the only Apple");
+            // 2) Buyer enters & adds that one apple to cart
+            String buyer = userService.enterToSystem().getData();
+            var itemsMap = new HashMap<Integer, HashMap<Integer,Integer>>();
+            itemsMap.put(shopId, new HashMap<>(Map.of(appleId, 1)));
+            assertTrue(orderService.addItemsToCart(buyer, itemsMap)
+                    .isOk(), "Buyer should add the only Apple");
 
-        // 3) Concurrently: owner removes item, buyer attempts checkout
-        List<Callable<Boolean>> tasks = List.of(
-            () -> shopService.removeItemFromShop(ownerToken, shopId, appleId).isOk(),
-            () -> orderService.buyCartContent(buyer).isOk()
-        );
+            // 3) Concurrently: owner removes item, buyer attempts checkout
+            List<Callable<Boolean>> tasks = List.of(
+                () -> shopService.removeItemFromShop(ownerToken, shopId, appleId).isOk(),
+                () -> orderService.buyCartContent(buyer).isOk()
+            );
 
-        ExecutorService ex = Executors.newFixedThreadPool(2);
-        List<Future<Boolean>> results = ex.invokeAll(tasks);
-        ex.shutdown();
+            ExecutorService ex = Executors.newFixedThreadPool(2);
+            List<Future<Boolean>> results = ex.invokeAll(tasks);
+            ex.shutdown();
 
-        long succeeded = results.stream()
-            .map(f -> {
-                try { return f.get(); }
-                catch (Exception e) { return false; }
-            })
-            .filter(ok -> ok)
-            .count();
+            long succeeded = results.stream()
+                .map(f -> {
+                    try { return f.get(); }
+                    catch (Exception e) { return false; }
+                })
+                .filter(ok -> ok)
+                .count();
 
-        // exactly one action may succeed
-        assertEquals(1, succeeded,
-            "Exactly one of removeItem or buyCartContent must succeed; succeeded=" + succeeded);
+            // exactly one action may succeed
+            assertEquals(1, succeeded,
+                "Exactly one of removeItem or buyCartContent must succeed; succeeded=" + succeeded);
+        }
     }
 
     @Test
     public void concurrentManagerAppointment() throws InterruptedException {
-        // 1) Owner creates shop
-        String ownerToken = generateloginAsRegistered("owner", "pwdO");
-        ShopDTO shop = generateShopAndItems(ownerToken);
-        int shopId = shop.getId();
+        for (int i = 0; i < 10; i++) {
+            // 1) Owner creates shop
+            String ownerToken = generateloginAsRegistered("owner"+i, "pwdO");
+            ShopDTO shop = generateShopAndItems(ownerToken);
+            int shopId = shop.getId();
 
-        // 2) Prepare candidate user
-        String candGuest = userService.enterToSystem().getData();
-        assertTrue(userService.registerUser(candGuest, "candidate", "pwdC", LocalDate.now().minusYears(25))
-                .isOk(), "Candidate registration should succeed");
+            // 2) Prepare candidate user
+            String candGuest = userService.enterToSystem().getData();
+            assertTrue(userService.registerUser(candGuest, "candidate"+i, "pwdC", LocalDate.now().minusYears(25))
+                    .isOk(), "Candidate registration should succeed");
 
-        // 3) Two concurrent attempts to appoint the same candidate
-        Set<Permission> perms = Set.of(Permission.VIEW);
-        List<Callable<Boolean>> tasks = List.of(
-            () -> shopService.addShopManager(ownerToken, shopId, "candidate", perms).isOk(),
-            () -> shopService.addShopManager(ownerToken, shopId, "candidate", perms).isOk()
-        );
+            // 3) Two concurrent attempts to appoint the same candidate
+            int iteration = i;  // effectively final
+            Set<Permission> perms = Set.of(Permission.VIEW);
+            List<Callable<Boolean>> tasks = List.of(
+                () -> shopService.addShopManager(ownerToken, shopId, "candidate"+iteration, perms).isOk(),
+                () -> shopService.addShopManager(ownerToken, shopId, "candidate"+iteration, perms).isOk()
+            );
 
-        ExecutorService ex = Executors.newFixedThreadPool(2);
-        List<Future<Boolean>> results = ex.invokeAll(tasks);
-        ex.shutdown();
+            ExecutorService ex = Executors.newFixedThreadPool(2);
+            List<Future<Boolean>> results = ex.invokeAll(tasks);
+            ex.shutdown();
 
-        long successCount = results.stream()
-            .map(f -> {
-                try { return f.get(); }
-                catch (Exception e) { return false; }
-            })
-            .filter(ok -> ok)
-            .count();
+            long successCount = results.stream()
+                .map(f -> {
+                    try { return f.get(); }
+                    catch (Exception e) { return false; }
+                })
+                .filter(ok -> ok)
+                .count();
 
-        assertEquals(1, successCount,
-            "Exactly one of the two concurrent addShopManager calls should succeed, but got " + successCount);
+            assertEquals(1, successCount,
+                "Exactly one of the two concurrent addShopManager calls should succeed, but got " + successCount);
+        }
     }
 }

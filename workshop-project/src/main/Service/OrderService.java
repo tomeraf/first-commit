@@ -368,7 +368,8 @@ public class OrderService {
             int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
             Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
-            purchaseService.purchaseBidItem(guest,shop,bidId, orderRepository.getAllOrders().size(),payment, shipment);
+            Order order = purchaseService.purchaseBidItem(guest,shop,bidId, orderRepository.getAllOrders().size(),payment, shipment);
+            orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Bid item purchased successfully for bid ID: " + bidId);
             return Response.ok();
         } catch (Exception e) {
