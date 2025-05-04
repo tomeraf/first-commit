@@ -1,5 +1,6 @@
 package Domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -398,6 +399,16 @@ public class Shop implements IMessageListener {
             }
         } else {
             throw new IllegalArgumentException("Bid ID does not exist in the shop.");
+        }
+    }
+
+    public void openAuction(int itemID, double startingPrice, LocalDateTime startDate, LocalDateTime endDate) {
+        if (items.containsKey(itemID)) {
+            AuctionPurchase auctionPurchase = new AuctionPurchase(auctionPurchaseCounter, startingPrice, itemID, startDate, endDate);
+            auctionPurchaseCounter++;
+            auctionPurchaseItems.put(auctionPurchase.getId(), auctionPurchase);
+        } else {
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 }

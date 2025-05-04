@@ -1,5 +1,7 @@
 package Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -706,5 +708,20 @@ public class ShopService {
             logger.error(()->"Error getting all messages: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
+    }
+
+    public Response<Void> openAuction(String sessionToken, int shopID, int itemID, double startingPrice,LocalDateTime startDate, LocalDateTime endDate) {
+        try{
+            authenticationAdapter.validateToken(sessionToken);
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            Shop shop = this.shopRepository.getShopById(shopID);
+            managementService.openAuction(user, shop, itemID, startingPrice, startDate, endDate);
+            logger.info(()->"Auction opened: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
+        } catch (Exception e) {
+            logger.error(()->"Error opening auction: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+        return Response.ok();
     }
 }
