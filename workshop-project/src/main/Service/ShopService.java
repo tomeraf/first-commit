@@ -173,7 +173,8 @@ public class ShopService {
                 itemDTOs.put(item.getId(),itemDTO);
             }
             ShopDTO shopDto = new ShopDTO(shop.getId(), shop.getName(), shop.getDescription(),itemDTOs, shop.getRating(),shop.getRatingCount());
-            logger.info(()->"Shop info retrieved: " + shopDto.getName() + " by user: " + sessionToken);
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            logger.info(()->"Shop info retrieved: " + shopDto.getName() + " by user: " + userRepository.getUserById(userID).getUsername());
             return Response.ok(shopDto);
         }
         catch (Exception e) {
