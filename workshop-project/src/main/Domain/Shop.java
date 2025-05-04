@@ -36,8 +36,8 @@ public class Shop implements IMessageListener {
     private int counterItemId; // Counter for item IDs
     private double rating;
     private int ratingCount;
-    private HashMap<Integer, BidPurchase> bidPurchaseItems; // BidId -> BidPurchase
-    private HashMap<Integer, AuctionPurchase> auctionPurchaseItems; // AuctionId -> AuctionPurchase
+    private HashMap<Integer, BidPurchase> bidPurchaseItems; // <BidId, BidPurchase>
+    private HashMap<Integer, AuctionPurchase> auctionPurchaseItems; // <AuctionId, AuctionPurchase>
     private int bidPurchaseCounter; // Counter for bid purchases
     private int auctionPurchaseCounter; // Counter for auction purchases
     private HashMap<Integer, IMessage> inbox; // 
@@ -409,6 +409,15 @@ public class Shop implements IMessageListener {
             auctionPurchaseItems.put(auctionPurchase.getId(), auctionPurchase);
         } else {
             throw new IllegalArgumentException("Item ID does not exist in the shop.");
+        }
+    }
+
+    public void submitAuctionOffer(int auctionID, double offerPrice, int userID) {
+        if (auctionPurchaseItems.containsKey(auctionID)) {
+            AuctionPurchase auctionPurchase = auctionPurchaseItems.get(auctionID);
+            auctionPurchase.placeOffer(offerPrice, userID);
+        } else {
+            throw new IllegalArgumentException("Auction ID does not exist in the shop.");
         }
     }
 }

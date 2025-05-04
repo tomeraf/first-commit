@@ -127,4 +127,8 @@ public class PurchaseService {
         Order order= new Order(orderID, guest.getUserID(), offer.getKey(), itemsToShip);
         return order;
     }
+
+    public void submitAuctionOffer(Guest guest, Shop shop, int auctionID, double offerPrice) {
+        shop.submitAuctionOffer(auctionID, offerPrice, guest.getUserID());
+    }
 }
