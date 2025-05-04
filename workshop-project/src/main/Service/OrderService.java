@@ -398,5 +398,21 @@ public class OrderService {
                 return Response.error("Error submitting auction offer: " + e.getMessage());
             }
     }
-    
+    public Response<Void> purchaseAuctionItem(String sessionToken,int shopId,int auctionID) {
+        try {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
+                throw new Exception("User not logged in");
+            }
+            int userId = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
+            Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
+            Order order = purchaseService.purchaseAuctionItem(guest,shop,auctionID, orderRepository.getAllOrders().size(),payment, shipment);
+            orderRepository.addOrder(order); // Save the order to the repository
+            logger.info(() -> "Auction item purchased successfully for auction ID: " + auctionID);
+            return Response.ok();
+        } catch (Exception e) {
+            logger.error(() -> "Error purchasing auction item: " + e.getMessage());
+            return Response.error("Error purchasing auction item: " + e.getMessage());
+        }
+    }
 }

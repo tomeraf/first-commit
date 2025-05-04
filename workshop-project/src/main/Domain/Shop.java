@@ -420,6 +420,22 @@ public class Shop implements IMessageListener {
             throw new IllegalArgumentException("Auction ID does not exist in the shop.");
         }
     }
+
+	public Pair<Integer, Double> purchaseAuctionItem(int auctionID, int userID) {
+		if(auctionPurchaseItems.containsKey(auctionID)) {
+            AuctionPurchase auctionPurchase = auctionPurchaseItems.get(auctionID);
+            try {
+                if (!getItem(auctionPurchase.getItemId()).quantityCheck(1)) {
+                    throw new IllegalArgumentException("Item is out of stock.");
+                }
+                return new Pair<>(auctionPurchase.getItemId(), auctionPurchase.getHighestBid());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Auction purchase failed: " + e.getMessage());
+            }
+        } else {
+            throw new IllegalArgumentException("Auction ID does not exist in the shop.");
+        }
+	}
 }
 
 
