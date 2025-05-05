@@ -1,24 +1,28 @@
-# Maven build output
-/target/
+# === Maven ===
+target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# IntelliJ IDEA
-/.idea/
-/*.iml
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.iws
+*.ipr
 
-# VSCode
+# === VS Code ===
 .vscode/
 
-# Logs
+# === Logs ===
 *.log
 
-# OS generated files
+# === OS-specific ===
 .DS_Store
 Thumbs.db
 
-# Temporary files
-*.class
+# === Temporary files ===
 *.swp
+*.swo
 *.bak
+*.tmp
 
-# Other
-*.jar
+# === Test output ===
+surefire-reports/
