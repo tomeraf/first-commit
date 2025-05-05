@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: Tests.AccepanceTests
 -------------------------------------------------------------------------------
-Tests run: 62, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 20.028 s - in Tests.AccepanceTests
+Tests run: 62, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 20.756 s - in Tests.AccepanceTests

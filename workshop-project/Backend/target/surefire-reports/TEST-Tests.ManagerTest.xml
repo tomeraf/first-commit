@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="Tests.ManagerTest" time="0.007" tests="6" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="Tests.ManagerTest" time="0.002" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
-    <property name="sun.java.command" value="C:\Users\Idan\AppData\Local\Temp\surefire8186417514655842625\surefirebooter1204302290633025982.jar C:\Users\Idan\AppData\Local\Temp\surefire8186417514655842625 2025-05-05T22-36-20_319-jvmRun1 surefire1194540616782039150tmp surefire_06181095329381181868tmp"/>
+    <property name="sun.java.command" value="C:\Users\Idan\AppData\Local\Temp\surefire17048448006536503762\surefirebooter18082664297298834203.jar C:\Users\Idan\AppData\Local\Temp\surefire17048448006536503762 2025-05-05T22-48-55_262-jvmRun1 surefire12883837643181801230tmp surefire_014737242887912893083tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\Idan\Desktop\אקדמיה וכו\שנה ג\קורסים סמסטר ו\סדנה ליישום פרוייקט תוכנה\עבודות\project\Whole-System\workshop-project\Backend\target\test-classes;C:\Users\Idan\Desktop\אקדמיה וכו\שנה ג\קורסים סמסטר ו\סדנה ליישום פרוייקט תוכנה\עבודות\project\Whole-System\workshop-project\Backend\target\classes;C:\Users\Idan\.m2\repository\io\jsonwebtoken\jjwt-api\0.12.6\jjwt-api-0.12.6.jar;C:\Users\Idan\.m2\repository\io\jsonwebtoken\jjwt-impl\0.12.6\jjwt-impl-0.12.6.jar;C:\Users\Idan\.m2\repository\io\jsonwebtoken\jjwt-jackson\0.12.6\jjwt-jackson-0.12.6.jar;C:\Users\Idan\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.15.3\jackson-annotations-2.15.3.jar;C:\Users\Idan\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.15.3\jackson-core-2.15.3.jar;C:\Users\Idan\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.15.3\jackson-databind-2.15.3.jar;C:\Users\Idan\.m2\repository\org\springframework\spring-beans\7.0.0-M4\spring-beans-7.0.0-M4.jar;C:\Users\Idan\.m2\repository\org\springframework\spring-core\7.0.0-M4\spring-core-7.0.0-M4.jar;C:\Users\Idan\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar;C:\Users\Idan\.m2\repository\org\springframework\spring-context\7.0.0-M4\spring-context-7.0.0-M4.jar;C:\Users\Idan\.m2\repository\org\springframework\spring-aop\7.0.0-M4\spring-aop-7.0.0-M4.jar;C:\Users\Idan\.m2\repository\org\springframework\spring-expression\7.0.0-M4\spring-expression-7.0.0-M4.jar;C:\Users\Idan\.m2\repository\io\micrometer\micrometer-observation\1.15.0-RC1\micrometer-observation-1.15.0-RC1.jar;C:\Users\Idan\.m2\repository\io\micrometer\micrometer-commons\1.15.0-RC1\micrometer-commons-1.15.0-RC1.jar;C:\Users\Idan\.m2\repository\org\springframework\security\spring-security-crypto\6.2.1\spring-security-crypto-6.2.1.jar;C:\Users\Idan\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\Idan\.m2\repository\org\junit\platform\junit-platform-console-standalone\1.9.3\junit-platform-console-standalone-1.9.3.jar;C:\Users\Idan\.m2\repository\org\mockito\mockito-core\5.2.0\mockito-core-5.2.0.jar;C:\Users\Idan\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar;C:\Users\Idan\.m2\repository\org\mockito\mockito-inline\5.2.0\mockito-inline-5.2.0.jar;C:\Users\Idan\.m2\repository\org\mockito\mockito-junit-jupiter\5.2.0\mockito-junit-jupiter-5.2.0.jar;C:\Users\Idan\.m2\repository\net\bytebuddy\byte-buddy\1.17.5\byte-buddy-1.17.5.jar;C:\Users\Idan\.m2\repository\net\bytebuddy\byte-buddy-agent\1.17.5\byte-buddy-agent-1.17.5.jar;C:\Users\Idan\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.9.3\junit-jupiter-api-5.9.3.jar;C:\Users\Idan\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\Idan\.m2\repository\org\junit\platform\junit-platform-commons\1.9.3\junit-platform-commons-1.9.3.jar;C:\Users\Idan\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Idan\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.9.3\junit-jupiter-engine-5.9.3.jar;C:\Users\Idan\.m2\repository\org\junit\platform\junit-platform-engine\1.9.3\junit-platform-engine-1.9.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\Idan\AppData\Local\Temp\surefire8186417514655842625\surefirebooter1204302290633025982.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\Idan\AppData\Local\Temp\surefire17048448006536503762\surefirebooter18082664297298834203.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.5+9-LTS-239"/>
@@ -59,7 +59,7 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testRemovePermission" classname="Tests.ManagerTest" time="0.003"/>
+  <testcase name="testRemovePermission" classname="Tests.ManagerTest" time="0"/>
   <testcase name="testRemoveNonExistentPermission" classname="Tests.ManagerTest" time="0"/>
   <testcase name="testAddPermission" classname="Tests.ManagerTest" time="0"/>
   <testcase name="testHasNoPermission" classname="Tests.ManagerTest" time="0"/>
