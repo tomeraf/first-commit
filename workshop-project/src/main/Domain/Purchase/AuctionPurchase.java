@@ -55,13 +55,7 @@ public class AuctionPurchase extends Purchase {
     public boolean isAccepted() {
         return isAccepted;
     }
-    public void accept() {
-        if (isAuctionEnded()) {
-            isAccepted = true;
-        } else {
-            throw new IllegalStateException("Auction must be ended to accept the bid.");
-        }
-    }
+
 
 
 }

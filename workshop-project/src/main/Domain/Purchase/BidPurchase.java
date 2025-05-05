@@ -29,14 +29,13 @@ public class BidPurchase extends Purchase {
     public boolean isAccepted() {
         return isAccepted==1;
     }
-    public void accept(){}
-    /* getMembersWithPermission() is a placeholder for the actual implementation of getting members with permission.
-    public void accept(){
-        if(AcceptingMembers.equals(getMembersWithPermission().add(buyerId)))
-            isAccepted = 1;
-    }
-    */
     public void reject(int rejecterID) {
+        if (isAccepted == 1) {
+            throw new IllegalStateException("Bid Purchase has already been accepted.");
+        }
+        if (isAccepted == -1) {
+            throw new IllegalStateException("Bid Purchase has already been rejected by " + rejecterId);
+        }
         this.rejecterId = rejecterID;
         isAccepted = -1;
     }
