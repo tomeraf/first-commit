@@ -11,6 +11,7 @@ import Domain.DTOs.ShopDTO;
 
 import Domain.Discount.DiscountPolicy;
 import Domain.Purchase.PurchasePolicy;
+import Domain.Purchase.PurchaseType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -240,7 +241,7 @@ public class Shop implements IMessageListener {
     }
 
     public void addBidPurchase(int itemId, double bidAmount, int buyerId) {  
-        if (items.containsKey(itemId)) {
+        if (items.containsKey(itemId) && purchasePolicy.allowsPurchaseType(PurchaseType.BID)) {
             BidPurchase bidPurchase = new BidPurchase(bidPurchaseCounter, bidAmount, itemId, buyerId, buyerId);
             bidPurchaseCounter++;
             bidPurchaseItems.put(bidPurchase.getId(), bidPurchase);
@@ -249,7 +250,7 @@ public class Shop implements IMessageListener {
         }
     }
     public void addAuctionPurchase(int itemId, double startingAmount, LocalDateTime startTime, LocalDateTime endTime){
-        if (items.containsKey(itemId) && items.get(itemId).getQuantity() > 0) {
+        if (items.containsKey(itemId) && purchasePolicy.allowsPurchaseType(PurchaseType.AUCTION)) {
             AuctionPurchase auctionPurchase = new AuctionPurchase(auctionPurchaseCounter, startingAmount, itemId, startTime, endTime);
             auctionPurchaseItems.put(auctionPurchase.getId(), auctionPurchase);
             auctionPurchaseCounter++;

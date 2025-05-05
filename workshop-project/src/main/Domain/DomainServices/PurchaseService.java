@@ -109,7 +109,12 @@ public class PurchaseService {
 
     public void submitBidOffer(Guest user,Shop shop ,int itemId, double offer)
     {
-        shop.addBidPurchase(itemId, offer,user.getUserID());
+        if(user instanceof Registered) {
+            shop.addBidPurchase(itemId, offer,user.getUserID());
+        }
+        else {
+            throw new IllegalArgumentException("Error: guest cannot submit bid.");
+        }
     }
 
 	public Order purchaseBidItem(Guest guest, Shop shop, int bidId,int orderID,IPayment pay,IShipment ship) {

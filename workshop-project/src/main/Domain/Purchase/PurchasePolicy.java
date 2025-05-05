@@ -44,5 +44,12 @@ public class PurchasePolicy {
 
     }
     //need to implement to check that a basket is valid for purchase
+    public boolean allowsPurchaseType(PurchaseType type) {
+        if (this.purchaseTypes.contains(type)) {
+            return true;
+        } else {
+            throw new IllegalArgumentException("Error: purchase type not allowed.");
+        }
+    }
     
 }

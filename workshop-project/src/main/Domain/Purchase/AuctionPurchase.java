@@ -26,14 +26,16 @@ public class AuctionPurchase extends Purchase {
             throw new IllegalArgumentException("Auction end time must be in the future.");
         }  
     }
+
     public void placeOffer(double bidAmount, int buyerId) {
-        if (bidAmount > highestBid && bidAmount >= getAmount() && auctionEndTime.isAfter(LocalDateTime.now())&& auctionStartTime.isBefore(LocalDateTime.now())) {
+        if (bidAmount > highestBid && bidAmount >= getAmount() && isAuctionActive()) {
             this.highestBid = bidAmount;
             setBuyerId(buyerId);
         } else {
             throw new IllegalArgumentException("Bid amount must be higher than the current bid and starting bid.");
         }
     }
+    
     public double getHighestBid() {
         return highestBid;
     }
@@ -52,6 +54,7 @@ public class AuctionPurchase extends Purchase {
     public boolean isAuctionStarted() {
         return auctionStartTime.isBefore(LocalDateTime.now());
     }
+    
     public boolean isAccepted() {
         return isAccepted;
     }
