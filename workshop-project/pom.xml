@@ -9,6 +9,5 @@
 <packaging>pom</packaging>
 <modules>
 <module>Backend</module>
-<module>Frontend</module>
 </modules>
 </project>
