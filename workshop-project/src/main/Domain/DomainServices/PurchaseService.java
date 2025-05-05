@@ -134,7 +134,12 @@ public class PurchaseService {
     }
 
     public void submitAuctionOffer(Guest guest, Shop shop, int auctionID, double offerPrice) {
-        shop.submitAuctionOffer(auctionID, offerPrice, guest.getUserID());
+        if(guest instanceof Registered) {
+            shop.submitAuctionOffer(auctionID, offerPrice, guest.getUserID());
+        }
+        else {
+            throw new IllegalArgumentException("Error: guest cannot submit auction offer.");
+        }
     }
 
     public Order purchaseAuctionItem(Guest guest, Shop shop, int auctionID, int orderID, IPayment payment,

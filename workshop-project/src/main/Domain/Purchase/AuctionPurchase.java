@@ -2,6 +2,8 @@ package Domain.Purchase;
 
 import java.time.LocalDateTime;
 
+import Domain.DTOs.Pair;
+
 public class AuctionPurchase extends Purchase {
     private double highestBid=0;
     private LocalDateTime auctionStartTime; 
@@ -57,6 +59,16 @@ public class AuctionPurchase extends Purchase {
     
     public boolean isAccepted() {
         return isAccepted;
+    }
+    public Pair<Integer, Double> purchaseAuctionItem(int userID) {
+        if (!isAuctionEnded()) {
+            throw new IllegalStateException("Auction has not ended yet.");
+        }
+        if(getBuyerId() != userID) {
+            throw new IllegalArgumentException("Error: user is not the highest bidder.");
+        }
+        return new Pair<>(getItemId(), getAmount()); // Return the item ID and bid amount as a pair
+
     }
 
 

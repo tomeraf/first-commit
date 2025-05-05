@@ -255,11 +255,8 @@ public class Shop implements IMessageListener {
             auctionPurchaseItems.put(auctionPurchase.getId(), auctionPurchase);
             auctionPurchaseCounter++;
         } 
-        else if (!items.containsKey(itemId)) {
-            throw new IllegalArgumentException("Item ID does not exist in the shop.");
-        }
         else {
-            throw new IllegalArgumentException("Item is out of stock.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 
@@ -429,7 +426,7 @@ public class Shop implements IMessageListener {
                 if (!getItem(auctionPurchase.getItemId()).quantityCheck(1)) {
                     throw new IllegalArgumentException("Item is out of stock.");
                 }
-                return new Pair<>(auctionPurchase.getItemId(), auctionPurchase.getHighestBid());
+                return auctionPurchase.purchaseAuctionItem(userID);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Auction purchase failed: " + e.getMessage());
             }
