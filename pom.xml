@@ -11,15 +11,16 @@
     <packaging>jar</packaging>
 
     <build>
-        <sourceDirectory>workshop-project/src/main</sourceDirectory>
-        <testSourceDirectory>workshop-project/src/Tests/Tests</testSourceDirectory>
+        <sourceDirectory>${project.basedir}/workshop-project/Backend/src/main</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/workshop-project/Backend/src/Tests</testSourceDirectory>
+        <!-- rest of build configuration -->
 
         <resources>
             <resource>
-                <directory>src/Domain</directory>
+                <directory>src/main/Domain</directory>
             </resource>
             <resource>
-                <directory>src/Service</directory>
+                <directory>src/main/Service</directory>
             </resource>
         </resources>
 
@@ -91,7 +92,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>7.0.0-M4</version>
+            <version>5.3.10</version>
         </dependency>
 
         <dependency>
