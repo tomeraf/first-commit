@@ -1,1 +1,24 @@
-target/
+# Maven build output
+/target/
+
+# IntelliJ IDEA
+/.idea/
+/*.iml
+
+# VSCode
+.vscode/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.class
+*.swp
+*.bak
+
+# Other
+*.jar
