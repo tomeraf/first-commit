@@ -17,6 +17,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ import Infrastructure.MemoryOrderRepository;
 import Infrastructure.MemoryShopRepository;
 import Infrastructure.MemoryUserRepository;
 
-public class AccepanceTests {
+public class AcceptanceTests {
 
     private IShopRepository shopRepository;
     private IUserRepository userRepository;
@@ -56,6 +57,7 @@ public class AccepanceTests {
     private ShopService shopService;
     private OrderService orderService;
     private ConcurrencyHandler concurrencyHandler;
+
     static {
         // 1) Reconfigure JUL so INFO logs don’t print timestamps
         java.util.logging.Logger root = java.util.logging.Logger.getLogger("");
@@ -89,6 +91,7 @@ public class AccepanceTests {
             }
         }));
     }
+    
     @BeforeEach
     public void setUp() {
         shopRepository = new MemoryShopRepository();
@@ -98,6 +101,7 @@ public class AccepanceTests {
         concurrencyHandler = new ConcurrencyHandler();
         shipment = mock(IShipment.class);
         payment = mock(IPayment.class);
+
 
         userService = new UserService(userRepository, jwtAdapter, concurrencyHandler);
         shopService = new ShopService(userRepository, shopRepository, orderRepository, jwtAdapter, concurrencyHandler);
@@ -1847,6 +1851,154 @@ public class AccepanceTests {
         // 2) Owner attempts to close it again
         Response<Void> secondClose = shopService.closeShop(ownerToken, shop.getId());
         assertFalse(secondClose.isOk(), "Closing an already closed shop should fail");
+    }
+
+    @Test
+    public void auctionFlowSuccessTest() {
+        // Stub payment and shipment
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(anyDouble())).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(anyDouble())).thenReturn(true);
+
+        // Owner setup
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().values().iterator().next().getItemID();
+
+        // Open auction that has already ended
+        LocalDateTime start = LocalDateTime.now().plusSeconds(1);
+        LocalDateTime end = LocalDateTime.now().plusSeconds(2);
+        Response<Void> openResp = shopService.openAuction(
+            ownerToken, shopId, appleId, 5.0, start, end
+        );
+        assertTrue(openResp.isOk(), "Opening auction should succeed");
+        try {
+            Thread.sleep(1000); // wait for auction to start
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        // Buyer setup
+        String buyerToken = generateloginAsRegistered("Buyer", "Pwd1");
+        int auctionId = 1; // first auction ID
+
+        // Submit offer and purchase
+        assertTrue(
+            orderService.submitAuctionOffer(buyerToken, shopId, auctionId, 7.0).isOk(),
+            "Submitting auction offer should succeed"
+        );
+        try {
+            Thread.sleep(1000); // wait for auction to start
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        assertTrue(
+            orderService.purchaseAuctionItem(buyerToken, shopId, auctionId).isOk(),
+            "Purchasing auction item should succeed"
+        );
+
+        // Verify order history
+        List<Order> history = orderService.viewPersonalOrderHistory(buyerToken).getData();
+        assertEquals(1, history.size(), "There should be one auction-based order");
+    }
+
+    @Test
+    public void sumbitAuctionOfferBeforeAuctionStartsShouldFailTest() {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(anyDouble())).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(anyDouble())).thenReturn(true);
+
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().values().iterator().next().getItemID();
+
+        // Schedule auction to start shortly
+        LocalDateTime start = LocalDateTime.now().plusSeconds(1);
+        LocalDateTime end = LocalDateTime.now().plusSeconds(3);
+        assertTrue(
+            shopService.openAuction(ownerToken, shopId, appleId, 5.0, start, end).isOk(),
+            "Opening auction should succeed"
+        );
+
+        // Buyer setup and attempt to submit offer before auction starts
+        String buyerToken = generateloginAsRegistered("Buyer", "Pwd1");
+        int auctionId = 1;
+        Response<Void> offerResp = orderService.submitAuctionOffer(buyerToken, shopId, auctionId, 7.0);
+        assertFalse(offerResp.isOk(), "Submitting auction offer before start should fail");
+    }
+
+    @Test
+    public void purchaseAuctionOfferBeforeAuctionEndsShouldFailTest() {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(anyDouble())).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(anyDouble())).thenReturn(true);
+
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().values().iterator().next().getItemID();
+
+        // Schedule auction to start shortly
+        LocalDateTime start = LocalDateTime.now().plusSeconds(1);
+        LocalDateTime end = LocalDateTime.now().plusSeconds(3);
+        assertTrue(
+            shopService.openAuction(ownerToken, shopId, appleId, 5.0, start, end).isOk(),
+            "Opening auction should succeed"
+        );
+        try {
+            Thread.sleep(1000); // wait for auction to start
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        // Buyer setup and attempt to submit offer before auction starts
+        String buyerToken = generateloginAsRegistered("Buyer", "Pwd1");
+        int auctionId = 1;
+        Response<Void> offerResp = orderService.submitAuctionOffer(buyerToken, shopId, auctionId, 7.0);
+        assertTrue(offerResp.isOk(), "Submitting auction offer after start should succeed");
+        
+        // Attempt purchase immediately before auction starts
+        Response<Void> purchaseResp = orderService.purchaseAuctionItem(buyerToken, shopId, auctionId);
+        assertFalse(purchaseResp.isOk(), "Purchasing before auction ends should fail");
+    }
+
+    @Test
+    public void anotherUserCannotPurchaseWonAuctionTest() {
+        when(payment.validatePaymentDetails()).thenReturn(true);
+        when(payment.processPayment(anyDouble())).thenReturn(true);
+        when(shipment.validateShipmentDetails()).thenReturn(true);
+        when(shipment.processShipment(anyDouble())).thenReturn(true);
+
+        String ownerToken = generateloginAsRegistered("Owner", "Pwd0");
+        ShopDTO shop = generateShopAndItems(ownerToken);
+        int shopId = shop.getId();
+        int appleId = shop.getItems().values().iterator().next().getItemID();
+
+        LocalDateTime start = LocalDateTime.now().plusSeconds(1);
+        LocalDateTime end = LocalDateTime.now().plusSeconds(2);
+        assertTrue(shopService.openAuction(ownerToken, shopId, appleId, 5.0, start, end).isOk(), "Opening auction should succeed");
+        try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+
+        String bidder1 = generateloginAsRegistered("Alice", "PwdA");
+        String bidder2 = generateloginAsRegistered("Bob", "PwdB");
+        int auctionId = 1;
+        assertTrue(orderService.submitAuctionOffer(bidder2, shopId, auctionId, 8.0).isOk(), "First bid should succeed");
+        assertTrue(orderService.submitAuctionOffer(bidder1, shopId, auctionId, 10.0).isOk(), "First bid should succeed");
+        
+        try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+
+        // Bob tries to purchase after auction ends
+        Response<Void> bobPurchase = orderService.purchaseAuctionItem(bidder2, shopId, auctionId);
+        assertFalse(bobPurchase.isOk(), "Non-winning bidder should not be able to purchase");
+
+        // Alice purchases successfully
+        Response<Void> alicePurchase = orderService.purchaseAuctionItem(bidder1, shopId, auctionId);
+        assertTrue(alicePurchase.isOk(), "Winning bidder should purchase successfully");
     }
 
     @Test
