@@ -109,7 +109,12 @@ public class PurchaseService {
 
     public void submitBidOffer(Guest user,Shop shop ,int itemId, double offer)
     {
-        shop.addBidPurchase(itemId, offer,user.getUserID());
+        if(user instanceof Registered) {
+            shop.addBidPurchase(itemId, offer,user.getUserID());
+        }
+        else {
+            throw new IllegalArgumentException("Error: guest cannot submit bid.");
+        }
     }
 
 	public Order purchaseBidItem(Guest guest, Shop shop, int bidId,int orderID,IPayment pay,IShipment ship) {
@@ -125,6 +130,27 @@ public class PurchaseService {
         pay.processPayment(offer.getValue());
         ship.processShipment(offer.getValue()*0.1);
         Order order= new Order(orderID, guest.getUserID(), offer.getKey(), itemsToShip);
+        return order;
+    }
+
+    public void submitAuctionOffer(Registered user, Shop shop, int auctionID, double offerPrice) {
+        shop.submitAuctionOffer(auctionID, offerPrice, user.getUserID());
+    }
+
+    public Order purchaseAuctionItem(Registered user, Shop shop, int auctionID, int orderID, IPayment payment,
+            IShipment shipment) {
+        if(!(shipment.validateShipmentDetails()& payment.validatePaymentDetails())){
+            throw new IllegalArgumentException("Error: cant validate payment or shipment details.");
+        }
+        Pair<Integer,Double> offer = shop.purchaseAuctionItem(auctionID, user.getUserID());
+        HashMap<Integer, List<ItemDTO>> itemsToShip = new HashMap<>();
+        List<ItemDTO> itemsList = new ArrayList<>();
+        Item item = shop.getItem(offer.getKey());
+        itemsList.add(new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), shop.getId(), offer.getKey(), 1, item.getRating(), item.getDescription()));
+        itemsToShip.put(shop.getId(), itemsList);
+        payment.processPayment(offer.getValue());
+        shipment.processShipment(offer.getValue()*0.1);
+        Order order= new Order(offer.getKey(), user.getUserID(), offer.getValue(), itemsToShip);
         return order;
     }
 }

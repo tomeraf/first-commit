@@ -14,7 +14,7 @@ import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
 import Domain.Guest;
-import Domain.Item;
+import Domain.Registered;
 import Domain.Response;
 import Domain.Shop;
 import Domain.ShoppingBasket;
@@ -37,18 +37,18 @@ public class OrderService {
     private IUserRepository userRepository;
     private IShopRepository shopRepository;
     private IOrderRepository orderRepository;
-    private IAuthentication jwtAdapter;
+    private IAuthentication authenticationAdapter;
     private IPayment payment;
     private IShipment shipment;
 
     private final ConcurrencyHandler ConcurrencyHandler;
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
-    public OrderService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication jwtAdapter, IPayment payment, IShipment shipment,  ConcurrencyHandler concurrencyHandler) {
+    public OrderService(IUserRepository userRepository, IShopRepository shopRepository, IOrderRepository orderRepository, IAuthentication authenticationAdapter, IPayment payment, IShipment shipment,  ConcurrencyHandler concurrencyHandler) {
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;
         this.orderRepository = orderRepository;
-        this.jwtAdapter = jwtAdapter;
+        this.authenticationAdapter = authenticationAdapter;
         this.payment = payment;
         this.shipment = shipment;
         this.ConcurrencyHandler = concurrencyHandler;
@@ -62,10 +62,10 @@ public class OrderService {
      */
     public Response<List<ItemDTO>> checkCartContent(String sessionToken) {
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
-            int userID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             
             Guest guest = userRepository.getUserById(userID);
             List<ItemDTO> itemDTOs = purchaseService.checkCartContent(guest);
@@ -94,10 +94,10 @@ public class OrderService {
 
 
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
-            int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
 
             
@@ -149,10 +149,10 @@ public class OrderService {
     public Response<Void> removeItemsFromCart(String sessionToken, HashMap<Integer, List<Integer>> userItems) {
 
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
-            int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             purchaseService.removeItemsFromCart(guest, userItems); // Save the updated cart to the repository
             
@@ -175,7 +175,7 @@ public class OrderService {
         List<Lock> acquiredLocks = new ArrayList<>();
         
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
             if (!payment.validatePaymentDetails()) {
@@ -184,7 +184,7 @@ public class OrderService {
             if (!shipment.validateShipmentDetails()) {
                 throw new Exception("Shipment details invalid");
             }
-            int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
             
             List<Pair<Integer, Integer>> locksToAcquire = new ArrayList<>();
@@ -270,10 +270,10 @@ public class OrderService {
             itemLock.lockInterruptibly();
 
             try {
-                if (!jwtAdapter.validateToken(sessionToken)) {
+                if (!authenticationAdapter.validateToken(sessionToken)) {
                     throw new Exception("User not logged in");
                 }
-                int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+                int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
                 Guest guest = userRepository.getUserById(cartID); // Get the guest user by ID
                 Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
                 purchaseService.submitBidOffer(guest,shop ,itemID, offerPrice);
@@ -313,10 +313,10 @@ public class OrderService {
     //     try {
     //         itemLock.lockInterruptibly();
     //         try {
-    //             if (!jwtAdapter.validateToken(sessionToken)) {
+    //             if (!authenticationAdapter.validateToken(sessionToken)) {
     //                 throw new Exception("User not logged in");
     //             }
-    //             int cartID = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+    //             int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
     //             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
     //             purchaseService.directPurchase(guest, itemID);
     
@@ -348,10 +348,10 @@ public class OrderService {
      */
     public Response<List<Order>> viewPersonalOrderHistory(String sessionToken) {
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
-            int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            int userId = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             List<Order> orders = orderRepository.getOrdersByCustomerId(userId);
             logger.info(() -> "Personal search history viewed successfully for user ID: " + userId);
             return Response.ok(orders);
@@ -362,10 +362,10 @@ public class OrderService {
     }
     public Response<Void> purchaseBidItem(String sessionToken,int shopId,int bidId) {
         try {
-            if (!jwtAdapter.validateToken(sessionToken)) {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
                 throw new Exception("User not logged in");
             }
-            int userId = Integer.parseInt(jwtAdapter.getUsername(sessionToken));
+            int userId = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
             Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
             Order order = purchaseService.purchaseBidItem(guest,shop,bidId, orderRepository.getAllOrders().size(),payment, shipment);
@@ -375,6 +375,46 @@ public class OrderService {
         } catch (Exception e) {
             logger.error(() -> "Error purchasing bid item: " + e.getMessage());
             return Response.error("Error purchasing bid item: " + e.getMessage());
+        }
+    }
+
+    public Response<Void> submitAuctionOffer(String sessionToken, int shopId, int auctionID, double offerPrice) {
+
+            try {
+                if (!authenticationAdapter.validateToken(sessionToken)) {
+                    throw new Exception("User not logged in");
+                }
+                int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+                Guest guest = userRepository.getUserById(cartID); // Get the guest user by ID
+                Registered user = userRepository.getUserByName(guest.getUsername());
+                Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
+                purchaseService.submitAuctionOffer(user,shop ,auctionID, offerPrice);
+    
+                logger.info(() -> "Auction offer submitted successfully for item ID: " + auctionID);
+                return Response.ok();
+
+            } 
+            catch (Exception e) {
+                logger.error(() -> "Error submitting auction offer: " + e.getMessage());
+                return Response.error("Error submitting auction offer: " + e.getMessage());
+            }
+    }
+    public Response<Void> purchaseAuctionItem(String sessionToken,int shopId,int auctionID) {
+        try {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
+                throw new Exception("User not logged in");
+            }
+            int userId = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
+            Registered registered = userRepository.getUserByName(guest.getUsername());
+            Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
+            Order order = purchaseService.purchaseAuctionItem(registered,shop,auctionID, orderRepository.getAllOrders().size(),payment, shipment);
+            orderRepository.addOrder(order); // Save the order to the repository
+            logger.info(() -> "Auction item purchased successfully for auction ID: " + auctionID);
+            return Response.ok();
+        } catch (Exception e) {
+            logger.error(() -> "Error purchasing auction item: " + e.getMessage());
+            return Response.error("Error purchasing auction item: " + e.getMessage());
         }
     }
 }

@@ -1,5 +1,7 @@
 package Domain.DomainServices;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -174,6 +176,14 @@ public class ManagementService {
             shop.submitCounterBid(user.getUserID(), bidID, offerAmount);
         } else {
             throw new IllegalArgumentException("You don't have permission to submit counter bids");
+        }
+    }
+    public void openAuction(Registered user, Shop shop, int itemID, double startingPrice, LocalDateTime startDate,
+            LocalDateTime endDate) {
+        if (user.hasPermission(shop.getId(), Permission.OPEN_AUCTION)) {
+            shop.openAuction(itemID, startingPrice, startDate, endDate);
+        } else {
+            throw new IllegalArgumentException("You don't have permission to open an auction");
         }
     }
 }

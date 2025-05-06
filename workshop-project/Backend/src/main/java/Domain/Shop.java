@@ -1,5 +1,6 @@
 package Domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -10,6 +11,7 @@ import Domain.DTOs.ShopDTO;
 
 import Domain.Discount.DiscountPolicy;
 import Domain.Purchase.PurchasePolicy;
+import Domain.Purchase.PurchaseType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +37,8 @@ public class Shop implements IMessageListener {
     private int counterItemId; // Counter for item IDs
     private double rating;
     private int ratingCount;
-    private HashMap<Integer, BidPurchase> bidPurchaseItems; // BidId -> BidPurchase
-    private HashMap<Integer, AuctionPurchase> auctionPurchaseItems; // AuctionId -> AuctionPurchase
+    private HashMap<Integer, BidPurchase> bidPurchaseItems; // <BidId, BidPurchase>
+    private HashMap<Integer, AuctionPurchase> auctionPurchaseItems; // <AuctionId, AuctionPurchase>
     private int bidPurchaseCounter; // Counter for bid purchases
     private int auctionPurchaseCounter; // Counter for auction purchases
     private HashMap<Integer, IMessage> inbox; // 
@@ -239,7 +241,7 @@ public class Shop implements IMessageListener {
     }
 
     public void addBidPurchase(int itemId, double bidAmount, int buyerId) {  
-        if (items.containsKey(itemId)) {
+        if (items.containsKey(itemId) && purchasePolicy.allowsPurchaseType(PurchaseType.BID)) {
             BidPurchase bidPurchase = new BidPurchase(bidPurchaseCounter, bidAmount, itemId, buyerId, buyerId);
             bidPurchaseCounter++;
             bidPurchaseItems.put(bidPurchase.getId(), bidPurchase);
@@ -248,16 +250,13 @@ public class Shop implements IMessageListener {
         }
     }
     public void addAuctionPurchase(int itemId, double startingAmount, LocalDateTime startTime, LocalDateTime endTime){
-        if (items.containsKey(itemId) && items.get(itemId).getQuantity() > 0) {
+        if (items.containsKey(itemId) && purchasePolicy.allowsPurchaseType(PurchaseType.AUCTION)) {
             AuctionPurchase auctionPurchase = new AuctionPurchase(auctionPurchaseCounter, startingAmount, itemId, startTime, endTime);
             auctionPurchaseItems.put(auctionPurchase.getId(), auctionPurchase);
             auctionPurchaseCounter++;
         } 
-        else if (!items.containsKey(itemId)) {
-            throw new IllegalArgumentException("Item ID does not exist in the shop.");
-        }
         else {
-            throw new IllegalArgumentException("Item is out of stock.");
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
         }
     }
 
@@ -400,6 +399,41 @@ public class Shop implements IMessageListener {
             throw new IllegalArgumentException("Bid ID does not exist in the shop.");
         }
     }
+
+    public void openAuction(int itemID, double startingPrice, LocalDateTime startDate, LocalDateTime endDate) {
+        if (items.containsKey(itemID)) {
+            AuctionPurchase auctionPurchase = new AuctionPurchase(auctionPurchaseCounter, startingPrice, itemID, startDate, endDate);
+            auctionPurchaseCounter++;
+            auctionPurchaseItems.put(auctionPurchase.getId(), auctionPurchase);
+        } else {
+            throw new IllegalArgumentException("Item ID does not exist in the shop.");
+        }
+    }
+
+    public void submitAuctionOffer(int auctionID, double offerPrice, int userID) {
+        if (auctionPurchaseItems.containsKey(auctionID)) {
+            AuctionPurchase auctionPurchase = auctionPurchaseItems.get(auctionID);
+            auctionPurchase.placeOffer(offerPrice, userID);
+        } else {
+            throw new IllegalArgumentException("Auction ID does not exist in the shop.");
+        }
+    }
+
+	public Pair<Integer, Double> purchaseAuctionItem(int auctionID, int userID) {
+		if(auctionPurchaseItems.containsKey(auctionID)) {
+            AuctionPurchase auctionPurchase = auctionPurchaseItems.get(auctionID);
+            try {
+                if (!getItem(auctionPurchase.getItemId()).quantityCheck(1)) {
+                    throw new IllegalArgumentException("Item is out of stock.");
+                }
+                return auctionPurchase.purchaseAuctionItem(userID);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Auction purchase failed: " + e.getMessage());
+            }
+        } else {
+            throw new IllegalArgumentException("Auction ID does not exist in the shop.");
+        }
+	}
 }
 
 

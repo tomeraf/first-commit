@@ -15,4 +15,5 @@ public enum Permission {
     APPOINTMENT,
     CLOSE_SHOP,
     ANSWER_BID,
+    OPEN_AUCTION,
 }

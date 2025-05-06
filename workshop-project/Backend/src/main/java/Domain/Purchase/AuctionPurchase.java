@@ -2,6 +2,8 @@ package Domain.Purchase;
 
 import java.time.LocalDateTime;
 
+import Domain.DTOs.Pair;
+
 public class AuctionPurchase extends Purchase {
     private double highestBid=0;
     private LocalDateTime auctionStartTime; 
@@ -26,14 +28,16 @@ public class AuctionPurchase extends Purchase {
             throw new IllegalArgumentException("Auction end time must be in the future.");
         }  
     }
+
     public void placeOffer(double bidAmount, int buyerId) {
-        if (bidAmount > highestBid && bidAmount >= getAmount() && auctionEndTime.isAfter(LocalDateTime.now())&& auctionStartTime.isBefore(LocalDateTime.now())) {
+        if (bidAmount > highestBid && bidAmount >= getAmount() && isAuctionActive()) {
             this.highestBid = bidAmount;
             setBuyerId(buyerId);
         } else {
             throw new IllegalArgumentException("Bid amount must be higher than the current bid and starting bid.");
         }
     }
+    
     public double getHighestBid() {
         return highestBid;
     }
@@ -52,16 +56,21 @@ public class AuctionPurchase extends Purchase {
     public boolean isAuctionStarted() {
         return auctionStartTime.isBefore(LocalDateTime.now());
     }
+    
     public boolean isAccepted() {
         return isAccepted;
     }
-    public void accept() {
-        if (isAuctionEnded()) {
-            isAccepted = true;
-        } else {
-            throw new IllegalStateException("Auction must be ended to accept the bid.");
+    public Pair<Integer, Double> purchaseAuctionItem(int userID) {
+        if (!isAuctionEnded()) {
+            throw new IllegalStateException("Auction has not ended yet.");
         }
+        if(getBuyerId() != userID) {
+            throw new IllegalArgumentException("Error: user is not the highest bidder.");
+        }
+        return new Pair<>(getItemId(), highestBid); // Return the item ID and bid amount as a pair
+
     }
+
 
 
 }

@@ -33,6 +33,5 @@ public abstract class Purchase {
 
 
     public abstract boolean isAccepted();
-    public abstract void accept();
 
 }
