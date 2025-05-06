@@ -133,21 +133,16 @@ public class PurchaseService {
         return order;
     }
 
-    public void submitAuctionOffer(Guest guest, Shop shop, int auctionID, double offerPrice) {
-        if(guest instanceof Registered) {
-            shop.submitAuctionOffer(auctionID, offerPrice, guest.getUserID());
-        }
-        else {
-            throw new IllegalArgumentException("Error: guest cannot submit auction offer.");
-        }
+    public void submitAuctionOffer(Registered user, Shop shop, int auctionID, double offerPrice) {
+        shop.submitAuctionOffer(auctionID, offerPrice, user.getUserID());
     }
 
-    public Order purchaseAuctionItem(Guest guest, Shop shop, int auctionID, int orderID, IPayment payment,
+    public Order purchaseAuctionItem(Registered user, Shop shop, int auctionID, int orderID, IPayment payment,
             IShipment shipment) {
         if(!(shipment.validateShipmentDetails()& payment.validatePaymentDetails())){
             throw new IllegalArgumentException("Error: cant validate payment or shipment details.");
         }
-        Pair<Integer,Double> offer = shop.purchaseAuctionItem(auctionID, guest.getUserID());
+        Pair<Integer,Double> offer = shop.purchaseAuctionItem(auctionID, user.getUserID());
         HashMap<Integer, List<ItemDTO>> itemsToShip = new HashMap<>();
         List<ItemDTO> itemsList = new ArrayList<>();
         Item item = shop.getItem(offer.getKey());
@@ -155,7 +150,7 @@ public class PurchaseService {
         itemsToShip.put(shop.getId(), itemsList);
         payment.processPayment(offer.getValue());
         shipment.processShipment(offer.getValue()*0.1);
-        Order order= new Order(offer.getKey(), guest.getUserID(), offer.getValue(), itemsToShip);
+        Order order= new Order(offer.getKey(), user.getUserID(), offer.getValue(), itemsToShip);
         return order;
     }
 }

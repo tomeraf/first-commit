@@ -14,7 +14,7 @@ import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
 import Domain.Guest;
-import Domain.Item;
+import Domain.Registered;
 import Domain.Response;
 import Domain.Shop;
 import Domain.ShoppingBasket;
@@ -386,8 +386,9 @@ public class OrderService {
                 }
                 int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
                 Guest guest = userRepository.getUserById(cartID); // Get the guest user by ID
+                Registered user = userRepository.getUserByName(guest.getUsername());
                 Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
-                purchaseService.submitAuctionOffer(guest,shop ,auctionID, offerPrice);
+                purchaseService.submitAuctionOffer(user,shop ,auctionID, offerPrice);
     
                 logger.info(() -> "Auction offer submitted successfully for item ID: " + auctionID);
                 return Response.ok();
@@ -405,8 +406,9 @@ public class OrderService {
             }
             int userId = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
+            Registered registered = userRepository.getUserByName(guest.getUsername());
             Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
-            Order order = purchaseService.purchaseAuctionItem(guest,shop,auctionID, orderRepository.getAllOrders().size(),payment, shipment);
+            Order order = purchaseService.purchaseAuctionItem(registered,shop,auctionID, orderRepository.getAllOrders().size(),payment, shipment);
             orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Auction item purchased successfully for auction ID: " + auctionID);
             return Response.ok();

@@ -67,7 +67,7 @@ public class AuctionPurchase extends Purchase {
         if(getBuyerId() != userID) {
             throw new IllegalArgumentException("Error: user is not the highest bidder.");
         }
-        return new Pair<>(getItemId(), getAmount()); // Return the item ID and bid amount as a pair
+        return new Pair<>(getItemId(), highestBid); // Return the item ID and bid amount as a pair
 
     }
 
