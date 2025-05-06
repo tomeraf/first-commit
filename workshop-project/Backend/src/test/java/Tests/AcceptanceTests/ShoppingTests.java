@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -261,10 +260,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
 
     @Test
     public void successfulBuyCartContentTest() {
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(1.0)).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(0.1)).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
 
         // 1) Owner setup
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
@@ -321,8 +318,7 @@ public class ShoppingTests extends BaseAcceptanceTests {
 
     @Test
     public void BuyCartContentTest_paymentFails() {
-        when(payment.validatePaymentDetails()).thenReturn(false);
-        when(payment.processPayment(1.0)).thenReturn(false);
+        fixtures.mockNegativePayment();
 
         // 1) Owner setup
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
@@ -354,10 +350,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
 
     @Test
     public void BuyCartContentTest_shipmentFails() {
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(1.0)).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(false);
-        when(shipment.processShipment(0.1)).thenReturn(false);
+        fixtures.mockPositivePayment();
+        fixtures.mockNegativeShipment();
 
         // 1) Owner setup
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
@@ -468,10 +462,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
 
     @Test
     public void rateShopTest() {
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(1.0)).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(0.1)).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
         // 1) Owner setup
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
         ShopDTO shop = fixtures.generateShopAndItems(ownerToken);
@@ -541,10 +533,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
     public void itemUnavailableForPurchaseTest() {
         // --- Setup -------------------------------------------------------------
         // 1) Prepare payment/shipment mocks
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(anyDouble())).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(anyDouble())).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
 
         // 2) Owner creates shop with 3 items
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
@@ -613,10 +603,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
     @Test
     public void concurrentSingleStockCartPurchaseTest() {
         // --- Arrange mocks for payments and shipments ---
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(anyDouble())).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(anyDouble())).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
 
         // --- 1) Owner creates shop with a single‐unit item ---
         String ownerToken = fixtures.generateRegisteredUserSession("owner", "pwdO");
@@ -675,10 +663,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
     @Test
     public void auctionFlowSuccessTest() {
         // Stub payment and shipment
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(anyDouble())).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(anyDouble())).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
 
         // Owner setup
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
@@ -726,10 +712,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
 
     @Test
     public void sumbitAuctionOfferBeforeAuctionStartsShouldFailTest() {
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(anyDouble())).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(anyDouble())).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
 
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
         ShopDTO shop = fixtures.generateShopAndItems(ownerToken);
@@ -753,10 +737,8 @@ public class ShoppingTests extends BaseAcceptanceTests {
 
     @Test
     public void purchaseAuctionOfferBeforeAuctionEndsShouldFailTest() {
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(anyDouble())).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(anyDouble())).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
 
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
         ShopDTO shop = fixtures.generateShopAndItems(ownerToken);
@@ -788,10 +770,9 @@ public class ShoppingTests extends BaseAcceptanceTests {
 
     @Test
     public void anotherUserCannotPurchaseWonAuctionTest() {
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(anyDouble())).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(anyDouble())).thenReturn(true);
+        fixtures.mockPositivePayment();
+        fixtures.mockPositiveShipment();
+
 
         String ownerToken = fixtures.generateRegisteredUserSession("Owner", "Pwd0");
         ShopDTO shop = fixtures.generateShopAndItems(ownerToken);

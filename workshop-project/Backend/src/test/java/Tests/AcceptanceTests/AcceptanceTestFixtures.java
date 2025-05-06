@@ -133,11 +133,9 @@ public class AcceptanceTestFixtures {
     }
 
     public Order successfulBuyCartContent(String sessionToken) {
-        
-        when(payment.validatePaymentDetails()).thenReturn(true);
-        when(payment.processPayment(1.0)).thenReturn(true);
-        when(shipment.validateShipmentDetails()).thenReturn(true);
-        when(shipment.processShipment(0.1)).thenReturn(true);
+        mockPositivePayment();
+        mockPositiveShipment();
+
         Response<Order> purchaseResp = orderService.buyCartContent(
             sessionToken
         );
