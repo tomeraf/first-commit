@@ -1,56 +1,76 @@
 package com.halilovindustries.restservice;
 
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Domain.Response;
-import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
-import Domain.Adapters_and_Interfaces.IAuthentication;
-import Domain.Adapters_and_Interfaces.IPayment;
-import Domain.Adapters_and_Interfaces.IShipment;
-import Domain.Adapters_and_Interfaces.JWTAdapter;
-import Service.OrderService;
-import Service.ShopService;
 import Service.UserService;
-import Domain.Repositories.*;
-import Infrastructure.*;
+
+import java.time.LocalDate;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @RestController
-//@RequestMapping("/api/user")
+@RequestMapping("/api/user")
 public class UserController {
-
-    protected IShopRepository shopRepository;
-    protected IUserRepository userRepository;
-    protected IOrderRepository orderRepository;
-    protected IAuthentication jwtAdapter;
-    protected IShipment shipment;
-    protected IPayment payment;
     protected UserService userService;
-    protected ShopService shopService;
-    protected OrderService orderService;
-    protected ConcurrencyHandler concurrencyHandler;
 
 
-    public UserController() {
-        userRepository   = new MemoryUserRepository();
-        orderRepository  = new MemoryOrderRepository();
-        jwtAdapter       = new JWTAdapter();
-        concurrencyHandler = new ConcurrencyHandler();
-    
-    
-        userService  = new UserService(userRepository, jwtAdapter, concurrencyHandler);
-        shopService  = new ShopService(userRepository, shopRepository, orderRepository, jwtAdapter, concurrencyHandler);
-        orderService = new OrderService(userRepository, shopRepository, orderRepository, jwtAdapter, payment, shipment, concurrencyHandler);
+    public UserController(UserService userService) {
+        this.userService  = userService;
     }
     
-    
-
     @GetMapping("/enter")
     public Response<String> enterToSystem() {
         return userService.enterToSystem();
     }
+    @PostMapping("/register")
+    public Response<Void> registerUser(
+            @RequestHeader("X-Session-Token") String token,
+            @RequestBody RegisterRequest req) {
+        return userService.registerUser(
+                token,
+                req.getUsername(),
+                req.getPassword(),
+                req.getDateOfBirth()
+        );
+    }
+
+    @PostMapping("/login")
+    public Response<String> loginUser(
+            @RequestHeader("X-Session-Token") String token,
+            @RequestBody LoginRequest req) {
+        return userService.loginUser(
+                token,
+                req.getUsername(),
+                req.getPassword()
+        );
+    }
+
+    public static class RegisterRequest {
+        private String username;
+        private String password;
+        private LocalDate dateOfBirth;
+
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+        public LocalDate getDateOfBirth() { return dateOfBirth; }
+        public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    }
+
+    public static class LoginRequest {
+        private String username;
+        private String password;
     
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+    }
 }
