@@ -10,6 +10,7 @@ import Domain.DTOs.Pair;
 import Domain.DTOs.ShopDTO;
 
 import Domain.Discount.DiscountPolicy;
+import Domain.Discount.DiscountType;
 import Domain.Purchase.PurchasePolicy;
 import Domain.Purchase.PurchaseType;
 
@@ -228,13 +229,13 @@ public class Shop implements IMessageListener {
     }
 
     public double purchaseBasket(HashMap <Integer, Integer> itemsToPurchase){ //will need to be synchronized later on
-        List<Item> allItems = new ArrayList<Item>();
+        HashMap<Item,Integer> allItems = new HashMap<>(); //<Item,quantity>
         for(Integer itemId: itemsToPurchase.keySet()){
-            allItems.add(items.get(itemId)); 
+            allItems.put(items.get(itemId), itemsToPurchase.get(itemId)); 
         }
         double totalPrice =0;
-        for(Item item: allItems){
-            item.buyItem(itemsToPurchase.get(item.getId()));
+        for(Item item: allItems.keySet()){
+            item.buyItem(allItems.get(item));
             totalPrice = totalPrice + item.getPrice() * itemsToPurchase.get(item.getId()); 
         }
         return totalPrice; 
@@ -434,6 +435,10 @@ public class Shop implements IMessageListener {
             throw new IllegalArgumentException("Auction ID does not exist in the shop.");
         }
 	}
+
+    public void updateDiscountType(DiscountType discountType) {
+        discountPolicy.updateDiscountType(discountType);
+    }
 }
 
 

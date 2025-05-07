@@ -22,7 +22,7 @@ import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
-
+import Domain.Discount.DiscountType;
 import Domain.DomainServices.InteractionService;
 
 import Domain.DomainServices.ManagementService;
@@ -385,7 +385,7 @@ public class ShopService {
         return Response.ok();
     }
 
-    public Response<Void> updateDiscountType(String sessionToken, int shopID, String discountType) {
+    public Response<Void> updateDiscountType(String sessionToken, int shopID, DiscountType discountType) {
         // Check if the user is logged in
         // If not, prompt to log in or register
         // If logged in, update the discount type for the item in the shop with the

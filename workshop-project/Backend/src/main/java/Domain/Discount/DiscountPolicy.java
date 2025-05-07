@@ -13,17 +13,17 @@ public class DiscountPolicy {
         this.discountTypes = new ArrayList<>();
         this.discountRules = new ArrayList<>();
     }
-    public void addDiscountType(DiscountType discountType) {
-        this.discountTypes.add(discountType);
-    }
     public void adddiscountRule(Rule discountRule) {
         this.discountRules.add(discountRule);
     }
-    public void removeDiscountType(DiscountType discountType) {
-        this.discountTypes.remove(discountType);
-    }
     public void removediscountRule(Rule discountRule) {
         this.discountRules.remove(discountRule);
+    }
+    public void updateDiscountType(DiscountType discountType) {
+        if(this.discountTypes.contains(discountType)) 
+            this.discountTypes.remove(discountType);
+        else
+            this.discountTypes.add(discountType);
     }
 
 }

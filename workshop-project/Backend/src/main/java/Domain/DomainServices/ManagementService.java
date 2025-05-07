@@ -1,6 +1,5 @@
 package Domain.DomainServices;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,7 @@ import Domain.Owner;
 import Domain.Permission;
 import Domain.Registered;
 import Domain.Shop;
+import Domain.Discount.DiscountType;
 
 public class ManagementService {
     private static ManagementService instance = null;
@@ -140,9 +140,12 @@ public class ManagementService {
         }
     }
 
-    public void updateDiscountType(Registered supplyManager, Shop shop, String discountType) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateDiscountType'");
+    public void updateDiscountType(Registered supplyManager, Shop shop, DiscountType discountType) {
+        if( supplyManager.hasPermission(shop.getId(), Permission.UPDATE_DISCOUNT_POLICY)) {
+            shop.updateDiscountType(discountType);
+        } else {
+            throw new IllegalArgumentException("You don't have permission to update discount type");
+        }
     }
 
     public void closeShop(Registered supplyManager, Shop shop) {
