@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 
 import org.junit.jupiter.api.Test;
 
-import Domain.Category;
+import Domain.Shop.*;
 import Domain.Response;
 import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.ItemDTO;

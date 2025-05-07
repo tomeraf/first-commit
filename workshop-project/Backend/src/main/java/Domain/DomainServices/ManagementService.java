@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import Domain.Category;
+import Domain.Shop.*;
 import Domain.Founder;
-import Domain.Item;
 import Domain.Manager;
 import Domain.Owner;
 import Domain.Permission;
 import Domain.Registered;
-import Domain.Shop;
 
 public class ManagementService {
     private static ManagementService instance = null;

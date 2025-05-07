@@ -2,6 +2,8 @@ package Domain.Repositories;
 
 import Domain.Guest;
 import Domain.Registered;
+
+import java.util.List;
 import java.util.Map;
 
 public interface IUserRepository {
@@ -16,4 +18,6 @@ public interface IUserRepository {
     Map<Integer, Guest> getAllUsers();
 
     Registered getUserByName(String username);
+
+    List<Registered> getAllRegisteredUsers();
 }

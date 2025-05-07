@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import Domain.Response;
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.ShopDTO;
-import Domain.Category;
+import Domain.Shop.*;
 
 import java.util.HashSet;
 import java.util.Set;

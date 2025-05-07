@@ -5,6 +5,7 @@ import Domain.Adapters_and_Interfaces.IPayment;
 import Domain.Adapters_and_Interfaces.IShipment;
 import Domain.DTOs.ItemDTO;
 
+import Domain.Shop.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import Domain.Category;
+import Domain.Shop.*;
 import Domain.Response;
 import Domain.Adapters_and_Interfaces.*;
 import Domain.DTOs.ItemDTO;

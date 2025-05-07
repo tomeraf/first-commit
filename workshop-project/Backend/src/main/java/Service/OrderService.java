@@ -16,7 +16,7 @@ import org.junit.platform.commons.logging.LoggerFactory;
 import Domain.Guest;
 import Domain.Registered;
 import Domain.Response;
-import Domain.Shop;
+import Domain.Shop.*;
 import Domain.ShoppingBasket;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;

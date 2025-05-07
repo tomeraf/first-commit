@@ -1,6 +1,8 @@
 package Domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class Guest {
     protected ShoppingCart cart;    
@@ -68,4 +70,5 @@ public class Guest {
     private boolean validPassword(String password) {
         return password != null && !password.isEmpty();
     }
+
 }

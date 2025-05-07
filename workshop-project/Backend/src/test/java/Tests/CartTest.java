@@ -2,12 +2,11 @@ package Tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import Domain.Item;
+import Domain.Shop.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import Domain.DTOs.ItemDTO;
-import Domain.Category;
 import Domain.ShoppingBasket;
 import Domain.ShoppingCart;
 

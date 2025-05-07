@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
-import Domain.Category;
+import Domain.Shop.*;
 import Domain.DTOs.ItemDTO;
 import Domain.ShoppingBasket;
 

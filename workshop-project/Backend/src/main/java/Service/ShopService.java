@@ -11,12 +11,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
-import Domain.Category;
-import Domain.Item;
+import Domain.Shop.*;
 import Domain.DTOs.ItemDTO;
 import Domain.Registered;
 import Domain.Response;
-import Domain.Shop;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IMessage;
