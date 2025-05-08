@@ -178,6 +178,7 @@ public class Registered extends Guest implements IMessageListener {
     public void removeSuspension() {
         this.suspension.removeSuspension();
     }
+    @Override
     public boolean isSuspended() {
         return this.suspension.isSuspended(LocalDateTime.now());
     }

@@ -70,5 +70,8 @@ public class Guest {
     private boolean validPassword(String password) {
         return password != null && !password.isEmpty();
     }
+    public boolean isSuspended() {
+        return false; 
+    }
 
 }

@@ -123,7 +123,7 @@ public class AcceptanceTestFixtures {
         assertTrue(chgQty3.isOk(), "changeItemQuantityInShop should succeed");
 
         // 4) Retrieve final list and return it
-        Response<List<ItemDTO>> finalResp = shopService.showShopItems(shopId);
+        Response<List<ItemDTO>> finalResp = shopService.showShopItems(ownerToken,shopId);
         assertTrue(finalResp.isOk(), "showShopItems should succeed");
         List<ItemDTO> items = finalResp.getData();
         assertNotNull(items, "Returned item list must not be null");

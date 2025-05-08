@@ -118,7 +118,7 @@ public class PurchaseService {
         }
     }
 
-	public Order purchaseBidItem(Guest guest, Shop shop, int bidId,int orderID,IPayment pay,IShipment ship) {
+	public Order purchaseBidItem(Registered guest, Shop shop, int bidId,int orderID,IPayment pay,IShipment ship) {
         if(!(ship.validateShipmentDetails()& pay.validatePaymentDetails())){
             throw new IllegalArgumentException("Error: cant validate payment or shipment details.");
         }

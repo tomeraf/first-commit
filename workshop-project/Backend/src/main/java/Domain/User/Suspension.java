@@ -25,7 +25,13 @@ public class Suspension {
     }
 
     public boolean isSuspended(LocalDateTime currentDate) {
-        return (!(startDate==null&&endDate==null&&!isPermanent))||isPermanent || (currentDate.isAfter(startDate) || currentDate.equals(startDate)) && (currentDate.isBefore(endDate) || currentDate.equals(endDate));
+        if (isPermanent) {
+            return true;
+        }
+        if (startDate == null || endDate == null) {
+            return false;
+        }
+        return currentDate.isAfter(startDate) && currentDate.isBefore(endDate);
     }
 
     private void validateDates(LocalDateTime startDate, LocalDateTime endDate) {
