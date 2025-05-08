@@ -13,7 +13,7 @@ import org.junit.platform.commons.logging.LoggerFactory;
 
 import Domain.Shop.*;
 import Domain.DTOs.ItemDTO;
-import Domain.Registered;
+import Domain.User.*;
 import Domain.Response;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
@@ -28,7 +28,6 @@ import Domain.DomainServices.ShoppingService;
 import Domain.Repositories.IOrderRepository;
 import Domain.Repositories.IShopRepository;
 import Domain.Repositories.IUserRepository;
-import Domain.Permission;
 
 public class ShopService {
 

@@ -7,11 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import Domain.Shop.*;
-import Domain.Founder;
-import Domain.Manager;
-import Domain.Owner;
-import Domain.Permission;
-import Domain.Registered;
+import Domain.User.*;
 
 public class ManagementService {
     private static ManagementService instance = null;

@@ -7,14 +7,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import Domain.DTOs.ItemDTO;
-import Domain.ShoppingBasket;
-import Domain.ShoppingCart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import Domain.User.*;
 
 public class CartTest {
     

@@ -13,11 +13,9 @@ import java.util.stream.Collectors;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
-import Domain.Guest;
-import Domain.Registered;
 import Domain.Response;
 import Domain.Shop.*;
-import Domain.ShoppingBasket;
+import Domain.User.*;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IPayment;

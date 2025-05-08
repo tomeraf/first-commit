@@ -1,6 +1,6 @@
 package Domain.Rules;
 
-import Domain.Guest;
+import Domain.User.*;
 import Domain.Shop.Item;
 
 @FunctionalInterface

@@ -2,7 +2,7 @@ package Domain.Shop.Discount;
 
 import java.time.LocalDate;
 
-import Domain.Guest;
+import Domain.User.*;
 import Domain.Shop.Item;
 import Domain.Rules.Rule;
 

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import Domain.Shop.*;
 import Domain.DTOs.ItemDTO;
-import Domain.ShoppingBasket;
+import Domain.User.*;
 
 public class BasketTest {
     
