@@ -4,6 +4,7 @@ package com.halilovindustries.websocket;
 
 import com.vaadin.flow.shared.Registration;
 import org.apache.commons.collections4.CollectionUtils;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery.B;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,17 @@ public class Broadcaster {
 
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
     private static final Map<String, List<Consumer<String>>> listeners = new ConcurrentHashMap<>();
+    private static Broadcaster instance = null;
 
+    private Broadcaster() {
+        // Private constructor to prevent instantiation
+    }
+    public static synchronized Broadcaster getInstance() {
+        if (instance == null) {
+            instance = new Broadcaster();
+        }
+        return instance;
+    }
     /**
      * Registers a listener (usually from a Vaadin UI) for a specific user UUID.
      * @param userUuid the user ID
