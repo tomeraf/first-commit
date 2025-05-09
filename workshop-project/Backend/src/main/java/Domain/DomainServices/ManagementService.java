@@ -2,6 +2,7 @@ package Domain.DomainServices;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -182,6 +183,13 @@ public class ManagementService {
             shop.openAuction(itemID, startingPrice, startDate, endDate);
         } else {
             throw new IllegalArgumentException("You don't have permission to open an auction");
+        }
+    }
+    public void addDiscount(Registered user, Shop shop, HashMap<String,String> discountDetails) {
+        if (user.hasPermission(shop.getId(), Permission.UPDATE_DISCOUNT_POLICY)) {
+            shop.addDiscount(discountDetails);
+        } else {
+            throw new IllegalArgumentException("You don't have permission to add discounts");
         }
     }
 }

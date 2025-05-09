@@ -433,6 +433,10 @@ public class Shop implements IMessageListener {
     public void updateDiscountType(DiscountType discountType) {
         discountPolicy.updateDiscountType(discountType);
     }
+
+    public void addDiscount(HashMap<String,String> discountDetails) {
+        discountPolicy.addDiscount(discountDetails);
+    }
 }
 
 

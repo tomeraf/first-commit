@@ -193,7 +193,7 @@ public class ShopService {
                 return Response.error("User is suspended");
             }
             Shop shop = this.shopRepository.getShopById(shopID);
-            HashMap<Integer, ItemDTO> itemDTOs = new HashMap();
+            HashMap<Integer, ItemDTO> itemDTOs = new HashMap<>();
             for (Item item : shop.getItems().values()) {
                 ItemDTO itemDTO = new ItemDTO(item.getName(), item.getCategory(), item.getPrice(), item.getShopId(),
                         item.getId(), item.getQuantity(), item.getRating(), item.getDescription());
@@ -866,6 +866,50 @@ public class ShopService {
             logger.info(() -> "Auction opened: " + itemID + " in shop: " + shop.getName() + " by user: " + userID);
         } catch (Exception e) {
             logger.error(() -> "Error opening auction: " + e.getMessage());
+            return Response.error("Error: " + e.getMessage());
+        }
+        return Response.ok();
+    }
+
+    // Discount Policy
+    /*
+     * discountDetails should contain the following keys:
+     * discount type-> max/combine //optional
+     * 
+     * itemId1-> item id //optional
+     * category1-> category //optional
+     * percentage1-> percentage
+     * cond_operator1-> xor/and/or //optional
+     * cond_type1-> item,category,shop //optional
+     * cond_itemId1-> item id //optional
+     * cond_category1-> category //optional
+     * 
+     * itemId2-> item id //optional
+     * category2-> category //optional
+     * percentage2-> percentage
+     * cond_operator2-> xor/and/or //optional
+     * cond_type2-> item,category,shop //optional
+     * cond_itemId2-> item id //optional
+     * cond_category2-> category //optional
+     * 
+     */
+
+    public Response<Void> addDiscount(String sessionToken, int shopID, HashMap<String,String> discountDetails) {
+        try {
+            if (!authenticationAdapter.validateToken(sessionToken)) {
+                throw new Exception("User is not logged in");
+            }
+            int userID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
+            Registered user = (Registered) this.userRepository.getUserById(userID);
+            if(user.isSuspended()) {
+                return Response.error("User is suspended");
+            }
+            Shop shop = this.shopRepository.getShopById(shopID);
+            managementService.addDiscount(user, shop, discountDetails);
+            logger.info(() -> "Discount added in shop: " + shop.getName() + " by user: "
+                    + userID);
+        } catch (Exception e) {
+            logger.error(() -> "Error adding discount: " + e.getMessage());
             return Response.error("Error: " + e.getMessage());
         }
         return Response.ok();

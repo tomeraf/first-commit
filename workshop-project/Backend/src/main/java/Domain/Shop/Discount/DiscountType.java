@@ -1,8 +1,7 @@
 package Domain.Shop.Discount;
 
 public enum DiscountType {
-    OPEN,
-    HIDDEN,
+    BASE,
     CONDITIONAL;
 
     public static DiscountType fromString(String type) {
