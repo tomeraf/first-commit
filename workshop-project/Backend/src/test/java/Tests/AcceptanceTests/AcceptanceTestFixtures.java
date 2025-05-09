@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import Domain.Category;
+import Domain.Shop.*;
 import Domain.Response;
 import Domain.Adapters_and_Interfaces.*;
 import Domain.DTOs.ItemDTO;
@@ -123,7 +123,7 @@ public class AcceptanceTestFixtures {
         assertTrue(chgQty3.isOk(), "changeItemQuantityInShop should succeed");
 
         // 4) Retrieve final list and return it
-        Response<List<ItemDTO>> finalResp = shopService.showShopItems(shopId);
+        Response<List<ItemDTO>> finalResp = shopService.showShopItems(ownerToken,shopId);
         assertTrue(finalResp.isOk(), "showShopItems should succeed");
         List<ItemDTO> items = finalResp.getData();
         assertNotNull(items, "Returned item list must not be null");

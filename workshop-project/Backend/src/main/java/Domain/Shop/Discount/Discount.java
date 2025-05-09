@@ -1,8 +1,8 @@
-package Domain.Discount;
+package Domain.Shop.Discount;
 
 import java.util.HashMap;
 
-import Domain.Item;
+import Domain.Shop.*;
 
 public interface Discount {
     public double calculateDiscount(HashMap<Item,Integer> allItems);

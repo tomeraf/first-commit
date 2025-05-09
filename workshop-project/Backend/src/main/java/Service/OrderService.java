@@ -13,11 +13,9 @@ import java.util.stream.Collectors;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
-import Domain.Guest;
-import Domain.Registered;
 import Domain.Response;
-import Domain.Shop;
-import Domain.ShoppingBasket;
+import Domain.Shop.*;
+import Domain.User.*;
 import Domain.Adapters_and_Interfaces.ConcurrencyHandler;
 import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IPayment;
@@ -98,7 +96,11 @@ public class OrderService {
                 throw new Exception("User not logged in");
             }
             int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
-            Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+            Guest guest = userRepository.getUserById(cartID); // Get the guest user by ID
+            if(guest.isSuspended()) {
+                throw new Exception("User is suspended");
+            }
+
 
             
             Set<Integer> shopIds = userItems.keySet(); // Get the set of shop IDs
@@ -154,6 +156,9 @@ public class OrderService {
             }
             int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+            if(guest.isSuspended()) {
+                throw new Exception("User is suspended");
+            }
             purchaseService.removeItemsFromCart(guest, userItems); // Save the updated cart to the repository
             
             
@@ -186,6 +191,9 @@ public class OrderService {
             }
             int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(cartID); // Get the guest user by I
+            if(guest.isSuspended()) {
+                throw new Exception("User is suspended");
+            }
             
             List<Pair<Integer, Integer>> locksToAcquire = new ArrayList<>();
         
@@ -275,6 +283,9 @@ public class OrderService {
                 }
                 int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
                 Guest guest = userRepository.getUserById(cartID); // Get the guest user by ID
+                if(guest.isSuspended()) {
+                    throw new Exception("User is suspended");
+                }
                 Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
                 purchaseService.submitBidOffer(guest,shop ,itemID, offerPrice);
     
@@ -367,8 +378,12 @@ public class OrderService {
             }
             int userId = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
+            if(guest.isSuspended()) {
+                throw new Exception("User is suspended");
+            }
+            Registered user = userRepository.getUserByName(guest.getUsername());
             Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
-            Order order = purchaseService.purchaseBidItem(guest,shop,bidId, orderRepository.getAllOrders().size(),payment, shipment);
+            Order order = purchaseService.purchaseBidItem(user,shop,bidId, orderRepository.getAllOrders().size(),payment, shipment);
             orderRepository.addOrder(order); // Save the order to the repository
             logger.info(() -> "Bid item purchased successfully for bid ID: " + bidId);
             return Response.ok();
@@ -386,6 +401,9 @@ public class OrderService {
                 }
                 int cartID = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
                 Guest guest = userRepository.getUserById(cartID); // Get the guest user by ID
+                if(guest.isSuspended()) {
+                    throw new Exception("User is suspended");
+                }
                 Registered user = userRepository.getUserByName(guest.getUsername());
                 Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
                 purchaseService.submitAuctionOffer(user,shop ,auctionID, offerPrice);
@@ -406,6 +424,9 @@ public class OrderService {
             }
             int userId = Integer.parseInt(authenticationAdapter.getUsername(sessionToken));
             Guest guest = userRepository.getUserById(userId); // Get the guest user by ID
+            if(guest.isSuspended()) {
+                throw new Exception("User is suspended");
+            }
             Registered registered = userRepository.getUserByName(guest.getUsername());
             Shop shop = shopRepository.getShopById(shopId); // Get the shop by ID
             Order order = purchaseService.purchaseAuctionItem(registered,shop,auctionID, orderRepository.getAllOrders().size(),payment, shipment);
