@@ -12,6 +12,7 @@ import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
 import Domain.Shop.*;
+import Domain.Shop.Discount.*;
 import Domain.DTOs.ItemDTO;
 import Domain.User.*;
 import Domain.Response;
@@ -20,7 +21,6 @@ import Domain.Adapters_and_Interfaces.IAuthentication;
 import Domain.Adapters_and_Interfaces.IMessage;
 import Domain.DTOs.Order;
 import Domain.DTOs.ShopDTO;
-import Domain.Discount.DiscountType;
 import Domain.DomainServices.InteractionService;
 
 import Domain.DomainServices.ManagementService;

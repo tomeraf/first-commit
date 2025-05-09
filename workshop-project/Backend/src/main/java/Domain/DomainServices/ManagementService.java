@@ -5,20 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-<<<<<<< HEAD
-import Domain.Category;
-import Domain.Founder;
-import Domain.Item;
-import Domain.Manager;
-import Domain.Owner;
-import Domain.Permission;
-import Domain.Registered;
-import Domain.Shop;
-import Domain.Discount.DiscountType;
-=======
 import Domain.Shop.*;
+import Domain.Shop.Discount.DiscountType;
 import Domain.User.*;
->>>>>>> 214-system-manager-actions
+
 
 public class ManagementService {
     private static ManagementService instance = null;
