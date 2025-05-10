@@ -1,27 +1,30 @@
-package Presenters;
+package com.example.application.presenters;
 
 import Domain.DTOs.ItemDTO;
 import Domain.DTOs.ShopDTO;
-import Domain.Response;
 import Service.ShopService;
 import Service.UserService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
+@Component
 public class HomePresenter {
     UserService userService;
     ShopService shopService;
     List<ShopDTO> RandomShops;
 
+
     public HomePresenter(UserService userService, ShopService shopService) {
         this.userService = userService;
         this.shopService = shopService;
+        rnd3Shops();
     }
 
-    public void rnd3Shops() {
+    private void rnd3Shops() {
         List<ShopDTO> shops = shopService.showAllShops().getData();
         Random rand = new Random();
         int rndNum = rand.nextInt(shops.size());
@@ -30,12 +33,12 @@ public class HomePresenter {
             RandomShops.add(shops.get(rndNum++ % shops.size()));
     }
 
-    public List<String> get3rndShopsNames() {
-        List<String> names = new ArrayList<>();
-        for (ShopDTO shop : RandomShops)
-            names.add(shop.getName());
-        return names;
+    @Bean
+    public List<ShopDTO> getRandomShops() {
+        return RandomShops;
     }
+
+    @Bean
     public List<ItemDTO> get4rndShopItems(ShopDTO shop) {
         List<ItemDTO> RandomItems = new ArrayList<>();
         Random rand = new Random();
@@ -45,5 +48,7 @@ public class HomePresenter {
             RandomItems.add(shop.getItems().get((Integer)(keys[rndNum%keys.length])));
         return RandomItems;
     }
+
+
 
 }
